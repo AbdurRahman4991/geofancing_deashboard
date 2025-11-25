@@ -1,70 +1,3 @@
-// import { api } from '../api/baseApi'
-
-// export const companySlice = api.injectEndpoints({
-//   endpoints: (builder) => ({
-//     getCompany: builder.query({
-//       query: ({token,page,limit}) => `company?page=${page}&limit=${limit}`,
-//       providesTags : ["company"]
-//     }),
-    
-   
-//     getDepartment: builder.query({
-//       query: (token) => `department`,
-//       providesTags : ["department"]
-//     }),
-
-//     getAcivment: builder.query({
-//       query: (token) => `achievement`,
-//       providesTags : ["achievement"]
-//     }),
-
- 
-
-//     deleteEmplyee: builder.mutation({
-//       query: id => ({
-//         url: `employees/${id}`,
-//         method: 'DELETE',  
-//         headers:{
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//         },
-//       }),
-//       invalidatesTags: ['employees']
-//     }),
-    
-//     createEmplyee: builder.mutation({
-//       query: data => ({
-//         url: 'employees',
-//         method: 'POST',
-//         headers:{
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//         },
-//         body: data
-//       }),
-//       invalidatesTags: ['employees']
-//     }),
-
-//     updateEmplyee: builder.mutation({
-//       query: data => ({
-      
-//         url: `employees/${data.id}`,
-//         method: 'PUT',
-//         headers:{
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//         },
-//         body: data
-//       }),
-//       invalidatesTags: ['employees']
-//     })
-//   }),
-// })
-
-// // Export hooks for usage in functional components, which are
-// // auto-generated based on the defined endpoints
-// export const { useGetEmplyeeQuery, useCreateEmplyeeMutation , useGetAcivmentQuery, useGetDepartmentQuery, useDeleteEmplyeeMutation, useUpdateEmplyeeMutation
-// } = emplyeSlice
 
 import { api } from '../api/baseApi'
 
@@ -86,11 +19,6 @@ export interface CompanyRequest {
 
 export const companySlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    // getCompany: builder.query<Company[], { page?: number; limit?: number }>({
-    //   query: ({ page = 1, limit = 10 }) => `companies?page=${page}&limit=${limit}`,
-    //   transformResponse: (response: any) => response.data.data,
-    //   providesTags: ['company'],
-    // }),
     getCompany: builder.query<
   { data: Company[]; pagination: any },
   { page?: number; limit?: number }
@@ -117,29 +45,42 @@ export const companySlice = api.injectEndpoints({
       invalidatesTags: ['company'],
     }),
 
-    createCompany: builder.mutation<Company, CompanyRequest>({
-      query: (data) => ({
+    createCompany: builder.mutation<Company, FormData>({
+      query: (formData) => ({
         url: 'companies',
         method: 'POST',
+        body: formData, 
+      }),
+      invalidatesTags: ['company'],
+    }),
+
+    getSingleCompany: builder.query<any, string>({
+      query: (id) => `companies/${id}`,
+      transformResponse: (response: any) => response.data,  
+      providesTags: ['company'],
+    }),
+
+
+
+    updateCompany: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `companies/${id}`,
+        method: "PUT", // or PUT if your API supports
         body: data,
       }),
       invalidatesTags: ['company'],
     }),
 
-    updateCompany: builder.mutation<Company, CompanyRequest>({
-      query: (data) => ({
-        url: `companies/${data.id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: ['company'],
-    }),
   }),
 })
 
-export const { 
+export const {   
   useGetCompanyQuery, 
   useDeleteCompanyMutation,
   useCreateCompanyMutation,
-  useUpdateCompanyMutation 
-} = companySlice
+  useUpdateCompanyMutation,
+  useGetSingleCompanyQuery
+} = companySlice;
+
+  
+
