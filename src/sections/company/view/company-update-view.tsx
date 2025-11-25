@@ -70,24 +70,25 @@ useEffect(() => {
   // -----------------------
   // SUBMIT
   // -----------------------
-  const handleSubmit = async () => {
-    if (!validate()) return;
+const handleSubmit = async () => {
+  if (!validate()) return;
 
-    const formData = new FormData();
-    formData.append('company_name', form.company_name);
-    formData.append('email', form.email);
-    formData.append('phone', form.phone);
-    formData.append('address', form.address);
+  const formData = new FormData();
+  formData.append('company_name', form.company_name);
+  formData.append('email', form.email);
+  formData.append('phone', form.phone);
+  formData.append('address', form.address);
 
-    if (form.avatar) formData.append('avatar', form.avatar);
+  if (form.avatar) formData.append('avatar', form.avatar);
 
-    try {
-      await updateCompany({ id, data: formData }).unwrap();
-      toast.success('Company updated successfully!');
-    } catch (err: any) {
-      toast.error("Failed to update");
-    }
-  };
+  try {
+    await updateCompany({ id, data: formData }).unwrap();
+    toast.success('Company updated successfully!');
+  } catch (err: any) {
+    toast.error("Failed to update");
+  }
+};
+
 
   if (isFetching) return <Typography sx={{ p: 3 }}>Loading company...</Typography>;
 

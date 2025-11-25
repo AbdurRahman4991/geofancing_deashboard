@@ -14,6 +14,9 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { useRouter } from 'src/routes/hooks';
+import { useDeleteCompanyMutation } from '../../../redux/service/companySlice';
+import { toast } from 'react-toastify';
+
 
 
 
@@ -40,6 +43,8 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
    const router = useRouter();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
+    const [deleteCompany] = useDeleteCompanyMutation();
+
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
   }, []);
@@ -47,6 +52,19 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+
+    const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this company?")) return;
+
+    try {
+      await deleteCompany(row.id).unwrap();
+      toast.success("Company deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete company");
+    }
+
+    handleClosePopover();
+  };
 
   return (
     <>
@@ -119,10 +137,6 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          {/* <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
-          </MenuItem> */}
           <MenuItem onClick={() => router.push(`edit-company/${row.id}`)}>
           <Iconify icon="solar:pen-bold" />
           Edit
@@ -130,10 +144,15 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
 
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+          {/* <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem> */}
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
+
         </MenuList>
       </Popover>
     </>

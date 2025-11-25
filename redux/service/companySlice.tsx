@@ -62,14 +62,19 @@ export const companySlice = api.injectEndpoints({
 
 
 
-    updateCompany: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `companies/${id}`,
-        method: "PUT", // or PUT if your API supports
-        body: data,
+      updateCompany: builder.mutation({
+        query: ({ id, data }) => {
+          data.append("_method", "PUT"); 
+
+          return {
+            url: `companies/${id}`,
+            method: "POST",
+            body: data,
+          };
+        },
+        invalidatesTags: ['company'],
       }),
-      invalidatesTags: ['company'],
-    }),
+
 
   }),
 })
