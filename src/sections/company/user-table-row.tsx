@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+  
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -12,6 +13,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { useRouter } from 'src/routes/hooks';
 
 
 
@@ -25,7 +27,6 @@ export type UserProps = {
   address: string; 
   status: string;  
   avatar: string;
-    avatar_url: string;
   verified: string;
 };
 
@@ -36,6 +37,7 @@ type UserTableRowProps = {
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+   const router = useRouter();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,18 +55,6 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        {/* <TableCell component="th" scope="row">
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar alt={row.company_name} src={row.avatar} />
-            {row.company_name}
-          </Box>
-        </TableCell> */}
         <TableCell component="th" scope="row">
           <Box
             sx={{
@@ -75,7 +65,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           >
             <Avatar
               alt={row.company_name}
-              src={row.avatar || row.avatar_url || '/default-avatar.png'} // fallback image
+              src={row.avatar || '/default-avatar.png'} // fallback image
               sx={{ width: 40, height: 40 }}
             />
             {row.company_name}
@@ -129,10 +119,16 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
+          {/* <MenuItem onClick={handleClosePopover}>
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </MenuItem> */}
+          <MenuItem onClick={() => router.push(`edit-company/${row.id}`)}>
+          <Iconify icon="solar:pen-bold" />
+          Edit
+        </MenuItem>
+
+
 
           <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
@@ -143,3 +139,4 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     </>
   );
 }
+

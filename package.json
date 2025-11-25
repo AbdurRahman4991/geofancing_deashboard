@@ -46,6 +46,7 @@
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.1",
+    "react-toastify": "^11.0.5",
     "simplebar-react": "^3.3.0"
   },
   "devDependencies": {

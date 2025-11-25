@@ -17,10 +17,12 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
+import { useRouter } from 'src/routes/hooks';
 
 import { useGetCompanyQuery } from '../../../../redux/service/companySlice';
 
 export function CompanyView() {
+  const router = useRouter();  
   const [page, setPage] = useState(1); // ✅ server uses 1-based page
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterName, setFilterName] = useState('');
@@ -47,7 +49,7 @@ export function CompanyView() {
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           Company
         </Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+        <Button  onClick={() => router.push('create-company')}  variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
           New company
         </Button>
       </Box>
