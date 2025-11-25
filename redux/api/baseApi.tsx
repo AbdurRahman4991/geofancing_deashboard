@@ -14,5 +14,5 @@ export const api = createApi({
 });
 
 
-export const imageUrl = 'http://192.168.20.203:4000/image/';
+export const imageUrl = 'http://192.168.0.106:4000/image/';
 //export const blogImg = 'http://192.168.20.203:4000/images/';
