@@ -1,7 +1,7 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://192.168.20.203:4000/api/',
+  baseUrl: 'http://192.168.0.106:4000/api',
 });
 
 export const api = createApi({
