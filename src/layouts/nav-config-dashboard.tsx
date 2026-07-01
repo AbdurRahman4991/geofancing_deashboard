@@ -1,3 +1,5 @@
+import { patch } from '@mui/material';
+import { title } from 'process';
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -27,6 +29,24 @@ export const navData = [
     title: 'Company',
     path: '/company',
     icon: icon('ic-user'),
+  },
+  {
+    title: 'Geofench',
+    path: '/geofench',
+    icon: icon('ic-cart'),
+
+  },
+  {
+    title: 'Attendance',
+    path: '/attendance',
+    icon: icon('ic-cart'),
+
+  },
+  {
+    title: 'Attendance Roles',
+    path: '/attendance-role',
+    icon: icon('ic-cart'),
+
   },
   {
     title: 'Product',

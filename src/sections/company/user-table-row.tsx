@@ -142,12 +142,6 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           Edit
         </MenuItem>
 
-
-
-          {/* <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem> */}
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete

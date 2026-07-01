@@ -23,135 +23,18 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
-import { useGetEmployeesQuery } from '../../../../redux/service/employeeSlice';
+import { useGetGeofencesQuery } from '../../../../redux/service/geofenchSlice';
 import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
-// export function UserView() {
-//   const table = useTable();
 
-//   const [filterName, setFilterName] = useState('');
-
-//   const dataFiltered: UserProps[] = applyFilter({
-//     inputData: _users,
-//     comparator: getComparator(table.order, table.orderBy),
-//     filterName,
-//   });
-
-//   const notFound = !dataFiltered.length && !!filterName;
-
-//   return (
-//     <DashboardContent>
-//       <Box
-//         sx={{
-//           mb: 5,
-//           display: 'flex',
-//           alignItems: 'center',
-//         }}
-//       >
-//         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-//           Users
-//         </Typography>
-//         <Button
-//           variant="contained"
-//           color="inherit"
-//           startIcon={<Iconify icon="mingcute:add-line" />}
-//         >
-//           New user
-//         </Button>
-//       </Box>
-
-//       <Card>
-//         <UserTableToolbar
-//           numSelected={table.selected.length}
-//           filterName={filterName}
-//           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
-//             setFilterName(event.target.value);
-//             table.onResetPage();
-//           }}
-//         />
-
-//         <Scrollbar>
-//           <TableContainer sx={{ overflow: 'unset' }}>
-//             <Table sx={{ minWidth: 800 }}>
-//               <UserTableHead
-//                 order={table.order}
-//                 orderBy={table.orderBy}
-//                 rowCount={_users.length}
-//                 numSelected={table.selected.length}
-//                 onSort={table.onSort}
-//                 onSelectAllRows={(checked) =>
-//                   table.onSelectAllRows(
-//                     checked,
-//                     _users.map((user) => user.id)
-//                   )
-//                 }
-//                 headLabel={[
-//                   { id: 'name', label: 'Name' },
-//                   { id: 'employee_id', label: 'Code' },
-//                   { id: 'phone', label: 'Phone' },
-//                   { id: 'company_id', label: 'Company' },
-//                   { id: 'nature_of_employment', label: 'Nature of Employment' },
-//                   { id: 'department', label: 'Department' },
-//                   { id: 'unit', label: 'Unit' },
-//                   { id: 'date_of_joining', label: 'Jod Date' },
-//                   { id: 'division', label: 'Division' },
-//                   { id: 'designation', label: 'Designation' },
-//                   { id: 'reporting_person', label: 'Reporting' },
-//                   { id: 'email', label: 'Email' },
-//                   { id: 'dob', label: 'Dob' },
-//                   { id: 'section_info', label: 'Section Info' },
-//                   { id: 'status', label: 'Status' },
-//                   { id: '', label: 'Action' },
-//                 ]}
-
-//               />
-//               <TableBody>
-//                 {dataFiltered
-//                   .slice(
-//                     table.page * table.rowsPerPage,
-//                     table.page * table.rowsPerPage + table.rowsPerPage
-//                   )
-//                   .map((row) => (
-//                     <UserTableRow
-//                       key={row.id}
-//                       row={row}
-//                       selected={table.selected.includes(row.id)}
-//                       onSelectRow={() => table.onSelectRow(row.id)}
-//                     />
-//                   ))}
-
-//                 <TableEmptyRows
-//                   height={68}
-//                   emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
-//                 />
-
-//                 {notFound && <TableNoData searchQuery={filterName} />}
-//               </TableBody>
-//             </Table>
-//           </TableContainer>
-//         </Scrollbar>
-
-//         <TablePagination
-//           component="div"
-//           page={table.page}
-//           count={_users.length}
-//           rowsPerPage={table.rowsPerPage}
-//           onPageChange={table.onChangePage}
-//           rowsPerPageOptions={[5, 10, 25]}
-//           onRowsPerPageChange={table.onChangeRowsPerPage}
-//         />
-//       </Card>
-//     </DashboardContent>
-//   );
-// }
-export function UserView() {
+export function GeofenchView() {
   const table = useTable();
   const [filterName, setFilterName] = useState('');
 
   // API call
 // API call
-const { data, isLoading } = useGetEmployeesQuery({
+const { data, isLoading } = useGetGeofencesQuery({
   page: table.page + 1,
   limit: table.rowsPerPage,
   search: filterName,
@@ -175,15 +58,15 @@ const total = data?.pagination?.total ?? 0;
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Geofench
         </Typography>
         <Button 
-        onClick={() => router.push('create-user')}
+        onClick={() => router.push('create-geofench')}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New user
+          New Geofench
         </Button>
       </Box>
 
@@ -211,19 +94,13 @@ const total = data?.pagination?.total ?? 0;
                 }
 
                 headLabel={[
-                  { id: "name", label: "Name" },
-                  { id: "employee_id", label: "Code" },
-                  { id: "phone", label: "Phone" },
-                  { id: "company_id", label: "Company" },
-                  { id: "nature_of_employment", label: "Employment" },
-                  { id: "department", label: "Department" },
-                  { id: "unit", label: "Unit" },
-                  { id: "date_of_joining", label: "Join Date" },
-                  { id: "designation", label: "Designation" },
-                  { id: "email", label: "Email" },
-                  { id: "status", label: "Status" },
-                  { id: "", label: "Action" },
-                ]}
+                    { id: "company_id", label: "Company" },
+                    { id: "user_id", label: "User" },
+                    { id: "latitude", label: "Latitude" },
+                    { id: "longitude", label: "Longitude" },
+                    { id: "radius", label: "Radius (M)" },
+                    { id: "", label: "Action" },
+                  ]}
               />
 
               <TableBody>

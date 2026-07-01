@@ -23,7 +23,7 @@ export default function App({ children }: AppProps) {
     <Fab
       size="medium"
       aria-label="Github"
-      href="https://github.com/minimal-ui-kit/material-kit-react"
+      href=""
       sx={{
         zIndex: 9,
         right: 20,
@@ -41,7 +41,7 @@ export default function App({ children }: AppProps) {
   return (
     <ThemeProvider>
       {children}
-      {githubButton()}
+     
     </ThemeProvider>
   );
 }

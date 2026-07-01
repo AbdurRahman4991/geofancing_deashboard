@@ -145,7 +145,7 @@ import { useRouter } from 'src/routes/hooks';
 //     </DashboardContent>
 //   );
 // }
-export function UserView() {
+export function AttendanceRoleView() {
   const table = useTable();
   const [filterName, setFilterName] = useState('');
 
@@ -175,7 +175,7 @@ const total = data?.pagination?.total ?? 0;
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Attendance Role
         </Typography>
         <Button 
         onClick={() => router.push('create-user')}
