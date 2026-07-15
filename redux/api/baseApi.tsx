@@ -1,18 +1,28 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+
+
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://192.168.0.106:4000/api',
+  baseUrl: "http://192.168.20.203:8000/api",
+
+  prepareHeaders: (headers) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+
+    headers.set("Accept", "application/json");
+
+    return headers;
+  },
 });
 
 export const api = createApi({
-  reducerPath: 'api',
-  // keepUnusedDataFor: 0,
-  baseQuery: baseQuery,
-  
+  reducerPath: "api",
+  baseQuery,
   endpoints: () => ({}),
-  tagTypes: ["company"],
+  tagTypes: ["company", "employees", "geofences", "attendance", "employeeLocations"],
 });
 
-
-export const imageUrl = 'http://192.168.0.106:4000/image/';
-//export const blogImg = 'http://192.168.20.203:4000/images/';
+export const imageUrl = "http://192.168.20.203:8000/image/";

@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-  
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,28 +9,36 @@ import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import { useRouter } from 'src/routes/hooks';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { useRouter } from 'src/routes/hooks';
-import { useDeleteCompanyMutation } from '../../../redux/service/companySlice';
+import { useDeleteEmployeeMutation } from '../../../redux/service/employeeSlice';
 import { toast } from 'react-toastify';
-
-
-
 
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id: string;
-  company_name: string;
-  email: string;
+  id: number;
+  name: string;
+  employee_id: string;
   phone: string;
-  address: string; 
-  status: string;  
-  avatar: string;
-  verified: string;
+  company_id?: string;
+  nature_of_employment: string;
+  department?: string;
+  unit?: string;
+  date_of_joining: string;
+  division?: string;
+  designation?: string;
+  reporting_person?: string;
+  email?: string;
+  dob?: string;
+  section_info?: string;
+  status: string;
 };
+
+
+
 
 type UserTableRowProps = {
   row: UserProps;
@@ -40,10 +47,9 @@ type UserTableRowProps = {
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
-   const router = useRouter();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
-    const [deleteCompany] = useDeleteCompanyMutation();
+   const router = useRouter();
+   const [deleteUser] = useDeleteEmployeeMutation();
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -53,26 +59,26 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     setOpenPopover(null);
   }, []);
 
-    const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this company?")) return;
-
-    try {
-      await deleteCompany(row.id).unwrap();
-      toast.success("Company deleted successfully");
-    } catch (err) {
-      toast.error("Failed to delete company");
-    }
-
-    handleClosePopover();
-  };
+      const handleDelete = async () => {
+      if (!confirm("Are you sure you want to delete this company?")) return;
+  
+      try {
+        await deleteUser(row.id).unwrap();
+        toast.success("Company deleted successfully");
+      } catch (err) {
+        toast.error("Failed to delete company");
+      }
+  
+      handleClosePopover();
+    };
 
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-
+{/*
         <TableCell component="th" scope="row">
           <Box
             sx={{
@@ -81,22 +87,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
               alignItems: 'center',
             }}
           >
-            <Avatar
-              alt={row.company_name}
-              src={row.avatar || '/default-avatar.png'} // fallback image
-              sx={{ width: 40, height: 40 }}
-            />
-            {row.company_name}
+            <Avatar alt={row.name} src={row.avatarUrl} />
+            {row.name}
           </Box>
         </TableCell>
 
+        <TableCell>{row.company}</TableCell>
 
-        <TableCell>{row.email} </TableCell>       
-        <TableCell>{row.phone} </TableCell>       
-        <TableCell>{row.address} </TableCell>       
+        <TableCell>{row.role}</TableCell>
 
         <TableCell align="center">
-          {row.verified == 'Yes' ? (
+          {row.isVerified ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
           ) : (
             '-'
@@ -104,14 +105,39 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
 
         <TableCell>
-          <Label color={(row.status === 'Inactive' && 'error') || 'success'}>{row.status}</Label>
+          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
         </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
+        </TableCell> */}
+        <TableCell component="th" scope="row">
+  {row.name}
+</TableCell>
+
+<TableCell>{row.employee_id}</TableCell>
+<TableCell>{row.phone}</TableCell>
+<TableCell>{row.company_id}</TableCell>
+<TableCell>{row.nature_of_employment}</TableCell>
+<TableCell>{row.department}</TableCell>
+<TableCell>{row.unit}</TableCell>
+<TableCell>{row.date_of_joining}</TableCell>
+<TableCell>{row.designation}</TableCell>
+<TableCell>{row.email}</TableCell>
+
+<TableCell>
+  <Label color={row.status === "active" ? "success" : "error"}>
+    {row.status}
+  </Label>
+</TableCell>
+        <TableCell align="right">
+          <IconButton onClick={handleOpenPopover}>
+            <Iconify icon="eva:more-vertical-fill" />
+          </IconButton>
         </TableCell>
+
       </TableRow>
 
       <Popover
@@ -137,19 +163,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={() => router.push(`edit-company/${row.id}`)}>
-          <Iconify icon="solar:pen-bold" />
-          Edit
-        </MenuItem>
+          <MenuItem  onClick={() => router.push(`edit-user/${row.id}`)}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
 
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
-
         </MenuList>
       </Popover>
     </>
   );
 }
-

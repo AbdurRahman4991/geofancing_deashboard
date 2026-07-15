@@ -5,12 +5,14 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import store from '../redux/store';
 
+
 // ---- router ----
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 
 import App from './app';
 import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
+import 'leaflet/dist/leaflet.css';
 
 // ----------------------------------------------------------------------
 

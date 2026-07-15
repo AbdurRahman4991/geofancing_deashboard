@@ -9,21 +9,36 @@ import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import { useRouter } from 'src/routes/hooks';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { useDeleteEmployeeMutation } from '../../../redux/service/employeeSlice';
+import { toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id: string;
+  id: number;
   name: string;
-  role: string;
+  employee_id: string;
+  phone: string;
+  company_id?: string;
+  nature_of_employment: string;
+  department?: string;
+  unit?: string;
+  date_of_joining: string;
+  division?: string;
+  designation?: string;
+  reporting_person?: string;
+  email?: string;
+  dob?: string;
+  section_info?: string;
   status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
 };
+
+
+
 
 type UserTableRowProps = {
   row: UserProps;
@@ -33,6 +48,8 @@ type UserTableRowProps = {
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+   const router = useRouter();
+   const [deleteUser] = useDeleteEmployeeMutation();
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -42,42 +59,44 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     setOpenPopover(null);
   }, []);
 
+      const handleDelete = async () => {
+      if (!confirm("Are you sure you want to delete this company?")) return;
+  
+      try {
+        await deleteUser(row.id).unwrap();
+        toast.success("Company deleted successfully");
+      } catch (err) {
+        toast.error("Failed to delete company");
+      }
+  
+      handleClosePopover();
+    };
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
+         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-
         <TableCell component="th" scope="row">
-          <Box
-            sx={{
-              gap: 2,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
-          </Box>
-        </TableCell>
+  {row.name}
+</TableCell>
 
-        <TableCell>{row.company}</TableCell>
+<TableCell>{row.employee_id}</TableCell>
+<TableCell>{row.phone}</TableCell>
+<TableCell>{row.company_id}</TableCell>
+<TableCell>{row.nature_of_employment}</TableCell>
+<TableCell>{row.department}</TableCell>
+<TableCell>{row.unit}</TableCell>
+<TableCell>{row.date_of_joining}</TableCell>
+<TableCell>{row.designation}</TableCell>
+<TableCell>{row.email}</TableCell>
 
-        <TableCell>{row.role}</TableCell>
-
-        <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )}
-        </TableCell>
-
-        <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell>
-
+<TableCell>
+  <Label color={row.status === "active" ? "success" : "error"}>
+    {row.status}
+  </Label>
+</TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -85,7 +104,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
       </TableRow>
 
-      <Popover
+      {/* <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
@@ -108,17 +127,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
+          <MenuItem  onClick={() => router.push(`edit-user/${row.id}`)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
         </MenuList>
-      </Popover>
+      </Popover> */}
     </>
   );
 }

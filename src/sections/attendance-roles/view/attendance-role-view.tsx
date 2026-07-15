@@ -21,43 +21,29 @@ import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-import { LoadingButton } from "@mui/lab";
-import { toast } from "react-toastify";
 
 import type { UserProps } from '../user-table-row';
-import { useGetEmployeesQuery, useSyncEmployeeMutation } from '../../../../redux/service/employeeSlice';
+import { useGetEmployeesQuery } from '../../../../redux/service/employeeSlice';
 import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
-export function UserView() {
+export function AttendanceRoleView() {
   const table = useTable();
-  const [filterName, setFilterName] = useState("");
-  const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("");
-  const [syncEmployee, { isLoading: syncing }] = useSyncEmployeeMutation();
+  const [filterName, setFilterName] = useState('');
 
-  const { data, isLoading } = useGetEmployeesQuery({
-    page: table.page + 1,
-    per_page: table.rowsPerPage,
-    search,
-    department,
-  });
+  // API call
+// API call
+const { data, isLoading } = useGetEmployeesQuery({
+  page: table.page + 1,
+  limit: table.rowsPerPage,
+  search: filterName,
+});
  const router = useRouter();
 // employees list
 const employees = data?.data ?? [];
 
 // FIX: pagination total
-const total = data?.total ?? 0;
-
-const handleSyncEmployee = async () => {
-  try {
-    const res = await syncEmployee().unwrap();
-
-    toast.success(res.message);
-  } catch (error: any) {
-    toast.error(error?.data?.message || "Employee Sync Failed");
-  }
-};
+const total = data?.pagination?.total ?? 0;
 
 
   return (
@@ -71,40 +57,23 @@ const handleSyncEmployee = async () => {
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Attendance Role
         </Typography>
-        {/* <Button 
-          onClick={() => router.push('create-user')}
-            variant="contained"
-            color="inherit"
-            startIcon={<Iconify icon="mingcute:add-line" />}
-          >
-            New user
-          </Button> */}
-         <LoadingButton
-          loading={syncing}
+        <Button 
+        onClick={() => router.push('create-user')}
           variant="contained"
-          color="primary"
-          startIcon={<Iconify icon="mdi:sync" />}
-          onClick={handleSyncEmployee}
+          color="inherit"
+          startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          Sync Employees
-        </LoadingButton>
+          New user
+        </Button>
       </Box>
+
       <Card>
-      
         <UserTableToolbar
           numSelected={table.selected.length}
-          search={search}
-          department={department}
-          onSearch={(e) => {
-            setSearch(e.target.value);
-            table.onResetPage();
-          }}
-          onDepartmentChange={(e) => {
-            setDepartment(e.target.value);
-            table.onResetPage();
-          }}
+          filterName={filterName}
+          onFilterName={(e) => setFilterName(e.target.value)}
         />
 
         <Scrollbar>
@@ -158,15 +127,14 @@ const handleSyncEmployee = async () => {
           </TableContainer>
         </Scrollbar>
 
-      <TablePagination
+        <TablePagination
           component="div"
-          count={total}
           page={table.page}
+          count={total}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-          rowsPerPageOptions={[5,10,20,50]}
-      />
+          rowsPerPageOptions={[10]}
+        />
       </Card>
     </DashboardContent>
   );
@@ -178,7 +146,7 @@ const handleSyncEmployee = async () => {
 export function useTable() {
   const [page, setPage] = useState(0);
   const [orderBy, setOrderBy] = useState('name');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
