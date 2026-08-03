@@ -1,40 +1,36 @@
+
 // import { useState } from 'react';
-// import { 
-//   Box, Card, Stack, TextField, Button, Typography
+// import {
+//   Card,
+//   Stack,
+//   TextField,
+//   Button,
+//   Typography,
 // } from '@mui/material';
 
 // import { DashboardContent } from 'src/layouts/dashboard';
-// import { useCreateEmployeeMutation } from '../../../../redux/service/employeeSlice';
 // import { toast, ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 
+// // ধরলাম তুমি এই mutation বানাবে
+// import { useCreateRoleMutation } from '../../../../redux/service/roleSlice';
 
-// export default function EmployeeCreateView() {
+// export default function GeofenceCreateView() {
 
-//   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
+//   const [createGeofence, { isLoading }] = useCreateRoleMutation();
 
 //   const [form, setForm] = useState({
-//     name: '',
-//     employee_id: '',
-//     phone: '',
 //     company_id: '',
-//     nature_of_employment: '',
-//     department: '',
-//     unit: '',
-//     date_of_joining: '',
-//     division: '',
-//     designation: '',
-//     reporting_person: '',
-//     email: '',
-//     dob: '',
-//     section_info: '',
-//     status: 'active',
+//     user_id: '',
+//     latitude: '',
+//     longitude: '',
+//     radius: '',
 //   });
 
 //   const [errors, setErrors] = useState<any>({});
 
 //   // -------------------------
-//   // HANDLE INPUT CHANGE
+//   // HANDLE CHANGE
 //   // -------------------------
 //   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 //     setForm({ ...form, [e.target.name]: e.target.value });
@@ -47,135 +43,97 @@
 //   const validate = () => {
 //     const newErrors: any = {};
 
-//     if (!form.name.trim()) newErrors.name = 'Name is required';
-//     if (!form.employee_id.trim()) newErrors.employee_id = 'Employee ID is required';
-//     if (!form.phone.trim()) newErrors.phone = 'Phone number is required';
-//     if (!form.nature_of_employment.trim())
-//       newErrors.nature_of_employment = 'Nature of employment is required';
-//     if (!form.date_of_joining)
-//       newErrors.date_of_joining = 'Joining date is required';
+//     if (!form.company_id.trim()) newErrors.company_id = 'Company is required';
+//     if (!form.user_id.trim()) newErrors.user_id = 'User is required';
+//     if (!form.latitude) newErrors.latitude = 'Latitude is required';
+//     if (!form.longitude) newErrors.longitude = 'Longitude is required';
+//     if (!form.radius) newErrors.radius = 'Radius is required';
 
 //     setErrors(newErrors);
 //     return Object.keys(newErrors).length === 0;
 //   };
 
 //   // -------------------------
-//   // SUBMIT FORM
+//   // SUBMIT
 //   // -------------------------
 //   const handleSubmit = async () => {
 //     if (!validate()) return;
 
-//     const formData = new FormData();
-
-//     Object.entries(form).forEach(([key, value]) => {
-//       formData.append(key, value);
-//     });
-
 //     try {
-//       await createEmployee(formData).unwrap();
-//       toast.success('Employee created successfully!');
+//       await createGeofence(form).unwrap();
+//       toast.success('Role created successfully');
 
 //       setForm({
-//         name: '',
-//         employee_id: '',
-//         phone: '',
 //         company_id: '',
-//         nature_of_employment: '',
-//         department: '',
-//         unit: '',
-//         date_of_joining: '',
-//         division: '',
-//         designation: '',
-//         reporting_person: '',
-//         email: '',
-//         dob: '',
-//         section_info: '',
-//         status: 'active',
+//         user_id: '',
+//         latitude: '',
+//         longitude: '',
+//         radius: '',
 //       });
 //       setErrors({});
 //     } catch (err: any) {
-//       if (err?.data) {
-//         setErrors(err.data); // backend validation errors
-//       } else {
-//         toast.error('Failed to create employee');
-//       }
+//       toast.error('Failed to create role');
 //     }
 //   };
 
 //   return (
 //     <DashboardContent>
 //       <Typography variant="h4" sx={{ mb: 3 }}>
-//         Create New Employee
+//         Create Role
 //       </Typography>
 
-//       <Card sx={{ p: 3, maxWidth: 700 }}>
+//       <Card sx={{ p: 3, maxWidth: 600 }}>
 //         <Stack spacing={2}>
 
 //           <TextField
-//             name="name"
-//             label="Employee Name"
-//             value={form.name}
-//             onChange={handleChange}
-//             error={!!errors.name}
-//             helperText={errors.name}
-//           />
-
-//           <TextField
-//             name="employee_id"
-//             label="Employee ID"
-//             value={form.employee_id}
-//             onChange={handleChange}
-//             error={!!errors.employee_id}
-//             helperText={errors.employee_id}
-//           />
-
-//           <TextField
-//             name="phone"
-//             label="Phone"
-//             value={form.phone}
-//             onChange={handleChange}
-//             error={!!errors.phone}
-//             helperText={errors.phone}
-//           />
-
-//           <TextField
 //             name="company_id"
-//             label="Company ID"
+//             label="Company"
 //             value={form.company_id}
 //             onChange={handleChange}
+//             error={!!errors.company}
+//             helperText={errors.company}
 //           />
 
 //           <TextField
-//             name="nature_of_employment"
-//             label="Nature of Employment"
-//             value={form.nature_of_employment}
+//             name="user_id"
+//             label="User"
+//             value={form.user_id}
 //             onChange={handleChange}
-//             error={!!errors.nature_of_employment}
-//             helperText={errors.nature_of_employment}
+//             error={!!errors.user}
+//             helperText={errors.user}
 //           />
-
-//           <TextField name="department" label="Department" value={form.department} onChange={handleChange} />
-//           <TextField name="unit" label="Unit" value={form.unit} onChange={handleChange} />
 
 //           <TextField
-//             name="date_of_joining"
-//             label="Date of Joining"
-//             type="date"
-//             InputLabelProps={{ shrink: true }}
-//             value={form.date_of_joining}
+//             name="latitude"
+//             label="Latitude"
+//             type="number"
+//             value={form.latitude}
 //             onChange={handleChange}
-//             error={!!errors.date_of_joining}
-//             helperText={errors.date_of_joining}
+//             error={!!errors.latitude}
+//             helperText={errors.latitude}
 //           />
 
-//           <TextField name="division" label="Division" value={form.division} onChange={handleChange} />
-//           <TextField name="designation" label="Designation" value={form.designation} onChange={handleChange} />
-//           <TextField name="reporting_person" label="Reporting Person" value={form.reporting_person} onChange={handleChange} />
-//           <TextField name="email" label="Email" value={form.email} onChange={handleChange} />
-//           <TextField name="dob" label="Date of Birth" type="date" InputLabelProps={{ shrink: true }} value={form.dob} onChange={handleChange} />
-//           <TextField name="section_info" label="Section Info" value={form.section_info} onChange={handleChange} />
+//           <TextField
+//             name="longitude"
+//             label="Longitude"
+//             type="number"
+//             value={form.longitude}
+//             onChange={handleChange}
+//             error={!!errors.longitude}
+//             helperText={errors.longitude}
+//           />
 
-//           <Button 
+//           <TextField
+//             name="radius"
+//             label="Radius (Meter)"
+//             type="number"
+//             value={form.radius}
+//             onChange={handleChange}
+//             error={!!errors.radius}
+//             helperText={errors.radius}
+//           />
+
+//           <Button
 //             variant="contained"
 //             size="large"
 //             fullWidth
@@ -183,7 +141,7 @@
 //             onClick={handleSubmit}
 //             disabled={isLoading}
 //           >
-//             {isLoading ? 'Creating...' : 'Create Employee'}
+//             {isLoading ? 'Saving...' : 'Create Role'}
 //           </Button>
 
 //         </Stack>
@@ -206,19 +164,14 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ধরলাম তুমি এই mutation বানাবে
-import { useCreateGeofenceMutation } from '../../../../redux/service/geofenchSlice';
+import { useCreateRoleMutation } from '../../../../redux/service/roleSlice';
 
-export default function GeofenceCreateView() {
-
-  const [createGeofence, { isLoading }] = useCreateGeofenceMutation();
+export default function RoleCreateView() {
+  const [createRole, { isLoading }] = useCreateRoleMutation();
 
   const [form, setForm] = useState({
-    company_id: '',
-    user_id: '',
-    latitude: '',
-    longitude: '',
-    radius: '',
+    name: '',
+    guard_name: 'web',
   });
 
   const [errors, setErrors] = useState<any>({});
@@ -227,8 +180,15 @@ export default function GeofenceCreateView() {
   // HANDLE CHANGE
   // -------------------------
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+
+    setErrors({
+      ...errors,
+      [e.target.name]: '',
+    });
   };
 
   // -------------------------
@@ -237,13 +197,12 @@ export default function GeofenceCreateView() {
   const validate = () => {
     const newErrors: any = {};
 
-    if (!form.company_id.trim()) newErrors.company_id = 'Company is required';
-    if (!form.user_id.trim()) newErrors.user_id = 'User is required';
-    if (!form.latitude) newErrors.latitude = 'Latitude is required';
-    if (!form.longitude) newErrors.longitude = 'Longitude is required';
-    if (!form.radius) newErrors.radius = 'Radius is required';
+    if (!form.name.trim()) {
+      newErrors.name = 'Role name is required';
+    }
 
     setErrors(newErrors);
+
     return Object.keys(newErrors).length === 0;
   };
 
@@ -254,88 +213,50 @@ export default function GeofenceCreateView() {
     if (!validate()) return;
 
     try {
-      await createGeofence(form).unwrap();
-      toast.success('Geofence created successfully');
+      await createRole(form).unwrap();
+
+      toast.success('Role created successfully');
 
       setForm({
-        company_id: '',
-        user_id: '',
-        latitude: '',
-        longitude: '',
-        radius: '',
+        name: '',
+        guard_name: 'web',
       });
+
       setErrors({});
-    } catch (err: any) {
-      toast.error('Failed to create geofence');
+    } catch (error: any) {
+      toast.error(
+        error?.data?.message || 'Failed to create role'
+      );
     }
   };
 
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Create Geofence
+        Create Role
       </Typography>
 
       <Card sx={{ p: 3, maxWidth: 600 }}>
-        <Stack spacing={2}>
+        <Stack spacing={3}>
 
           <TextField
-            name="company_id"
-            label="Company"
-            value={form.company_id}
+            fullWidth
+            name="name"
+            label="Role Name"
+            value={form.name}
             onChange={handleChange}
-            error={!!errors.company}
-            helperText={errors.company}
-          />
-
-          <TextField
-            name="user_id"
-            label="User"
-            value={form.user_id}
-            onChange={handleChange}
-            error={!!errors.user}
-            helperText={errors.user}
-          />
-
-          <TextField
-            name="latitude"
-            label="Latitude"
-            type="number"
-            value={form.latitude}
-            onChange={handleChange}
-            error={!!errors.latitude}
-            helperText={errors.latitude}
-          />
-
-          <TextField
-            name="longitude"
-            label="Longitude"
-            type="number"
-            value={form.longitude}
-            onChange={handleChange}
-            error={!!errors.longitude}
-            helperText={errors.longitude}
-          />
-
-          <TextField
-            name="radius"
-            label="Radius (Meter)"
-            type="number"
-            value={form.radius}
-            onChange={handleChange}
-            error={!!errors.radius}
-            helperText={errors.radius}
+            error={!!errors.name}
+            helperText={errors.name}
           />
 
           <Button
             variant="contained"
-            size="large"
-            fullWidth
             color="inherit"
+            size="large"
             onClick={handleSubmit}
             disabled={isLoading}
           >
-            {isLoading ? 'Saving...' : 'Create Geofence'}
+            {isLoading ? 'Saving...' : 'Create Role'}
           </Button>
 
         </Stack>

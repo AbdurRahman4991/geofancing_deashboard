@@ -7,8 +7,10 @@ export const roleSlice = api.injectEndpoints({
       providesTags: ["role"],
     }),
 
+
     getSingleRole: builder.query({
       query: (id) => `roles/${id}`,
+      transformResponse: (response: any) => response.data,
       providesTags: ["role"],
     }),
 

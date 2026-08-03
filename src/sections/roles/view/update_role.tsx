@@ -1,239 +1,146 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 import {
   Card,
   Stack,
-  TextField,
   Button,
+  TextField,
   Typography,
-} from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { DashboardContent } from 'src/layouts/dashboard';
+  CircularProgress,
+} from "@mui/material";
+
+import { useNavigate, useParams } from "react-router-dom";
+import { DashboardContent } from "src/layouts/dashboard";
 
 import {
-  useGetSingleGeofenceQuery,
-  useUpdateGeofenceMutation,
-} from '../../../../redux/service/geofenchSlice';
+  useGetSingleRoleQuery,
+  useUpdateRoleMutation,
+} from "../../../../redux/service/roleSlice";
 
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
-// ------------------------------------
-// TYPES
-// ------------------------------------
-type FormState = {
-  company_id: string;
-  user_id: string;
-  latitude: number | '';
-  longitude: number | '';
-  radius: number | '';
-};
+export default function RoleEditView() {
+  const { id } = useParams();
 
+  const navigate = useNavigate();
 
-export default function GeofenceUpdateView() {
-  // ------------------------------------
-  // GET ID FROM ROUTE
-  // ------------------------------------
- const { id } = useParams<{ id: string }>();
+const { data, isLoading } = useGetSingleRoleQuery(id!);
 
-const {
-  data: geofence,
-  isLoading: isFetching,
-} = useGetSingleGeofenceQuery(id!, {
-  skip: !id,
-});
+console.log(data);
 
+  const [updateRole, { isLoading: updating }] =
+    useUpdateRoleMutation();
 
+  const [form, setForm] = useState({
+    name: "",
+  });
 
-  // ------------------------------------
-  // UPDATE MUTATION
-  // ------------------------------------
-  const [updateGeofence, { isLoading }] =
-    useUpdateGeofenceMutation();
+  const [errors, setErrors] = useState<any>({});
 
-  // ------------------------------------
-  // FORM STATE
-  // ------------------------------------
-const [form, setForm] = useState<FormState>({
-  company_id: '',
-  user_id: '',
-  latitude: '',
-  longitude: '',
-  radius: '',
-});
+  useEffect(() => {
+    if (data) {
+      setForm({
+        name: data.name,
+      });
+    }
+  }, [data]);
 
-
-  const [errors, setErrors] = useState<Partial<FormState>>({});
-
-  // ------------------------------------
-  // PREFILL FORM
-  // ------------------------------------
-useEffect(() => {
-  console.log('Geofence data:', geofence);
-  if (geofence) {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setForm({
-      company_id: String(geofence.company_id),
-      user_id: String(geofence.user_id),
-      latitude: Number(geofence.latitude),
-      longitude: Number(geofence.longitude),
-      radius: Number(geofence.radius),
+      ...form,
+      [e.target.name]: e.target.value,
     });
-  }
-}, [geofence]);
 
+    setErrors({
+      ...errors,
+      [e.target.name]: "",
+    });
+  };
 
-  // ------------------------------------
-  // HANDLE CHANGE
-  // ------------------------------------
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-
-  setForm((prev) => ({
-    ...prev,
-    [name]:
-      name === 'latitude' ||
-      name === 'longitude' ||
-      name === 'radius'
-        ? value === '' ? '' : Number(value)
-        : value,
-  }));
-};
-
-
-  // ------------------------------------
-  // VALIDATION
-  // ------------------------------------
   const validate = () => {
-  const newErrors: Partial<Record<keyof FormState, string>> = {};
+    let temp: any = {};
 
-  if (!form.company_id.trim())
-    newErrors.company_id = 'Company is required';
+    if (!form.name.trim()) {
+      temp.name = "Role name is required";
+    }
 
-  if (!form.user_id.trim())
-    newErrors.user_id = 'User is required';
+    setErrors(temp);
 
-  if (form.latitude === '' || isNaN(form.latitude))
-    newErrors.latitude = 'Latitude is required';
+    return Object.keys(temp).length === 0;
+  };
 
-  if (form.longitude === '' || isNaN(form.longitude))
-    newErrors.longitude = 'Longitude is required';
-
-  if (form.radius === '' || isNaN(form.radius))
-    newErrors.radius = 'Radius is required';
-
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-
-
-  // ------------------------------------
-  // SUBMIT
-  // ------------------------------------
   const handleSubmit = async () => {
     if (!validate()) return;
 
     try {
-      await updateGeofence({
+      await updateRole({
         id,
-        data: {
-          company_id: Number(form.company_id),
-          user_id: Number(form.user_id),
-          latitude: Number(form.latitude),
-          longitude: Number(form.longitude),
-          radius: Number(form.radius),
-        },
+        data: form,
       }).unwrap();
 
-      toast.success('Geofence updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update geofence');
+      toast.success("Role updated successfully");
+
+      navigate("/roles");
+    } catch (error: any) {
+      toast.error(
+        error?.data?.message || "Update failed"
+      );
     }
   };
 
-  // ------------------------------------
-  // LOADING STATE
-  // ------------------------------------
-  if (isFetching) {
+  if (isLoading) {
     return (
       <DashboardContent>
-        <Typography>Loading...</Typography>
+        <CircularProgress />
       </DashboardContent>
     );
   }
 
-  // ------------------------------------
-  // UI
-  // ------------------------------------
   return (
     <DashboardContent>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Update Role
+      <Typography variant="h4" sx={{ mb: 4 }}>
+        Edit Role
       </Typography>
 
-      <Card sx={{ p: 3, maxWidth: 600 }}>
-        <Stack spacing={2}>
+      <Card
+        sx={{
+          p: 4,
+          maxWidth: 650,
+        }}
+      >
+        <Stack spacing={3}>
           <TextField
-            label="Company ID"
-            name="company_id"
-            value={form.company_id} 
-            onChange={handleChange}
-            error={!!errors.company_id}
-            helperText={errors.company_id}
-          />
-
-          <TextField
-            label="User ID"
-            name="user_id"
-            value={form.user_id}
-            onChange={handleChange}
-            error={!!errors.user_id}
-            helperText={errors.user_id}
-          />
-
-          <TextField
-            label="Latitude"
-            name="latitude"
-            type="number"
-            value={form.latitude}
-            onChange={handleChange}
-            error={!!errors.latitude}
-            helperText={errors.latitude}
-          />
-
-          <TextField
-            label="Longitude"
-            name="longitude"
-            type="number"
-            value={form.longitude}
-            onChange={handleChange}
-            error={!!errors.longitude}
-            helperText={errors.longitude}
-          />
-
-          <TextField
-            label="Radius (Meter)"
-            name="radius"
-            type="number"
-            value={form.radius}
-            onChange={handleChange}
-            error={!!errors.radius}
-            helperText={errors.radius}
-          />
-
-          <Button
-            variant="contained"
-            size="large"
             fullWidth
-            color="inherit"
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Updating...' : 'Update Role'}
-          </Button>
+            name="name"
+            label="Role Name"
+            value={form.name}
+            onChange={handleChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="contained"
+              color="inherit"
+              onClick={handleSubmit}
+              disabled={updating}
+            >
+              {updating ? "Updating..." : "Update Role"}
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => navigate("/roles")}
+            >
+              Cancel
+            </Button>
+          </Stack>
         </Stack>
       </Card>
-
-      <ToastContainer position="top-right" autoClose={3000} />
     </DashboardContent>
   );
 }

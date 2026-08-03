@@ -19,6 +19,8 @@ export const EditUser = lazy(() => import('src/sections/user/view/update_user'))
 // export const CompanyEdit = lazy(() => import('src/sections/company/view/company-update-view'));
 export const GeoenchPage = lazy(()=>import('src/pages/geofench'));
 export const RolePage = lazy(() => import('src/pages/roles'));
+export const CreateRole = lazy(() => import('src/sections/roles/view/create_role'));
+export const EditRole = lazy(() => import('src/sections/roles/view/update_role'));
 export const Permissions = lazy(() => import('src/pages/permissions'));
 export const GeofenchCreate = lazy(() => import('src/sections/geofench/view/create_gefench'));
 export const GeofenchEdit = lazy(() => import('src/sections/geofench/view/update_geofench'));
@@ -62,6 +64,8 @@ export const routesSection: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/sign-in" replace /> },
       { path: 'roles', element: <RolePage />},
+      { path: 'roles/create-role', element: <CreateRole />},   
+      { path: 'roles/edit-role/:id', element: <EditRole /> },
       { path: 'permissions', element: <Permissions />},
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },

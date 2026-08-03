@@ -16,15 +16,15 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
+
 import { UserTableHead } from '../user-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
-import { useGetGeofencesQuery } from '../../../../redux/service/geofenchSlice';
+import { useGetRolesQuery } from '../../../../redux/service/roleSlice';
 import { useRouter } from 'src/routes/hooks';
+import { RoleTableRow } from '../role-table-row';
 // ----------------------------------------------------------------------
 
 
@@ -34,15 +34,14 @@ export function RoleView() {
 
   // API call
 // API call
-const { data, isLoading } = useGetGeofencesQuery({
+const { data, isLoading } = useGetRolesQuery({
   page: table.page + 1,
   limit: table.rowsPerPage,
   search: filterName,
-   per_page: table.rowsPerPage,
 });
  const router = useRouter();
-// employees list
-const employees = data?.data ?? [];
+
+const roles = data?.data ?? [];
 
 // FIX: pagination total
 const total = data?.pagination?.total ?? 0;
@@ -62,7 +61,7 @@ const total = data?.pagination?.total ?? 0;
           Roles
         </Typography>
         <Button 
-        onClick={() => router.push('create-geofench')}
+        onClick={() => router.push('create-role')}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
@@ -84,41 +83,34 @@ const total = data?.pagination?.total ?? 0;
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={employees.length}
+                rowCount={roles.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    employees.map((emp) => String(emp.id))
+                    roles.map((emp) => String(emp.id))
                   )
                 }
 
-                headLabel={[
-                    { id: "name", label: "Employee name" },
-                    { id: "employee_id", label: "Code" },
-                    { id: "latitude", label: "Latitude" },
-                    { id: "longitude", label: "Longitude" },
-                    { id: "radius", label: "Radius (M)" },
-                    { id: "", label: "Action" },
-                  ]}
+                headLabel={[                 
+                  { id: "name", label: "Role Name" },
+                  { id: "guard_name", label: "Guard" },
+                  { id: "", label: "Action" },
+                ]}
               />
 
-              <TableBody>
-                {employees.map((row) => (
-                  <UserTableRow
-                    key={row.id}
-                    row={row}
-                    selected={table.selected.includes(String(row.id))}
-                  onSelectRow={() => table.onSelectRow(String(row.id))}
 
-                  />
-                ))}
-
-                {!employees.length && !isLoading && (
-                  <TableNoData searchQuery={filterName} />
-                )}
-              </TableBody>
+<TableBody>
+  {roles.map((row) => (
+    <RoleTableRow
+      key={row.id}
+      row={row}
+      selected={table.selected.includes(String(row.id))}
+      onSelectRow={() => table.onSelectRow(String(row.id))}
+    />
+  ))}
+</TableBody>
             </Table>
           </TableContainer>
         </Scrollbar>
