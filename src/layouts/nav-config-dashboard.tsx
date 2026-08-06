@@ -25,11 +25,25 @@ export const navData = [
     path: '/roles',
     icon: icon('ic-analytics'),
   },
+
+    {
+    title: 'Assing Roles',
+    path: '/roles/assign-role',
+    icon: icon('ic-analytics'),
+  },
+
   {
     title: 'Permissions',
     path: '/permissions',
     icon: icon('ic-analytics'),
   },
+
+    {
+    title: 'Assign Permissions',
+    path: '/permissions/assign-permission',
+    icon: icon('ic-analytics'),
+  },
+
   {
     title: 'Employee',
     path: '/user',

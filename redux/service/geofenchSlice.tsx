@@ -79,12 +79,12 @@ export const geofenceSlice = api.injectEndpoints({
       }),
 
       transformResponse: (response: any) => ({
-        data: response.data,
+        data: response.data.data,
         pagination: {
-          current_page: response.current_page,
-          total: response.total,
-          per_page: response.per_page,
-          last_page: response.last_page,
+          current_page: response.data.current_page,
+          total: response.data.total,
+          per_page: response.data.per_page,
+          last_page: response.data.last_page,
         },
       }),
 

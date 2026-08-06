@@ -1,123 +1,141 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Table from "@mui/material/Table";
+import Button from "@mui/material/Button";
+import TableBody from "@mui/material/TableBody";
+import Typography from "@mui/material/Typography";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
 
-import { _users } from 'src/_mock';
-import { DashboardContent } from 'src/layouts/dashboard';
+import { DashboardContent } from "src/layouts/dashboard";
+import { Scrollbar } from "src/components/scrollbar";
+import { Iconify } from "src/components/iconify";
 
-import { Iconify } from 'src/components/iconify';
-import { Scrollbar } from 'src/components/scrollbar';
+import { TableNoData } from "../table-no-data";
+import { UserTableHead } from "../user-table-head";
+import { UserTableToolbar } from "../user-table-toolbar";
 
-import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
-import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
+import { useRouter } from "src/routes/hooks";
 
-import type { UserProps } from '../user-table-row';
-import { useGetGeofencesQuery } from '../../../../redux/service/geofenchSlice';
-import { useRouter } from 'src/routes/hooks';
-// ----------------------------------------------------------------------
+import {
+  PermissionTableRow,
+  PermissionProps,
+} from "../permission-table-row";
 
+import { useGetPermissionsQuery } from "../../../../redux/service/permissionSlice";
 
 export function PermissionView() {
   const table = useTable();
-  const [filterName, setFilterName] = useState('');
 
-  // API call
-// API call
-const { data, isLoading } = useGetGeofencesQuery({
-  page: table.page + 1,
-  limit: table.rowsPerPage,
-  search: filterName,
-   per_page: table.rowsPerPage,
-});
- const router = useRouter();
-// employees list
-const employees = data?.data ?? [];
+  const router = useRouter();
 
-// FIX: pagination total
-const total = data?.pagination?.total ?? 0;
+  const [filterName, setFilterName] = useState("");
 
+  const { data: permissions = [], isLoading } =
+    useGetPermissionsQuery();
+
+  const filteredData = permissions.filter((item: PermissionProps) =>
+    item.name.toLowerCase().includes(filterName.toLowerCase())
+  );
 
   return (
     <DashboardContent>
-
       <Box
         sx={{
           mb: 5,
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
         }}
       >
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Permission
+        <Typography
+          variant="h4"
+          sx={{ flexGrow: 1 }}
+        >
+          Permissions
         </Typography>
-        {/* <Button 
-        onClick={() => router.push('create-geofench')}
+
+        <Button
           variant="contained"
           color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
+          startIcon={
+            <Iconify icon="mingcute:add-line" />
+          }
+          onClick={() =>
+            router.push("/permissions/create-permission")
+          }
         >
-          New Geofench
-        </Button> */}
+          New Permission
+        </Button>
       </Box>
 
       <Card>
         <UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
-          onFilterName={(e) => setFilterName(e.target.value)}
+          onFilterName={(e) =>
+            setFilterName(e.target.value)
+          }
         />
 
         <Scrollbar>
           <TableContainer sx={{ overflow: "unset" }}>
-            <Table sx={{ minWidth: 800 }}>
+            <Table sx={{ minWidth: 700 }}>
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={employees.length}
+                rowCount={filteredData.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-               onSelectAllRows={(checked) =>
+                onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    employees.map((emp) => String(emp.id))
+                    filteredData.map((item) =>
+                      String(item.id)
+                    )
                   )
                 }
-
                 headLabel={[
-                    { id: "name", label: "Employee name" },
-                    { id: "employee_id", label: "Code" },
-                    { id: "latitude", label: "Latitude" },
-                    { id: "longitude", label: "Longitude" },
-                    { id: "radius", label: "Radius (M)" },
-                    { id: "", label: "Action" },
-                  ]}
+                  {
+                    id: "name",
+                    label: "Permission",
+                  },
+                  {
+                    id: "guard_name",
+                    label: "Guard",
+                  },
+                  {
+                    id: "",
+                    label: "Action",
+                  },
+                ]}
               />
 
               <TableBody>
-                {employees.map((row) => (
-                  <UserTableRow
-                    key={row.id}
-                    row={row}
-                    selected={table.selected.includes(String(row.id))}
-                  onSelectRow={() => table.onSelectRow(String(row.id))}
-
-                  />
-                ))}
-
-                {!employees.length && !isLoading && (
-                  <TableNoData searchQuery={filterName} />
+                {filteredData.map(
+                  (row: PermissionProps) => (
+                    <PermissionTableRow
+                      key={row.id}
+                      row={row}
+                      selected={table.selected.includes(
+                        String(row.id)
+                      )}
+                      onSelectRow={() =>
+                        table.onSelectRow(
+                          String(row.id)
+                        )
+                      }
+                    />
+                  )
                 )}
+
+                {!filteredData.length &&
+                  !isLoading && (
+                    <TableNoData
+                      searchQuery={filterName}
+                    />
+                  )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -125,82 +143,79 @@ const total = data?.pagination?.total ?? 0;
 
         <TablePagination
           component="div"
-          page={table.page}
-          count={total}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
+          page={0}
+          count={filteredData.length}
+          rowsPerPage={filteredData.length || 10}
           rowsPerPageOptions={[10]}
+          onPageChange={() => {}}
         />
       </Card>
     </DashboardContent>
   );
 }
 
-
-// ----------------------------------------------------------------------
+// ===============================
 
 export function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('name');
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selected, setSelected] = useState<string[]>([]);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+
+  const [orderBy, setOrderBy] =
+    useState("name");
+
+  const [rowsPerPage, setRowsPerPage] =
+    useState(10);
+
+  const [selected, setSelected] =
+    useState<string[]>([]);
+
+  const [order, setOrder] = useState<
+    "asc" | "desc"
+  >("asc");
 
   const onSort = useCallback(
     (id: string) => {
-      const isAsc = orderBy === id && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
+      const isAsc =
+        orderBy === id && order === "asc";
+
+      setOrder(isAsc ? "desc" : "asc");
       setOrderBy(id);
     },
     [order, orderBy]
   );
 
-  const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-    if (checked) {
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  }, []);
+  const onSelectAllRows = useCallback(
+    (
+      checked: boolean,
+      newSelecteds: string[]
+    ) => {
+      if (checked) {
+        setSelected(newSelecteds);
+      } else {
+        setSelected([]);
+      }
+    },
+    []
+  );
 
   const onSelectRow = useCallback(
-    (inputValue: string) => {
-      const newSelected = selected.includes(inputValue)
-        ? selected.filter((value) => value !== inputValue)
-        : [...selected, inputValue];
+    (id: string) => {
+      const newSelected = selected.includes(id)
+        ? selected.filter((item) => item !== id)
+        : [...selected, id];
 
       setSelected(newSelected);
     },
     [selected]
   );
 
-  const onResetPage = useCallback(() => {
-    setPage(0);
-  }, []);
-
-  const onChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, []);
-
-  const onChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      onResetPage();
-    },
-    [onResetPage]
-  );
-
   return {
     page,
     order,
-    onSort,
     orderBy,
-    selected,
     rowsPerPage,
+    selected,
+    onSort,
     onSelectRow,
-    onResetPage,
-    onChangePage,
     onSelectAllRows,
-    onChangeRowsPerPage,
   };
 }

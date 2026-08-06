@@ -73,7 +73,7 @@
 
 //     try {
 //       await deleteGeofence(row.id).unwrap();
-//       toast.success('Geofence deleted successfully');
+//       toast.success('Permission deleted successfully');
 //     } catch (error) {
 //       toast.error('Failed to delete geofence');
 //     }
@@ -142,7 +142,6 @@
 //     </>
 //   );
 // }
-
 import { useState, useCallback } from "react";
 
 import TableRow from "@mui/material/TableRow";
@@ -156,19 +155,19 @@ import MenuItem, { menuItemClasses } from "@mui/material/MenuItem";
 import { useRouter } from "src/routes/hooks";
 import { Iconify } from "src/components/iconify";
 
-export type RoleProps = {
+export type PermissionProps = {
   id: number;
   name: string;
   guard_name: string;
 };
 
 type Props = {
-  row: RoleProps;
+  row: PermissionProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
-export function RoleTableRow({
+export function PermissionTableRow({
   row,
   selected,
   onSelectRow,
@@ -195,7 +194,6 @@ export function RoleTableRow({
         <TableCell padding="checkbox">
           <Checkbox checked={selected} onChange={onSelectRow} />
         </TableCell>
-       
 
         <TableCell>{row.name}</TableCell>
 
@@ -212,31 +210,20 @@ export function RoleTableRow({
         open={Boolean(openPopover)}
         anchorEl={openPopover}
         onClose={handleClosePopover}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
       >
         <MenuList
           disablePadding
           sx={{
             p: 0.5,
             width: 150,
-            display: "flex",
-            flexDirection: "column",
             [`& .${menuItemClasses.root}`]: {
               px: 1,
               gap: 2,
-              borderRadius: 0.75,
             },
           }}
         >
           <MenuItem
-            onClick={() => router.push(`/roles/edit-role/${row.id}`)}
+            onClick={() => router.push(`/permissions/edit-permission/${row.id}`)}
           >
             <Iconify icon="solar:pen-bold" />
             Edit

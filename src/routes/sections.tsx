@@ -21,7 +21,11 @@ export const GeoenchPage = lazy(()=>import('src/pages/geofench'));
 export const RolePage = lazy(() => import('src/pages/roles'));
 export const CreateRole = lazy(() => import('src/sections/roles/view/create_role'));
 export const EditRole = lazy(() => import('src/sections/roles/view/update_role'));
+export const AssignRole = lazy(() => import('src/sections/roles/view/assign_role'));
 export const Permissions = lazy(() => import('src/pages/permissions'));
+export const CreatePermission = lazy(() => import('src/sections/permissions/view/create_permission'));
+export const EditPermission = lazy(() => import('src/sections/permissions/view/update_permission'));
+export const AssignPermission = lazy(() => import('src/sections/permissions/view/permission_assign'));
 export const GeofenchCreate = lazy(() => import('src/sections/geofench/view/create_gefench'));
 export const GeofenchEdit = lazy(() => import('src/sections/geofench/view/update_geofench'));
 export const AttendancePage = lazy(()=>import('src/pages/attendance'))
@@ -66,7 +70,11 @@ export const routesSection: RouteObject[] = [
       { path: 'roles', element: <RolePage />},
       { path: 'roles/create-role', element: <CreateRole />},   
       { path: 'roles/edit-role/:id', element: <EditRole /> },
+      { path: 'roles/assign-role', element: <AssignRole />},
       { path: 'permissions', element: <Permissions />},
+      { path: 'permissions/create-permission', element: <CreatePermission />},   
+      { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
+      { path: 'permissions/assign-permission', element: <AssignPermission /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
       { path: 'user/create-user', element: <CreateUser />},   

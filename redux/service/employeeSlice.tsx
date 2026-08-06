@@ -1,11 +1,30 @@
 import { api } from "../api/baseApi";
 
+export interface EmployeeResponse {
+  data: any[];
+  pagination: {
+    current_page: number;
+    total: number;
+    per_page: number;
+    last_page: number;
+  };
+}
+
 export const employeeApi = api.injectEndpoints({
   endpoints: (builder) => ({
     // ===========================
     // Employee List
     // ===========================
-    getEmployees: builder.query({
+    getEmployees: builder.query<
+      EmployeeResponse,
+      {
+        page?: number;
+        per_page?: number;
+        name?: string;
+        department?: string;
+        search?: string;
+      }
+    >({
       query: ({
         page = 1,
         per_page = 10,
@@ -20,9 +39,20 @@ export const employeeApi = api.injectEndpoints({
           per_page,
           name,
           department,
-          search 
+          search,
         },
       }),
+
+      transformResponse: (response: any) => ({
+        data: response.data.data,
+        pagination: {
+          current_page: response.data.current_page,
+          total: response.data.total,
+          per_page: response.data.per_page,
+          last_page: response.data.last_page,
+        },
+      }),
+
       providesTags: ["employees"],
     }),
 
@@ -34,11 +64,14 @@ export const employeeApi = api.injectEndpoints({
         url: `/employees/${id}`,
         method: "GET",
       }),
+
+      transformResponse: (response: any) => response.data,
+
       providesTags: ["employees"],
     }),
 
     // ===========================
-    // Sync Employee From ERP
+    // Sync Employee
     // ===========================
     syncEmployee: builder.mutation({
       query: () => ({

@@ -22,7 +22,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery,
   endpoints: () => ({}),
-  tagTypes: ["company", "employees", "geofences", "attendance", "employeeLocations",'role', 'permission'],
+  tagTypes: ["company", "employees", "geofences", "attendance", "employeeLocations",'role', 'permission', 'user', 'users'],
 });
 
 export const imageUrl = "http://192.168.20.203:8000/image/";
