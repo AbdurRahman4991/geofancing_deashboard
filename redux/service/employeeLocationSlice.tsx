@@ -75,6 +75,32 @@ export const employeeLocationSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["employeeLocations"],
     }),
+
+    getLocationEmployees: builder.query({
+      query: (search = "") => ({
+        url: "/locations/employees",
+        method: "GET",
+        params: {
+          search,
+        },
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+
+    getEmployeeLocationHistory: builder.query({
+      query: ({
+        employee_id,
+        date,
+      }) => ({
+        url: "/locations/history",
+        method: "POST",
+        body: {
+          employee_id,
+          date,
+        },
+      }),
+    }),
+
   }),
 });
 
@@ -84,4 +110,6 @@ export const {
   useCreateEmployeeLocationMutation,
   useUpdateEmployeeLocationMutation,
   useDeleteEmployeeLocationMutation,
+  useGetLocationEmployeesQuery, 
+  useGetEmployeeLocationHistoryQuery,
 } = employeeLocationSlice;

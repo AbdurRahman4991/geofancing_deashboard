@@ -87,7 +87,7 @@ export const routesSection: RouteObject[] = [
       { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> }, 
       { path: 'attendance', element: <AttendancePage />}, 
       { path: 'employee-location', element: <EmployeeTrackingPage />}, 
-      { path: 'employee-location/:id', element: <EmployeeTrackingMap />},
+      { path: 'employee-location-map', element: <EmployeeTrackingMap />},
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
       
