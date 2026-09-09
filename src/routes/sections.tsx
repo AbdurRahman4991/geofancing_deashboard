@@ -14,9 +14,9 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const CreateUser = lazy(() => import('src/sections/user/view/create_user'));
 export const EditUser = lazy(() => import('src/sections/user/view/update_user'));
-// export const CompanyPage = lazy(()=>import('src/pages/company'));
-// export const CompanyCreate = lazy(() => import('src/sections/company/view/company-create-view'));
-// export const CompanyEdit = lazy(() => import('src/sections/company/view/company-update-view'));
+export const CompanyPage = lazy(()=>import('src/pages/company'));
+export const CompanyCreate = lazy(() => import('src/sections/company/view/company-create-view'));
+export const CompanyEdit = lazy(() => import('src/sections/company/view/company-update-view'));
 export const GeoenchPage = lazy(()=>import('src/pages/geofench'));
 export const RolePage = lazy(() => import('src/pages/roles'));
 export const CreateRole = lazy(() => import('src/sections/roles/view/create_role'));
@@ -30,6 +30,7 @@ export const GeofenchCreate = lazy(() => import('src/sections/geofench/view/crea
 export const GeofenchEdit = lazy(() => import('src/sections/geofench/view/update_geofench'));
 export const AttendancePage = lazy(()=>import('src/pages/attendance'))
 export const AttendanceRolePage = lazy(()=>import('src/pages/attendance-roles'))
+export const AttendanceRoleCreate = lazy(()=>import('src/pages/attendance-roles'))
 export const EmployeeTrackingPage = lazy(()=>import('src/pages/employee-location'))
 export const EmployeeTrackingMap = lazy(()=> import('src/pages/employee-location-map-view'))
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -79,13 +80,14 @@ export const routesSection: RouteObject[] = [
       { path: 'user', element: <UserPage /> },
       { path: 'user/create-user', element: <CreateUser />},   
       { path: 'user/edit-user/:id', element: <EditUser /> },
-      // { path: 'company', element: <CompanyPage /> },
-      // { path: 'company/create-company', element: <CompanyCreate /> },    
-      // { path: 'company/edit-company/:id', element: <CompanyEdit /> },
+      { path: 'company', element: <CompanyPage /> },
+      { path: 'company/create-company', element: <CompanyCreate /> },    
+      { path: 'company/edit-company/:id', element: <CompanyEdit /> },
       { path: 'geofench', element: <GeoenchPage />}, 
       { path: 'geofench/create-geofench', element: <GeofenchCreate /> },    
       { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> }, 
-      { path: 'attendance', element: <AttendancePage />}, 
+      { path: 'attendance', element: <AttendancePage />},
+      { path: 'attendance-role', element: <AttendanceRolePage />},
       { path: 'employee-location', element: <EmployeeTrackingPage />}, 
       { path: 'employee-location-map', element: <EmployeeTrackingMap />},
       { path: 'products', element: <ProductsPage /> },

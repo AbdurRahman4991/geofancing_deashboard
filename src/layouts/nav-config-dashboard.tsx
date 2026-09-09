@@ -49,11 +49,11 @@ export const navData = [
     path: '/user',
     icon: icon('ic-user'),
   },
-  // {
-  //   title: 'Company',
-  //   path: '/company',
-  //   icon: icon('ic-user'),
-  // },
+  {
+    title: 'Company',
+    path: '/company',
+    icon: icon('ic-user'),
+  },
   {
     title: 'Geofench',
     path: '/geofench',
@@ -63,6 +63,12 @@ export const navData = [
   {
     title: 'Attendance',
     path: '/attendance',
+    icon: icon('ic-cart'),
+
+  },
+  {
+    title: 'Attendance Role',
+    path: '/attendance-role',
     icon: icon('ic-cart'),
 
   },
