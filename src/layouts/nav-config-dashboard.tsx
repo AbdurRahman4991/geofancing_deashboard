@@ -28,28 +28,56 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
-    title: 'Roles',
-    path: '/roles',
-    icon: icon('ic-analytics'),
-  },
+  title: 'Access control',
+  path: '/access-control',
+  icon: icon('ic-analytics'),
 
+  children: [
     {
-    title: 'Assing Roles',
-    path: '/roles/assign-role',
-    icon: icon('ic-analytics'),
-  },
-
-  {
-    title: 'Permissions',
-    path: '/permissions',
-    icon: icon('ic-analytics'),
-  },
-
+      title: 'Roles',
+      path: '/roles',
+      icon: icon('ic-analytics'),
+    },
     {
-    title: 'Assign Permissions',
-    path: '/permissions/assign-permission',
-    icon: icon('ic-analytics'),
-  },
+      title: 'Assign Roles',
+      path: '/roles/assign-role',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Permissions',
+      path: '/permissions',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Assign Permissions',
+      path: '/permissions/assign-permission',
+      icon: icon('ic-analytics'),
+    },
+  ],
+},
+  // {
+  //   title: 'Roles',
+  //   path: '/roles',
+  //   icon: icon('ic-analytics'),
+  // },
+
+  //   {
+  //   title: 'Assing Roles',
+  //   path: '/roles/assign-role',
+  //   icon: icon('ic-analytics'),
+  // },
+
+  // {
+  //   title: 'Permissions',
+  //   path: '/permissions',
+  //   icon: icon('ic-analytics'),
+  // },
+
+  //   {
+  //   title: 'Assign Permissions',
+  //   path: '/permissions/assign-permission',
+  //   icon: icon('ic-analytics'),
+  // },
 
   {
     title: 'Employee',
