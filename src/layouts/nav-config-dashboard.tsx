@@ -7,12 +7,6 @@ import { SvgColor } from 'src/components/svg-color';
 
 const icon = (name: string) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} />;
 
-// export type NavItem = {
-//   title: string;
-//   path: string;
-//   icon: React.ReactNode;
-//   info?: React.ReactNode;
-// };
 export type NavItem = {
   title: string;
   path?: string;
@@ -53,32 +47,9 @@ export const navData = [
       path: '/permissions/assign-permission',
       icon: icon('ic-analytics'),
     },
-  ],
-},
-  // {
-  //   title: 'Roles',
-  //   path: '/roles',
-  //   icon: icon('ic-analytics'),
-  // },
-
-  //   {
-  //   title: 'Assing Roles',
-  //   path: '/roles/assign-role',
-  //   icon: icon('ic-analytics'),
-  // },
-
-  // {
-  //   title: 'Permissions',
-  //   path: '/permissions',
-  //   icon: icon('ic-analytics'),
-  // },
-
-  //   {
-  //   title: 'Assign Permissions',
-  //   path: '/permissions/assign-permission',
-  //   icon: icon('ic-analytics'),
-  // },
-
+    ],
+  },
+  
   {
     title: 'Employee',
     path: '/user',

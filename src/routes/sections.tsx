@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+import CompanyUpdateView from 'src/sections/company/view/company-update-view';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,23 @@ export const AttendanceRolePage = lazy(()=>import('src/pages/attendance-roles'))
 export const AttendanceRoleCreate = lazy(()=>import('src/pages/attendance-roles'))
 export const EmployeeTrackingPage = lazy(()=>import('src/pages/employee-location'))
 export const EmployeeTrackingMap = lazy(()=> import('src/pages/employee-location-map-view'))
+// Hiearchy
+export const Country = lazy(()=>import('src/sections/hierarchy/country/view/country_view'));
+export const CreateCountry = lazy(() => import('../sections/hierarchy/country/view/create_country'));
+export const EditCountry = lazy(() => import('../sections/hierarchy/country/view/update_country'));
+export const Region = lazy(()=> import('src/sections/hierarchy/region/view/region_view'));
+export const CreateRegion = lazy(() => import('../sections/hierarchy/region/view/create_region'));
+export const EditRegion = lazy(() => import('../sections/hierarchy/region/view/update_region'));
+export const Zone = lazy(()=> import('src/sections/hierarchy/zone/view/zone_view'));
+export const CreateZone = lazy(() => import('../sections/hierarchy/zone/view/create_zone'));
+export const EditZone = lazy(() => import('../sections/hierarchy/zone/view/update_zone'));
+export const Division = lazy(()=> import('src/sections/hierarchy/division/view/division_view'));
+export const CreateDivision = lazy(() => import('../sections/hierarchy/division/view/create_division'));
+export const EditDivision = lazy(() => import('../sections/hierarchy/division/view/update_division'));
+export const District = lazy(()=> import('src/sections/hierarchy/district/view/district_view'));
+export const CreateDistrict = lazy(() => import('../sections/hierarchy/district/view/create_district'));
+export const EditDistrict = lazy(() => import('../sections/hierarchy/district/view/update_district'));
+
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -90,6 +108,21 @@ export const routesSection: RouteObject[] = [
       { path: 'attendance-role', element: <AttendanceRolePage />},
       { path: 'employee-location', element: <EmployeeTrackingPage />}, 
       { path: 'employee-location-map', element: <EmployeeTrackingMap />},
+      { path: 'hierarchy/country', element: <Country />},
+      { path: 'hierarchy/create-country', element: <CreateCountry />},
+      { path: 'hierarchy/edit-country/:id', element: <EditCountry />},
+      { path: 'hierarchy/region', element: <Region />},
+      { path: 'hierarchy/create-region', element: <CreateRegion />},
+      { path: 'hierarchy/edit-region/:id', element: <EditRegion />},
+      { path: 'hierarchy/zone', element: <Zone />},
+      { path: 'hierarchy/create-zone', element: <CreateZone />},
+      { path: 'hierarchy/edit-zone/:id', element: <EditZone />},
+      { path: 'hierarchy/division', element: <Division />},
+      { path: 'hierarchy/create-division', element: <CreateDivision />},
+      { path: 'hierarchy/edit-division/:id', element: <EditDivision />},
+      { path: 'hierarchy/district', element: <District />},
+      { path: 'hierarchy/create-district', element: <CreateDistrict />},
+      { path: 'hierarchy/edit-district/:id', element: <EditDistrict />},
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
       

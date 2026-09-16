@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 
 import Popover from '@mui/material/Popover';
@@ -6,28 +7,41 @@ import Checkbox from '@mui/material/Checkbox';
 import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import MenuItem, {
+  menuItemClasses,
+} from '@mui/material/MenuItem';
 
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
+// TYPES
+// ----------------------------------------------------------------------
 
-export type CountryProps = {
+type DistrictProps = {
   id: number;
+  division_id: number;
   name: string;
-  code: string | null;
   status: number;
-  created_at?: string;
-  updated_at?: string;
+
+  division?: {
+    id: number;
+    zone_id: number;
+    name: string;
+    status: number;
+    created_at?: string;
+    updated_at?: string;
+  };
 };
 
 type UserTableRowProps = {
-  row: CountryProps;
+  row: DistrictProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
+// ----------------------------------------------------------------------
+// COMPONENT
 // ----------------------------------------------------------------------
 
 export function UserTableRow({
@@ -40,42 +54,48 @@ export function UserTableRow({
 
   const router = useRouter();
 
-  // ==============================
-  // Open Popover
-  // ==============================
+  // --------------------------------------------------------------------
+  // Popover
+  // --------------------------------------------------------------------
 
   const handleOpenPopover = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      setOpenPopover(event.currentTarget);
+    (
+      event: React.MouseEvent<HTMLButtonElement>
+    ) => {
+      setOpenPopover(
+        event.currentTarget
+      );
     },
     []
   );
-
-  // ==============================
-  // Close Popover
-  // ==============================
 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
 
-  // ==============================
+  // --------------------------------------------------------------------
   // Edit
-  // ==============================
+  // --------------------------------------------------------------------
 
   const handleEdit = () => {
     handleClosePopover();
 
-    router.push(`/hierarchy/edit-country/${row.id}`);
+    router.push(
+      `/hierarchy/edit-district/${row.id}`
+    );
   };
 
-  // ==============================
+  // --------------------------------------------------------------------
   // UI
-  // ==============================
+  // --------------------------------------------------------------------
 
   return (
     <>
-      <TableRow hover selected={selected}>
+      <TableRow
+        hover
+        selected={selected}
+      >
+
         {/* Checkbox */}
         <TableCell padding="checkbox">
           <Checkbox
@@ -84,32 +104,37 @@ export function UserTableRow({
           />
         </TableCell>
 
-        {/* Country Name */}
+        {/* District Name */}
         <TableCell>
           {row.name}
         </TableCell>
 
-        {/* Country Code */}
+        {/* Division */}
         <TableCell>
-          {row.code ?? '-'}
+          {row.division?.name || '-'}
         </TableCell>
 
         {/* Status */}
         <TableCell>
-          {row.status === 1 ? 'Active' : 'Inactive'}
+          {row.status === 1
+            ? 'Active'
+            : 'Inactive'}
         </TableCell>
 
         {/* Action */}
         <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
+          <IconButton
+            onClick={handleOpenPopover}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
+
       </TableRow>
 
-      {/* ============================== */}
+      {/* ---------------------------------------------------------------- */}
       {/* Popover */}
-      {/* ============================== */}
+      {/* ---------------------------------------------------------------- */}
 
       <Popover
         open={Boolean(openPopover)}
@@ -148,3 +173,4 @@ export function UserTableRow({
     </>
   );
 }
+

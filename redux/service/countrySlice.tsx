@@ -1,144 +1,120 @@
-import { api } from "../api/baseApi";
-
+import { api } from '../api/baseApi';
 
 // ==============================
 // Interfaces
 // ==============================
 
-export interface Company {
-  id: number;
-  company_name: string;
-}
-
-export interface User {
+export interface Country {
   id: number;
   name: string;
-}
-
-export interface Geofence {
-  id: number;
-  company_id: number;
-  user_id: number;
-  latitude: string;
-  longitude: string;
-  radius: number;
+  code: string | null;
+  status: number;
   created_at?: string;
   updated_at?: string;
-
-  company?: Company | null;
-  user?: User | null;
 }
 
-export interface GeofenceRequest {
-  company_id: number;
-  user_id: number;
-  latitude: string;
-  longitude: string;
-  radius: number;
-}
-
-export interface GeofenceResponse {
-  data: Geofence[];
-  pagination: {
-    current_page: number;
-    total: number;
-    per_page: number;
-    last_page: number;
-  };
+export interface CountryResponse {
+  status: number;
+  data: Country[];
 }
 
 // ==============================
 // API
 // ==============================
 
-export const geofenceSlice = api.injectEndpoints({
+export const countrySlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // ==========================
-    // Get Geofence List
+    // Get Country List
     // ==========================
-    getGeofences: builder.query<
-      GeofenceResponse,
+    getCountries: builder.query<CountryResponse, void>({
+      query: () => ({
+        url: 'countries',
+        method: 'GET',
+      }),
+
+      transformResponse: (response: any): CountryResponse => ({
+        status: response.status,
+        data: response.data ?? [],
+      }),
+
+      providesTags: ['countries'],
+    }),
+
+    // ==========================
+    // Get Single Country
+    // ==========================
+    getSingleCountry: builder.query<Country, number>({
+      query: (id) => `countries/${id}`,
+
+      transformResponse: (response: any): Country => {
+        return response.data ?? response;
+      },
+
+      providesTags: ['countries'],
+    }),
+
+    // ==========================
+    // Create Country
+    // ==========================
+    createCountry: builder.mutation<
+      Country,
       {
-        page?: number;
-        per_page?: number;
-        user_id?: number | string;
-        search?: string;
-        company_id?: number | string;
+        name: string;
+        code: string | null;
+        status: number;
       }
     >({
-      query: ({ page = 1, per_page = 10, user_id = "", search= "", company_id="", }) => ({
-        url: "geofences",
-        params: {
-          page,
-          per_page,
-          user_id,
-          search,
-          company_id
-          
-        },
-      }),
-
-      transformResponse: (response: any) => ({
-        data: response.data.data,
-        pagination: {
-          current_page: response.data.current_page,
-          total: response.data.total,
-          per_page: response.data.per_page,
-          last_page: response.data.last_page,
-        },
-      }),
-
-      providesTags: ["geofences"],
-    }),
-
-    // ==========================
-    // Get Single Geofence
-    // ==========================
-    getSingleGeofence: builder.query<Geofence, number>({
-      query: (id) => `geofences/${id}`,
-      transformResponse: (response: any) => response.data ?? response,
-      providesTags: ["geofences"],
-    }),
-
-    // ==========================
-    // Create
-    // ==========================
-    createGeofence: builder.mutation<Geofence, GeofenceRequest>({
       query: (body) => ({
-        url: "geofences",
-        method: "POST",
+        url: 'countries',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["geofences"],
+
+      transformResponse: (response: any): Country => {
+        return response.data ?? response;
+      },
+
+      invalidatesTags: ['countries'],
     }),
 
     // ==========================
-    // Update
+    // Update Country
     // ==========================
-    updateGeofence: builder.mutation<
-      Geofence,
+    updateCountry: builder.mutation<
+      Country,
       {
         id: number;
-        data: GeofenceRequest;
+        data: {
+          name: string;
+          code: string | null;
+          status: number;
+        };
       }
     >({
       query: ({ id, data }) => ({
-        url: `geofences/${id}`,
-        method: "PUT",
+        url: `countries/${id}`,
+        method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ["geofences"],
+
+      transformResponse: (response: any): Country => {
+        return response.data ?? response;
+      },
+
+      invalidatesTags: ['countries'],
     }),
 
     // ==========================
-    // Delete
+    // Delete Country
     // ==========================
-    deleteGeofence: builder.mutation<void, number>({
+    deleteCountry: builder.mutation<void, number>({
       query: (id) => ({
-        url: `geofences/${id}`,
-        method: "DELETE",
+        url: `countries/${id}`,
+        method: 'DELETE',
       }),
-      invalidatesTags: ["geofences"],
+
+      invalidatesTags: ['countries'],
     }),
   }),
 });
@@ -148,9 +124,9 @@ export const geofenceSlice = api.injectEndpoints({
 // ==============================
 
 export const {
-  useGetGeofencesQuery,
-  useGetSingleGeofenceQuery,
-  useCreateGeofenceMutation,
-  useUpdateGeofenceMutation,
-  useDeleteGeofenceMutation,
-} = geofenceSlice;
+  useGetCountriesQuery,
+  useGetSingleCountryQuery,
+  useCreateCountryMutation,
+  useUpdateCountryMutation,
+  useDeleteCountryMutation,
+} = countrySlice;

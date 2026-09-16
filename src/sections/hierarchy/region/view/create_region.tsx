@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 
 import {
@@ -11,24 +12,51 @@ import {
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { toast, ToastContainer } from 'react-toastify';
+import {
+  toast,
+  ToastContainer,
+} from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useCreateCountryMutation } from '../../../../../redux/service/countrySlice';
+import {
+  useCreateRegionMutation,
+} from '../../../../../redux/service/regionSlice';
+
+import {
+  useGetCountriesQuery,
+} from '../../../../../redux/service/countrySlice';
 
 // ----------------------------------------------------------------------
 
-export default function CountryCreateView() {
-  const [createCountry, { isLoading }] =
-    useCreateCountryMutation();
+export default function RegionCreateView() {
+  // ==============================
+  // Region API
+  // ==============================
+
+  const [
+    createRegion,
+    { isLoading: isCreating },
+  ] = useCreateRegionMutation();
+
+  // ==============================
+  // Country API
+  // ==============================
+
+  const {
+    data: countryData,
+    isLoading: isCountriesLoading,
+  } = useGetCountriesQuery();
+
+  const countries = countryData?.data ?? [];
 
   // ==============================
   // Form
   // ==============================
 
   const [form, setForm] = useState({
+    country_id: '',
     name: '',
-    code: '',
     status: 1,
   });
 
@@ -37,8 +65,8 @@ export default function CountryCreateView() {
   // ==============================
 
   const [errors, setErrors] = useState<{
+    country_id?: string;
     name?: string;
-    code?: string;
     status?: string;
   }>({});
 
@@ -54,9 +82,11 @@ export default function CountryCreateView() {
     setForm((prev) => ({
       ...prev,
       [name]:
-        name === 'status'
-          ? Number(value)
-          : value,
+        name === 'country_id'
+          ? value
+          : name === 'status'
+            ? Number(value)
+            : value,
     }));
 
     setErrors((prev) => ({
@@ -71,21 +101,27 @@ export default function CountryCreateView() {
 
   const validate = () => {
     const newErrors: {
+      country_id?: string;
       name?: string;
-      code?: string;
       status?: string;
     } = {};
 
+    if (!form.country_id) {
+      newErrors.country_id =
+        'Country is required';
+    }
+
     if (!form.name.trim()) {
-      newErrors.name = 'Country name is required';
+      newErrors.name =
+        'Region name is required';
     }
 
-    if (!form.code.trim()) {
-      newErrors.code = 'Country code is required';
-    }
-
-    if (!form.status) {
-      newErrors.status = 'Status is required';
+    if (
+      form.status !== 0 &&
+      form.status !== 1
+    ) {
+      newErrors.status =
+        'Status is required';
     }
 
     setErrors(newErrors);
@@ -101,31 +137,34 @@ export default function CountryCreateView() {
     if (!validate()) return;
 
     try {
-      await createCountry({
+      await createRegion({
+        country_id: Number(form.country_id),
         name: form.name.trim(),
-        code: form.code.trim().toUpperCase(),
         status: form.status,
       }).unwrap();
 
       toast.success(
-        'Country created successfully'
+        'Region created successfully'
       );
 
       // Reset form
 
       setForm({
+        country_id: '',
         name: '',
-        code: '',
         status: 1,
       });
 
       setErrors({});
     } catch (err: any) {
-      console.error(err);
+      console.error(
+        'Create region error:',
+        err
+      );
 
       toast.error(
         err?.data?.message ||
-          'Failed to create country'
+          'Failed to create region'
       );
     }
   };
@@ -136,11 +175,12 @@ export default function CountryCreateView() {
 
   return (
     <DashboardContent>
+
       <Typography
         variant="h4"
         sx={{ mb: 3 }}
       >
-        Create Country
+        Create Region
       </Typography>
 
       <Card
@@ -150,11 +190,51 @@ export default function CountryCreateView() {
         }}
       >
         <Stack spacing={2}>
-          {/* Country Name */}
+
+          {/* ============================== */}
+          {/* Country */}
+          {/* ============================== */}
+
+          <TextField
+            select
+            name="country_id"
+            label="Country"
+            value={form.country_id}
+            onChange={handleChange}
+            error={!!errors.country_id}
+            helperText={
+              errors.country_id
+            }
+            fullWidth
+            disabled={isCountriesLoading}
+          >
+            {isCountriesLoading ? (
+              <MenuItem value="">
+                Loading countries...
+              </MenuItem>
+            ) : (
+              countries.map((country) => (
+                <MenuItem
+                  key={country.id}
+                  value={country.id}
+                >
+                  {country.name}
+                  {country.code
+                    ? ` (${country.code})`
+                    : ''}
+                </MenuItem>
+              ))
+            )}
+          </TextField>
+
+          {/* ============================== */}
+          {/* Region Name */}
+          {/* ============================== */}
 
           <TextField
             name="name"
-            label="Country Name"
+            label="Region Name"
+            placeholder="Example: Dhaka Region"
             value={form.name}
             onChange={handleChange}
             error={!!errors.name}
@@ -162,25 +242,9 @@ export default function CountryCreateView() {
             fullWidth
           />
 
-          {/* Country Code */}
-
-          <TextField
-            name="code"
-            label="Country Code"
-            value={form.code}
-            onChange={handleChange}
-            error={!!errors.code}
-            helperText={
-              errors.code ||
-              'Example: BD, IN, US'
-            }
-            inputProps={{
-              maxLength: 3,
-            }}
-            fullWidth
-          />
-
+          {/* ============================== */}
           {/* Status */}
+          {/* ============================== */}
 
           <TextField
             select
@@ -201,7 +265,9 @@ export default function CountryCreateView() {
             </MenuItem>
           </TextField>
 
+          {/* ============================== */}
           {/* Submit */}
+          {/* ============================== */}
 
           <Button
             variant="contained"
@@ -209,12 +275,16 @@ export default function CountryCreateView() {
             fullWidth
             color="inherit"
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={
+              isCreating ||
+              isCountriesLoading
+            }
           >
-            {isLoading
+            {isCreating
               ? 'Saving...'
-              : 'Create Country'}
+              : 'Create Region'}
           </Button>
+
         </Stack>
       </Card>
 
@@ -222,6 +292,8 @@ export default function CountryCreateView() {
         position="top-right"
         autoClose={3000}
       />
+
     </DashboardContent>
   );
 }
+

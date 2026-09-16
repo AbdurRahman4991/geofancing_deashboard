@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 
 import Popover from '@mui/material/Popover';
@@ -12,22 +13,34 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
+// TYPES
+// ----------------------------------------------------------------------
 
-export type CountryProps = {
+type RegionProps = {
   id: number;
+  country_id: number;
   name: string;
-  code: string | null;
   status: number;
-  created_at?: string;
-  updated_at?: string;
+
+  country?: {
+    id: number;
+    name: string;
+    code: string | null;
+    status?: number;
+  };
+
+  country_name?: string;
+  country_code?: string | null;
 };
 
 type UserTableRowProps = {
-  row: CountryProps;
+  row: RegionProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
+// ----------------------------------------------------------------------
+// COMPONENT
 // ----------------------------------------------------------------------
 
 export function UserTableRow({
@@ -40,9 +53,9 @@ export function UserTableRow({
 
   const router = useRouter();
 
-  // ==============================
-  // Open Popover
-  // ==============================
+  // --------------------------------------------------------------------
+  // Popover
+  // --------------------------------------------------------------------
 
   const handleOpenPopover = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,31 +64,28 @@ export function UserTableRow({
     []
   );
 
-  // ==============================
-  // Close Popover
-  // ==============================
-
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
 
-  // ==============================
+  // --------------------------------------------------------------------
   // Edit
-  // ==============================
+  // --------------------------------------------------------------------
 
   const handleEdit = () => {
     handleClosePopover();
 
-    router.push(`/hierarchy/edit-country/${row.id}`);
+    router.push(`/hierarchy/edit-region/${row.id}`);
   };
 
-  // ==============================
+  // --------------------------------------------------------------------
   // UI
-  // ==============================
+  // --------------------------------------------------------------------
 
   return (
     <>
       <TableRow hover selected={selected}>
+
         {/* Checkbox */}
         <TableCell padding="checkbox">
           <Checkbox
@@ -84,32 +94,46 @@ export function UserTableRow({
           />
         </TableCell>
 
-        {/* Country Name */}
+        {/* Region Name */}
         <TableCell>
           {row.name}
         </TableCell>
 
+        {/* Country */}
+        <TableCell>
+          {row.country?.name ||
+            row.country_name ||
+            '-'}
+        </TableCell>
+
         {/* Country Code */}
         <TableCell>
-          {row.code ?? '-'}
+          {row.country?.code ||
+            row.country_code ||
+            '-'}
         </TableCell>
 
         {/* Status */}
         <TableCell>
-          {row.status === 1 ? 'Active' : 'Inactive'}
+          {row.status === 1
+            ? 'Active'
+            : 'Inactive'}
         </TableCell>
 
         {/* Action */}
         <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
+          <IconButton
+            onClick={handleOpenPopover}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
+
       </TableRow>
 
-      {/* ============================== */}
+      {/* ---------------------------------------------------------------- */}
       {/* Popover */}
-      {/* ============================== */}
+      {/* ---------------------------------------------------------------- */}
 
       <Popover
         open={Boolean(openPopover)}

@@ -18,12 +18,13 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { UserTableToolbar } from '../user-table-toolbar';
 
-import { useGetCountriesQuery } from '../../../../../redux/service/countrySlice';
+import { useGetZonesQuery } from '../../../../../redux/service/zoneSlice';
+
 import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export function CountryView() {
+export function ZoneView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
@@ -34,30 +35,58 @@ export function CountryView() {
   // API
   // ==============================
 
-  const { data, isLoading, isError } = useGetCountriesQuery();
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useGetZonesQuery();
 
   // ==============================
-  // Countries
+  // Zones
   // ==============================
 
-  const countries = data?.data ?? [];
+  const zones = data?.data ?? [];
 
   // ==============================
   // Search
   // ==============================
 
-  const filteredCountries = countries.filter((country) =>
-    (country.name ?? '').toLowerCase().includes(filterName.toLowerCase()) ||
-    (country.code ?? '').toLowerCase().includes(filterName.toLowerCase())
-  );
+  const filteredZones = zones.filter((zone) => {
+    const zoneName =
+      zone.name?.toLowerCase() ?? '';
+
+    const regionName =
+      zone.region?.name?.toLowerCase() ?? '';
+
+    const search =
+      filterName.toLowerCase();
+
+    return (
+      zoneName.includes(search) ||
+      regionName.includes(search)
+    );
+  });
 
   // ==============================
   // Sorting
   // ==============================
 
-  const sortedCountries = [...filteredCountries].sort((a, b) => {
-    const valueA = String(a[table.orderBy as keyof typeof a] ?? '');
-    const valueB = String(b[table.orderBy as keyof typeof b] ?? '');
+  const sortedZones = [...filteredZones].sort((a, b) => {
+    let valueA = '';
+    let valueB = '';
+
+    if (table.orderBy === 'region') {
+      valueA = a.region?.name ?? '';
+      valueB = b.region?.name ?? '';
+    } else {
+      valueA = String(
+        a[table.orderBy as keyof typeof a] ?? ''
+      );
+
+      valueB = String(
+        b[table.orderBy as keyof typeof b] ?? ''
+      );
+    }
 
     if (valueA < valueB) {
       return table.order === 'asc' ? -1 : 1;
@@ -75,7 +104,7 @@ export function CountryView() {
   // ==============================
 
   const handleCreate = () => {
-    router.push('/hierarchy/create-country');
+    router.push('/hierarchy/create-zone');
   };
 
   // ==============================
@@ -85,7 +114,9 @@ export function CountryView() {
   if (isLoading) {
     return (
       <DashboardContent>
-        <Typography>Loading countries...</Typography>
+        <Typography>
+          Loading zones...
+        </Typography>
       </DashboardContent>
     );
   }
@@ -98,14 +129,19 @@ export function CountryView() {
     return (
       <DashboardContent>
         <Typography color="error">
-          Failed to load countries.
+          Failed to load zones.
         </Typography>
       </DashboardContent>
     );
   }
 
+  // ==============================
+  // UI
+  // ==============================
+
   return (
     <DashboardContent>
+
       {/* ============================== */}
       {/* Header */}
       {/* ============================== */}
@@ -117,17 +153,22 @@ export function CountryView() {
           alignItems: 'center',
         }}
       >
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Country
+        <Typography
+          variant="h4"
+          sx={{ flexGrow: 1 }}
+        >
+          Zone
         </Typography>
 
         <Button
           onClick={handleCreate}
           variant="contained"
           color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
+          startIcon={
+            <Iconify icon="mingcute:add-line" />
+          }
         >
-          New Country
+          New Zone
         </Button>
       </Box>
 
@@ -136,6 +177,7 @@ export function CountryView() {
       {/* ============================== */}
 
       <Card>
+
         {/* ============================== */}
         {/* Toolbar */}
         {/* ============================== */}
@@ -150,8 +192,10 @@ export function CountryView() {
         />
 
         <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
+          <TableContainer
+            sx={{ overflow: 'unset' }}
+          >
+            <Table sx={{ minWidth: 900 }}>
 
               {/* ============================== */}
               {/* Table Header */}
@@ -160,23 +204,25 @@ export function CountryView() {
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={sortedCountries.length}
+                rowCount={sortedZones.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    sortedCountries.map((country) => String(country.id))
+                    sortedZones.map(
+                      (zone) => String(zone.id)
+                    )
                   )
                 }
                 headLabel={[
                   {
                     id: 'name',
-                    label: 'Country Name',
+                    label: 'Zone Name',
                   },
                   {
-                    id: 'code',
-                    label: 'Code',
+                    id: 'region',
+                    label: 'Region',
                   },
                   {
                     id: 'status',
@@ -194,50 +240,60 @@ export function CountryView() {
               {/* ============================== */}
 
               <TableBody>
-                {sortedCountries.map((country) => (
+                {sortedZones.map((zone) => (
                   <UserTableRow
-                    key={country.id}
-                    row={{
-                      ...country,
-
-                      // UserTableRow যদি এই fields expect করে
-                      name: country.name,
-                      code: country.code,
-                    }}
-                    selected={table.selected.includes(String(country.id))}
+                    key={zone.id}
+                    row={zone}
+                    selected={table.selected.includes(
+                      String(zone.id)
+                    )}
                     onSelectRow={() =>
-                      table.onSelectRow(String(country.id))
+                      table.onSelectRow(
+                        String(zone.id)
+                      )
                     }
                   />
                 ))}
 
                 {/* No Data */}
 
-                {!sortedCountries.length && !isLoading && (
-                  <TableNoData searchQuery={filterName} />
+                {!sortedZones.length && !isLoading && (
+                  <TableNoData
+                    searchQuery={filterName}
+                  />
                 )}
               </TableBody>
+
             </Table>
           </TableContainer>
         </Scrollbar>
+
       </Card>
+
     </DashboardContent>
   );
 }
-export default CountryView;
 
+export default ZoneView;
+
+// ----------------------------------------------------------------------
+// TABLE HOOK
 // ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);
 
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] =
+    useState('name');
 
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] =
+    useState(10);
 
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] =
+    useState<string[]>([]);
 
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [order, setOrder] =
+    useState<'asc' | 'desc'>('asc');
 
   // ==============================
   // Sort
@@ -245,9 +301,13 @@ export function useTable() {
 
   const onSort = useCallback(
     (id: string) => {
-      const isAsc = orderBy === id && order === 'asc';
+      const isAsc =
+        orderBy === id &&
+        order === 'asc';
 
-      setOrder(isAsc ? 'desc' : 'asc');
+      setOrder(
+        isAsc ? 'desc' : 'asc'
+      );
 
       setOrderBy(id);
     },
@@ -259,7 +319,10 @@ export function useTable() {
   // ==============================
 
   const onSelectAllRows = useCallback(
-    (checked: boolean, newSelecteds: string[]) => {
+    (
+      checked: boolean,
+      newSelecteds: string[]
+    ) => {
       if (checked) {
         setSelected(newSelecteds);
         return;
@@ -276,9 +339,12 @@ export function useTable() {
 
   const onSelectRow = useCallback(
     (inputValue: string) => {
-      const newSelected = selected.includes(inputValue)
-        ? selected.filter((value) => value !== inputValue)
-        : [...selected, inputValue];
+      const newSelected =
+        selected.includes(inputValue)
+          ? selected.filter(
+              (value) => value !== inputValue
+            )
+          : [...selected, inputValue];
 
       setSelected(newSelected);
     },
@@ -298,7 +364,10 @@ export function useTable() {
   // ==============================
 
   const onChangePage = useCallback(
-    (event: unknown, newPage: number) => {
+    (
+      event: unknown,
+      newPage: number
+    ) => {
       setPage(newPage);
     },
     []
@@ -308,14 +377,22 @@ export function useTable() {
   // Change Rows Per Page
   // ==============================
 
-  const onChangeRowsPerPage = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
+  const onChangeRowsPerPage =
+    useCallback(
+      (
+        event: React.ChangeEvent<HTMLInputElement>
+      ) => {
+        setRowsPerPage(
+          parseInt(
+            event.target.value,
+            10
+          )
+        );
 
-      onResetPage();
-    },
-    [onResetPage]
-  );
+        onResetPage();
+      },
+      [onResetPage]
+    );
 
   return {
     page,

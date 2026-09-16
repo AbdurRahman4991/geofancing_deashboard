@@ -1,225 +1,227 @@
-
 import { useState, useEffect } from 'react';
+
 import {
   Card,
   Stack,
   TextField,
   Button,
   Typography,
+  MenuItem,
 } from '@mui/material';
+
 import { useParams } from 'react-router-dom';
+
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import {
-  useGetSingleGeofenceQuery,
-  useUpdateGeofenceMutation,
-} from '../../../../redux/service/geofenchSlice';
+  useGetSingleCountryQuery,
+  useUpdateCountryMutation,
+} from '../../../../../redux/service/countrySlice';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ------------------------------------
-// TYPES
-// ------------------------------------
-type FormState = {
-  company_id: string;
-  user_id: string;
-  latitude: number | '';
-  longitude: number | '';
-  radius: number | '';
-};
+export default function CountryUpdateView() {
+  const { id } = useParams();
 
+  const {
+    data: country,
+    isLoading: isFetching,
+    isError: isFetchError,
+  } = useGetSingleCountryQuery(Number(id), {
+    skip: !id,
+  });
 
-export default function GeofenceUpdateView() {
-  // ------------------------------------
-  // GET ID FROM ROUTE
-  // ------------------------------------
- const { id } = useParams<{ id: string }>();
+  const [updateCountry, { isLoading }] =
+    useUpdateCountryMutation();
 
-const {
-  data: geofence,
-  isLoading: isFetching,
-} = useGetSingleGeofenceQuery(id!, {
-  skip: !id,
-});
+  const [form, setForm] = useState({
+    name: '',
+    code: '',
+    status: 1,
+  });
 
+  const [errors, setErrors] = useState({});
 
+  // ----------------------------------------------------------------------
+  // LOAD COUNTRY DATA
+  // ----------------------------------------------------------------------
 
-  // ------------------------------------
-  // UPDATE MUTATION
-  // ------------------------------------
-  const [updateGeofence, { isLoading }] =
-    useUpdateGeofenceMutation();
+  useEffect(() => {
+    if (country) {
+      console.log('Country data:', country);
 
-  // ------------------------------------
-  // FORM STATE
-  // ------------------------------------
-const [form, setForm] = useState<FormState>({
-  company_id: '',
-  user_id: '',
-  latitude: '',
-  longitude: '',
-  radius: '',
-});
+      setForm({
+        name: country.name || '',
+        code: country.code || '',
+        status: country.status ?? 1,
+      });
+    }
+  }, [country]);
 
+  // ----------------------------------------------------------------------
+  // HANDLE INPUT CHANGE
+  // ----------------------------------------------------------------------
 
-  const [errors, setErrors] = useState<Partial<FormState>>({});
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  // ------------------------------------
-  // PREFILL FORM
-  // ------------------------------------
-useEffect(() => {
-  console.log('Geofence data:', geofence);
-  if (geofence) {
-    setForm({
-      company_id: String(geofence.company_id),
-      user_id: String(geofence.user_id),
-      latitude: Number(geofence.latitude),
-      longitude: Number(geofence.longitude),
-      radius: Number(geofence.radius),
-    });
-  }
-}, [geofence]);
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'status' ? Number(value) : value,
+    }));
 
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
+    }));
+  };
 
-  // ------------------------------------
-  // HANDLE CHANGE
-  // ------------------------------------
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
-
-  setForm((prev) => ({
-    ...prev,
-    [name]:
-      name === 'latitude' ||
-      name === 'longitude' ||
-      name === 'radius'
-        ? value === '' ? '' : Number(value)
-        : value,
-  }));
-};
-
-
-  // ------------------------------------
+  // ----------------------------------------------------------------------
   // VALIDATION
-  // ------------------------------------
+  // ----------------------------------------------------------------------
+
   const validate = () => {
-  const newErrors: Partial<Record<keyof FormState, string>> = {};
+    const newErrors = {};
 
-  if (!form.company_id.trim())
-    newErrors.company_id = 'Company is required';
+    if (!form.name.trim()) {
+      newErrors.name = 'Country name is required';
+    }
 
-  if (!form.user_id.trim())
-    newErrors.user_id = 'User is required';
+    if (!form.code.trim()) {
+      newErrors.code = 'Country code is required';
+    }
 
-  if (form.latitude === '' || isNaN(form.latitude))
-    newErrors.latitude = 'Latitude is required';
+    if (form.status !== 0 && form.status !== 1) {
+      newErrors.status = 'Status is required';
+    }
 
-  if (form.longitude === '' || isNaN(form.longitude))
-    newErrors.longitude = 'Longitude is required';
+    setErrors(newErrors);
 
-  if (form.radius === '' || isNaN(form.radius))
-    newErrors.radius = 'Radius is required';
+    return Object.keys(newErrors).length === 0;
+  };
 
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
+  // ----------------------------------------------------------------------
+  // UPDATE COUNTRY
+  // ----------------------------------------------------------------------
 
-
-  // ------------------------------------
-  // SUBMIT
-  // ------------------------------------
   const handleSubmit = async () => {
-    if (!validate()) return;
+    if (!id) {
+      toast.error('Country ID is missing');
+      return;
+    }
+
+    if (!validate()) {
+      return;
+    }
 
     try {
-      await updateGeofence({
-        id,
+      await updateCountry({
+        id: Number(id),
         data: {
-          company_id: Number(form.company_id),
-          user_id: Number(form.user_id),
-          latitude: Number(form.latitude),
-          longitude: Number(form.longitude),
-          radius: Number(form.radius),
+          name: form.name.trim(),
+          code: form.code.trim().toUpperCase(),
+          status: form.status,
         },
       }).unwrap();
 
-      toast.success('Geofence updated successfully!');
+      toast.success('Country updated successfully!');
     } catch (error) {
-      toast.error('Failed to update geofence');
+      console.error('Update country error:', error);
+
+      toast.error(
+        error?.data?.message || 'Failed to update country'
+      );
     }
   };
 
-  // ------------------------------------
-  // LOADING STATE
-  // ------------------------------------
+  // ----------------------------------------------------------------------
+  // LOADING
+  // ----------------------------------------------------------------------
+
   if (isFetching) {
     return (
       <DashboardContent>
-        <Typography>Loading...</Typography>
+        <Typography>Loading country...</Typography>
       </DashboardContent>
     );
   }
 
-  // ------------------------------------
+  // ----------------------------------------------------------------------
+  // ERROR
+  // ----------------------------------------------------------------------
+
+  if (isFetchError || !country) {
+    return (
+      <DashboardContent>
+        <Typography color="error">
+          Failed to load country.
+        </Typography>
+      </DashboardContent>
+    );
+  }
+
+  // ----------------------------------------------------------------------
   // UI
-  // ------------------------------------
+  // ----------------------------------------------------------------------
+
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Update Geofence
+        Update Country
       </Typography>
 
       <Card sx={{ p: 3, maxWidth: 600 }}>
         <Stack spacing={2}>
+
+          {/* Country Name */}
           <TextField
-            label="Company ID"
-            name="company_id"
-            value={form.company_id} 
+            label="Country Name"
+            name="name"
+            value={form.name}
             onChange={handleChange}
-            error={!!errors.company_id}
-            helperText={errors.company_id}
+            error={!!errors.name}
+            helperText={errors.name}
+            fullWidth
           />
 
+          {/* Country Code */}
           <TextField
-            label="User ID"
-            name="user_id"
-            value={form.user_id}
+            label="Country Code"
+            name="code"
+            value={form.code}
             onChange={handleChange}
-            error={!!errors.user_id}
-            helperText={errors.user_id}
+            error={!!errors.code}
+            helperText={
+              errors.code || 'Example: BD, IN, US'
+            }
+            inputProps={{
+              maxLength: 3,
+            }}
+            fullWidth
           />
 
+          {/* Status */}
           <TextField
-            label="Latitude"
-            name="latitude"
-            type="number"
-            value={form.latitude}
+            select
+            label="Status"
+            name="status"
+            value={form.status}
             onChange={handleChange}
-            error={!!errors.latitude}
-            helperText={errors.latitude}
-          />
+            error={!!errors.status}
+            helperText={errors.status}
+            fullWidth
+          >
+            <MenuItem value={1}>
+              Active
+            </MenuItem>
 
-          <TextField
-            label="Longitude"
-            name="longitude"
-            type="number"
-            value={form.longitude}
-            onChange={handleChange}
-            error={!!errors.longitude}
-            helperText={errors.longitude}
-          />
+            <MenuItem value={0}>
+              Inactive
+            </MenuItem>
+          </TextField>
 
-          <TextField
-            label="Radius (Meter)"
-            name="radius"
-            type="number"
-            value={form.radius}
-            onChange={handleChange}
-            error={!!errors.radius}
-            helperText={errors.radius}
-          />
-
+          {/* Update Button */}
           <Button
             variant="contained"
             size="large"
@@ -228,12 +230,16 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             onClick={handleSubmit}
             disabled={isLoading}
           >
-            {isLoading ? 'Updating...' : 'Update Geofence'}
+            {isLoading ? 'Updating...' : 'Update Country'}
           </Button>
+
         </Stack>
       </Card>
 
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+      />
     </DashboardContent>
   );
 }
