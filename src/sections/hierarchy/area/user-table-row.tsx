@@ -18,24 +18,27 @@ import { Iconify } from 'src/components/iconify';
 // TYPES
 // ----------------------------------------------------------------------
 
-type DistrictProps = {
+type AreaProps = {
   id: number;
-  division_id: number;
+  territory_id: number;
   name: string;
   status: number;
 
-  division?: {
+  territory?: {
     id: number;
-    zone_id: number;
+    sub_district_id: number;
     name: string;
     status: number;
     created_at?: string;
     updated_at?: string;
   };
+
+  created_at?: string;
+  updated_at?: string;
 };
 
 type UserTableRowProps = {
-  row: DistrictProps;
+  row: AreaProps;
   selected: boolean;
   onSelectRow: () => void;
 };
@@ -81,7 +84,7 @@ export function UserTableRow({
     handleClosePopover();
 
     router.push(
-      `/hierarchy/edit-district/${row.id}`
+      `/hierarchy/edit-area/${row.id}`
     );
   };
 
@@ -104,14 +107,14 @@ export function UserTableRow({
           />
         </TableCell>
 
-        {/* District Name */}
+        {/* Area Name */}
         <TableCell>
           {row.name}
         </TableCell>
 
-        {/* Division */}
+        {/* Territory */}
         <TableCell>
-          {row.division?.name || '-'}
+          {row.territory?.name || '-'}
         </TableCell>
 
         {/* Status */}
@@ -173,4 +176,3 @@ export function UserTableRow({
     </>
   );
 }
-

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 import {
@@ -20,43 +19,44 @@ import {
 import 'react-toastify/dist/ReactToastify.css';
 
 import {
-  useCreateDistrictMutation,
-} from '../../../../../redux/service/districtSlice';
+  useCreateSubDistrictMutation,
+} from '../../../../../redux/service/subDistrictSlice';
 
 import {
-  useGetDivisionsQuery,
-} from '../../../../../redux/service/divisionSlice';
+  useGetDistrictsQuery,
+} from '../../../../../redux/service/districtSlice';
 
 // ----------------------------------------------------------------------
 
-export default function DistrictCreateView() {
+export default function SubDistrictCreateView() {
+
+  // ==============================
+  // SubDistrict API
+  // ==============================
+
+  const [
+    createSubDistrict,
+    { isLoading: isCreating },
+  ] = useCreateSubDistrictMutation();
+
   // ==============================
   // District API
   // ==============================
 
-  const [
-    createDistrict,
-    { isLoading: isCreating },
-  ] = useCreateDistrictMutation();
-
-  // ==============================
-  // Division API
-  // ==============================
-
   const {
-    data: divisionData,
-    isLoading: isDivisionsLoading,
-  } = useGetDivisionsQuery();
+    data: districtData,
+    isLoading: isDistrictsLoading,
+  } = useGetDistrictsQuery();
 
-  const divisions =
-    divisionData?.data ?? [];
+  const districts =
+    districtData?.data ?? [];
 
   // ==============================
   // Form
   // ==============================
 
   const [form, setForm] = useState({
-    division_id: '',
+    district_id: '',
     name: '',
     status: 1,
   });
@@ -66,7 +66,7 @@ export default function DistrictCreateView() {
   // ==============================
 
   const [errors, setErrors] = useState<{
-    division_id?: string;
+    district_id?: string;
     name?: string;
     status?: string;
   }>({});
@@ -84,7 +84,7 @@ export default function DistrictCreateView() {
       ...prev,
 
       [name]:
-        name === 'division_id'
+        name === 'district_id'
           ? value
           : name === 'status'
             ? Number(value)
@@ -102,20 +102,21 @@ export default function DistrictCreateView() {
   // ==============================
 
   const validate = () => {
+
     const newErrors: {
-      division_id?: string;
+      district_id?: string;
       name?: string;
       status?: string;
     } = {};
 
-    if (!form.division_id) {
-      newErrors.division_id =
-        'Division is required';
+    if (!form.district_id) {
+      newErrors.district_id =
+        'District is required';
     }
 
     if (!form.name.trim()) {
       newErrors.name =
-        'District name is required';
+        'Sub District name is required';
     }
 
     if (
@@ -138,39 +139,43 @@ export default function DistrictCreateView() {
   // ==============================
 
   const handleSubmit = async () => {
+
     if (!validate()) return;
 
     try {
-      await createDistrict({
-        division_id: Number(
-          form.division_id
+
+      await createSubDistrict({
+        district_id: Number(
+          form.district_id
         ),
         name: form.name.trim(),
         status: form.status,
       }).unwrap();
 
       toast.success(
-        'District created successfully'
+        'Sub District created successfully'
       );
 
       // Reset form
 
       setForm({
-        division_id: '',
+        district_id: '',
         name: '',
         status: 1,
       });
 
       setErrors({});
+
     } catch (err: any) {
+
       console.error(
-        'Create district error:',
+        'Create sub district error:',
         err
       );
 
       toast.error(
         err?.data?.message ||
-          'Failed to create district'
+          'Failed to create sub district'
       );
     }
   };
@@ -186,7 +191,7 @@ export default function DistrictCreateView() {
         variant="h4"
         sx={{ mb: 3 }}
       >
-        Create District
+        Create Sub District
       </Typography>
 
       <Card
@@ -195,51 +200,60 @@ export default function DistrictCreateView() {
           maxWidth: 600,
         }}
       >
+
         <Stack spacing={2}>
 
           {/* ============================== */}
-          {/* Division */}
+          {/* District */}
           {/* ============================== */}
 
           <TextField
             select
-            name="division_id"
-            label="Division"
-            value={form.division_id}
+            name="district_id"
+            label="District"
+            value={form.district_id}
             onChange={handleChange}
-            error={!!errors.division_id}
+            error={!!errors.district_id}
             helperText={
-              errors.division_id
+              errors.district_id
             }
             fullWidth
             disabled={
-              isDivisionsLoading
+              isDistrictsLoading
             }
           >
-            {isDivisionsLoading ? (
+
+            {isDistrictsLoading ? (
+
               <MenuItem value="">
-                Loading divisions...
+                Loading districts...
               </MenuItem>
+
             ) : (
-              divisions.map((division) => (
+
+              districts.map((district) => (
+
                 <MenuItem
-                  key={division.id}
-                  value={division.id}
+                  key={district.id}
+                  value={district.id}
                 >
-                  {division.name}
+                  {district.name}
                 </MenuItem>
+
               ))
+
             )}
+
           </TextField>
 
           {/* ============================== */}
-          {/* District Name */}
+          {/* Sub District Name */}
           {/* ============================== */}
 
           <TextField
             name="name"
-            label="District Name"
-            placeholder="Example: Habiganj"
+            label="Sub District Name"
+            placeholder="Example: Nageshwari"
             value={form.name}
             onChange={handleChange}
             error={!!errors.name}
@@ -261,6 +275,7 @@ export default function DistrictCreateView() {
             helperText={errors.status}
             fullWidth
           >
+
             <MenuItem value={1}>
               Active
             </MenuItem>
@@ -268,6 +283,7 @@ export default function DistrictCreateView() {
             <MenuItem value={0}>
               Inactive
             </MenuItem>
+
           </TextField>
 
           {/* ============================== */}
@@ -282,15 +298,18 @@ export default function DistrictCreateView() {
             onClick={handleSubmit}
             disabled={
               isCreating ||
-              isDivisionsLoading
+              isDistrictsLoading
             }
           >
+
             {isCreating
               ? 'Saving...'
-              : 'Create District'}
+              : 'Create Sub District'}
+
           </Button>
 
         </Stack>
+
       </Card>
 
       <ToastContainer
@@ -301,4 +320,3 @@ export default function DistrictCreateView() {
     </DashboardContent>
   );
 }
-

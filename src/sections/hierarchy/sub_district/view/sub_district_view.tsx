@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -20,14 +19,14 @@ import { UserTableHead } from '../user-table-head';
 import { UserTableToolbar } from '../user-table-toolbar';
 
 import {
-  useGetDistrictsQuery,
-} from '../../../../../redux/service/districtSlice';
+  useGetSubDistrictsQuery,
+} from '../../../../../redux/service/subDistrictSlice';
 
 import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
-export function DistrictView() {
+export function SubDistrictView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
@@ -42,32 +41,32 @@ export function DistrictView() {
     data,
     isLoading,
     isError,
-  } = useGetDistrictsQuery();
+  } = useGetSubDistrictsQuery();
 
   // ==============================
-  // Districts
+  // SubDistricts
   // ==============================
 
-  const districts = data?.data ?? [];
+  const subDistricts = data?.data ?? [];
 
   // ==============================
   // Search
   // ==============================
 
-  const filteredDistricts = districts.filter(
-    (district) => {
-      const districtName =
-        district.name?.toLowerCase() ?? '';
+  const filteredSubDistricts = subDistricts.filter(
+    (subDistrict) => {
+      const subDistrictName =
+        subDistrict.name?.toLowerCase() ?? '';
 
-      const divisionName =
-        district.division?.name?.toLowerCase() ?? '';
+      const districtName =
+        subDistrict.district?.name?.toLowerCase() ?? '';
 
       const search =
         filterName.toLowerCase();
 
       return (
-        districtName.includes(search) ||
-        divisionName.includes(search)
+        subDistrictName.includes(search) ||
+        districtName.includes(search)
       );
     }
   );
@@ -76,22 +75,22 @@ export function DistrictView() {
   // Sorting
   // ==============================
 
-  const sortedDistricts = [
-    ...filteredDistricts,
+  const sortedSubDistricts = [
+    ...filteredSubDistricts,
   ].sort((a, b) => {
     let valueA = '';
     let valueB = '';
 
-    // Sort by Division
-    if (table.orderBy === 'division') {
+    // Sort by District
+    if (table.orderBy === 'district') {
       valueA =
-        a.division?.name ?? '';
+        a.district?.name ?? '';
 
       valueB =
-        b.division?.name ?? '';
+        b.district?.name ?? '';
     }
 
-    // Sort by District Name / Status
+    // Sort by SubDistrict Name / Status
     else {
       valueA = String(
         a[
@@ -127,7 +126,7 @@ export function DistrictView() {
 
   const handleCreate = () => {
     router.push(
-      '/hierarchy/create-district'
+      '/hierarchy/create-sub-district'
     );
   };
 
@@ -139,7 +138,7 @@ export function DistrictView() {
     return (
       <DashboardContent>
         <Typography>
-          Loading districts...
+          Loading sub districts...
         </Typography>
       </DashboardContent>
     );
@@ -153,7 +152,7 @@ export function DistrictView() {
     return (
       <DashboardContent>
         <Typography color="error">
-          Failed to load districts.
+          Failed to load sub districts.
         </Typography>
       </DashboardContent>
     );
@@ -181,7 +180,7 @@ export function DistrictView() {
           variant="h4"
           sx={{ flexGrow: 1 }}
         >
-          District
+          Sub District
         </Typography>
 
         <Button
@@ -192,7 +191,7 @@ export function DistrictView() {
             <Iconify icon="mingcute:add-line" />
           }
         >
-          New District
+          New Sub District
         </Button>
       </Box>
 
@@ -238,7 +237,7 @@ export function DistrictView() {
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={
-                  sortedDistricts.length
+                  sortedSubDistricts.length
                 }
                 numSelected={
                   table.selected.length
@@ -248,10 +247,10 @@ export function DistrictView() {
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    sortedDistricts.map(
-                      (district) =>
+                    sortedSubDistricts.map(
+                      (subDistrict) =>
                         String(
-                          district.id
+                          subDistrict.id
                         )
                     )
                   )
@@ -260,11 +259,11 @@ export function DistrictView() {
                 headLabel={[
                   {
                     id: 'name',
-                    label: 'District Name',
+                    label: 'Sub District Name',
                   },
                   {
-                    id: 'division',
-                    label: 'Division',
+                    id: 'district',
+                    label: 'District',
                   },
                   {
                     id: 'status',
@@ -283,20 +282,21 @@ export function DistrictView() {
 
               <TableBody>
 
-                {sortedDistricts.map(
-                  (district) => (
+                {sortedSubDistricts.map(
+                  (subDistrict) => (
                     <UserTableRow
-                      key={district.id}
-                      row={district}
+                      key={subDistrict.id}
+                      row={subDistrict}
                       selected={table.selected.includes(
                         String(
-                          district.id
+                          subDistrict.id
                         )
                       )}
+
                       onSelectRow={() =>
                         table.onSelectRow(
                           String(
-                            district.id
+                            subDistrict.id
                           )
                         )
                       }
@@ -308,7 +308,7 @@ export function DistrictView() {
                 {/* No Data */}
                 {/* ============================== */}
 
-                {!sortedDistricts.length &&
+                {!sortedSubDistricts.length &&
                   !isLoading && (
                     <TableNoData
                       searchQuery={
@@ -331,7 +331,7 @@ export function DistrictView() {
   );
 }
 
-export default DistrictView;
+export default SubDistrictView;
 
 // ----------------------------------------------------------------------
 // TABLE HOOK
@@ -484,4 +484,3 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
-

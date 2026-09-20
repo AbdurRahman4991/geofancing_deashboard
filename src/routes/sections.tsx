@@ -50,6 +50,16 @@ export const EditDivision = lazy(() => import('../sections/hierarchy/division/vi
 export const District = lazy(()=> import('src/sections/hierarchy/district/view/district_view'));
 export const CreateDistrict = lazy(() => import('../sections/hierarchy/district/view/create_district'));
 export const EditDistrict = lazy(() => import('../sections/hierarchy/district/view/update_district'));
+export const SubDistrict = lazy(()=> import('src/sections/hierarchy/sub_district/view/sub_district_view'));
+export const CreateSubDistrict = lazy(() => import('../sections/hierarchy/sub_district/view/create_sub_district'));
+export const EditSubDistrict = lazy(() => import('../sections/hierarchy/sub_district/view/update_sub_district'));
+export const Territory = lazy(()=> import('src/sections/hierarchy/territory/view/territory_view'));
+export const CreateTerritory = lazy(() => import('../sections/hierarchy/territory/view/create_territory'));
+export const EditTerritory = lazy(() => import('../sections/hierarchy/territory/view/update_territory'));
+export const Area = lazy(()=> import('src/sections/hierarchy/area/view/area_view'));
+export const CreateArea = lazy(() => import('../sections/hierarchy/area/view/create_area'));
+export const EditArea = lazy(() => import('../sections/hierarchy/area/view/update_area'));
+
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -123,6 +133,15 @@ export const routesSection: RouteObject[] = [
       { path: 'hierarchy/district', element: <District />},
       { path: 'hierarchy/create-district', element: <CreateDistrict />},
       { path: 'hierarchy/edit-district/:id', element: <EditDistrict />},
+      { path: 'hierarchy/sub-district', element: <SubDistrict />},
+      { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict />},
+      { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict />},
+      { path: 'hierarchy/territory', element: <Territory />},
+      { path: 'hierarchy/create-territory', element: <CreateTerritory />},
+      { path: 'hierarchy/edit-territory/:id', element: <EditTerritory />},
+      { path: 'hierarchy/area', element: <Area />},
+      { path: 'hierarchy/create-area', element: <CreateArea />},
+      { path: 'hierarchy/edit-area/:id', element: <EditArea />},
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
       

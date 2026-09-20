@@ -111,11 +111,6 @@ export const navData = [
         path: '/hierarchy/area',
         icon: icon('ic-analytics'),
       },
-      {
-        title: 'Farm',
-        path: '/hierarchy/farm',
-        icon: icon('ic-analytics'),
-      },
     ],
   },
 

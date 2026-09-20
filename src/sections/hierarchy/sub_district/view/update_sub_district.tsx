@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 import {
@@ -15,13 +14,13 @@ import { useParams } from 'react-router-dom';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import {
-  useGetSingleDistrictQuery,
-  useUpdateDistrictMutation,
-} from '../../../../../redux/service/districtSlice';
+  useGetSingleSubDistrictQuery,
+  useUpdateSubDistrictMutation,
+} from '../../../../../redux/service/subDistrictSlice';
 
 import {
-  useGetDivisionsQuery,
-} from '../../../../../redux/service/divisionSlice';
+  useGetDistrictsQuery,
+} from '../../../../../redux/service/districtSlice';
 
 import {
   toast,
@@ -32,47 +31,51 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // ----------------------------------------------------------------------
 
-export default function DistrictUpdateView() {
+export default function SubDistrictUpdateView() {
   const { id } = useParams();
 
   // ==============================
-  // Get Single District
+  // Get Single SubDistrict
   // ==============================
 
   const {
-    data: district,
-    isLoading: isFetchingDistrict,
-    isError: isDistrictError,
-  } = useGetSingleDistrictQuery(Number(id), {
-    skip: !id,
-  });
+    data: subDistrict,
+    isLoading: isFetchingSubDistrict,
+    isError: isSubDistrictError,
+  } = useGetSingleSubDistrictQuery(
+    Number(id),
+    {
+      skip: !id,
+    }
+  );
 
   // ==============================
-  // Get Divisions
+  // Get Districts
   // ==============================
 
   const {
-    data: divisionData,
-    isLoading: isFetchingDivisions,
-  } = useGetDivisionsQuery();
+    data: districtData,
+    isLoading: isFetchingDistricts,
+  } = useGetDistrictsQuery();
 
-  const divisions = divisionData?.data ?? [];
+  const districts =
+    districtData?.data ?? [];
 
   // ==============================
-  // Update District
+  // Update SubDistrict
   // ==============================
 
   const [
-    updateDistrict,
+    updateSubDistrict,
     { isLoading: isUpdating },
-  ] = useUpdateDistrictMutation();
+  ] = useUpdateSubDistrictMutation();
 
   // ==============================
   // Form
   // ==============================
 
   const [form, setForm] = useState({
-    division_id: '',
+    district_id: '',
     name: '',
     status: 1,
   });
@@ -82,28 +85,35 @@ export default function DistrictUpdateView() {
   // ==============================
 
   const [errors, setErrors] = useState<{
-    division_id?: string;
+    district_id?: string;
     name?: string;
     status?: string;
   }>({});
 
   // ----------------------------------------------------------------------
-  // LOAD DISTRICT DATA
+  // LOAD SUB DISTRICT DATA
   // ----------------------------------------------------------------------
 
   useEffect(() => {
-    if (district) {
-      console.log('District data:', district);
+    if (subDistrict) {
+      console.log(
+        'Sub District data:',
+        subDistrict
+      );
 
       setForm({
-        division_id: String(
-          district.division_id ?? ''
+        district_id: String(
+          subDistrict.district_id ?? ''
         ),
-        name: district.name || '',
-        status: district.status ?? 1,
+
+        name:
+          subDistrict.name || '',
+
+        status:
+          subDistrict.status ?? 1,
       });
     }
-  }, [district]);
+  }, [subDistrict]);
 
   // ----------------------------------------------------------------------
   // HANDLE INPUT CHANGE
@@ -135,19 +145,19 @@ export default function DistrictUpdateView() {
 
   const validate = () => {
     const newErrors: {
-      division_id?: string;
+      district_id?: string;
       name?: string;
       status?: string;
     } = {};
 
-    if (!form.division_id) {
-      newErrors.division_id =
-        'Division is required';
+    if (!form.district_id) {
+      newErrors.district_id =
+        'District is required';
     }
 
     if (!form.name.trim()) {
       newErrors.name =
-        'District name is required';
+        'Sub District name is required';
     }
 
     if (
@@ -166,14 +176,15 @@ export default function DistrictUpdateView() {
   };
 
   // ----------------------------------------------------------------------
-  // UPDATE DISTRICT
+  // UPDATE SUB DISTRICT
   // ----------------------------------------------------------------------
 
   const handleSubmit = async () => {
     if (!id) {
       toast.error(
-        'District ID is missing'
+        'Sub District ID is missing'
       );
+
       return;
     }
 
@@ -182,12 +193,12 @@ export default function DistrictUpdateView() {
     }
 
     try {
-      await updateDistrict({
+      await updateSubDistrict({
         id: Number(id),
 
         data: {
-          division_id: Number(
-            form.division_id
+          district_id: Number(
+            form.district_id
           ),
 
           name: form.name.trim(),
@@ -197,17 +208,18 @@ export default function DistrictUpdateView() {
       }).unwrap();
 
       toast.success(
-        'District updated successfully!'
+        'Sub District updated successfully!'
       );
+
     } catch (error: any) {
       console.error(
-        'Update district error:',
+        'Update sub district error:',
         error
       );
 
       toast.error(
         error?.data?.message ||
-          'Failed to update district'
+          'Failed to update sub district'
       );
     }
   };
@@ -217,13 +229,13 @@ export default function DistrictUpdateView() {
   // ----------------------------------------------------------------------
 
   if (
-    isFetchingDistrict ||
-    isFetchingDivisions
+    isFetchingSubDistrict ||
+    isFetchingDistricts
   ) {
     return (
       <DashboardContent>
         <Typography>
-          Loading district...
+          Loading sub district...
         </Typography>
       </DashboardContent>
     );
@@ -234,13 +246,13 @@ export default function DistrictUpdateView() {
   // ----------------------------------------------------------------------
 
   if (
-    isDistrictError ||
-    !district
+    isSubDistrictError ||
+    !subDistrict
   ) {
     return (
       <DashboardContent>
         <Typography color="error">
-          Failed to load district.
+          Failed to load sub district.
         </Typography>
       </DashboardContent>
     );
@@ -257,7 +269,7 @@ export default function DistrictUpdateView() {
         variant="h4"
         sx={{ mb: 3 }}
       >
-        Update District
+        Update Sub District
       </Typography>
 
       <Card
@@ -266,42 +278,45 @@ export default function DistrictUpdateView() {
           maxWidth: 600,
         }}
       >
+
         <Stack spacing={2}>
 
           {/* ============================== */}
-          {/* Division */}
+          {/* District */}
           {/* ============================== */}
 
           <TextField
             select
-            name="division_id"
-            label="Division"
-            value={form.division_id}
+            name="district_id"
+            label="District"
+            value={form.district_id}
             onChange={handleChange}
-            error={!!errors.division_id}
+            error={!!errors.district_id}
             helperText={
-              errors.division_id
+              errors.district_id
             }
             fullWidth
           >
-            {divisions.map((division) => (
+
+            {districts.map((district) => (
               <MenuItem
-                key={division.id}
-                value={division.id}
+                key={district.id}
+                value={district.id}
               >
-                {division.name}
+                {district.name}
               </MenuItem>
             ))}
+
           </TextField>
 
           {/* ============================== */}
-          {/* District Name */}
+          {/* Sub District Name */}
           {/* ============================== */}
 
           <TextField
-            label="District Name"
+            label="Sub District Name"
             name="name"
-            placeholder="Example: Habiganj"
+            placeholder="Example: Nageshwari"
             value={form.name}
             onChange={handleChange}
             error={!!errors.name}
@@ -323,6 +338,7 @@ export default function DistrictUpdateView() {
             helperText={errors.status}
             fullWidth
           >
+
             <MenuItem value={1}>
               Active
             </MenuItem>
@@ -330,6 +346,7 @@ export default function DistrictUpdateView() {
             <MenuItem value={0}>
               Inactive
             </MenuItem>
+
           </TextField>
 
           {/* ============================== */}
@@ -344,15 +361,16 @@ export default function DistrictUpdateView() {
             onClick={handleSubmit}
             disabled={
               isUpdating ||
-              isFetchingDivisions
+              isFetchingDistricts
             }
           >
             {isUpdating
               ? 'Updating...'
-              : 'Update District'}
+              : 'Update Sub District'}
           </Button>
 
         </Stack>
+
       </Card>
 
       <ToastContainer

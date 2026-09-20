@@ -18,15 +18,16 @@ import { Iconify } from 'src/components/iconify';
 // TYPES
 // ----------------------------------------------------------------------
 
-type DistrictProps = {
+type SubDistrictProps = {
   id: number;
-  division_id: number;
+  district_id: number;
   name: string;
   status: number;
 
-  division?: {
+  // Nested District
+  district?: {
     id: number;
-    zone_id: number;
+    division_id: number;
     name: string;
     status: number;
     created_at?: string;
@@ -35,7 +36,7 @@ type DistrictProps = {
 };
 
 type UserTableRowProps = {
-  row: DistrictProps;
+  row: SubDistrictProps;
   selected: boolean;
   onSelectRow: () => void;
 };
@@ -81,7 +82,7 @@ export function UserTableRow({
     handleClosePopover();
 
     router.push(
-      `/hierarchy/edit-district/${row.id}`
+      `/hierarchy/edit-sub-district/${row.id}`
     );
   };
 
@@ -104,14 +105,14 @@ export function UserTableRow({
           />
         </TableCell>
 
-        {/* District Name */}
+        {/* Sub District Name */}
         <TableCell>
           {row.name}
         </TableCell>
 
-        {/* Division */}
+        {/* District */}
         <TableCell>
-          {row.division?.name || '-'}
+          {row.district?.name || '-'}
         </TableCell>
 
         {/* Status */}
