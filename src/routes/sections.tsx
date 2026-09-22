@@ -59,6 +59,7 @@ export const EditTerritory = lazy(() => import('../sections/hierarchy/territory/
 export const Area = lazy(()=> import('src/sections/hierarchy/area/view/area_view'));
 export const CreateArea = lazy(() => import('../sections/hierarchy/area/view/create_area'));
 export const EditArea = lazy(() => import('../sections/hierarchy/area/view/update_area'));
+export const AssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/hierarchy_assign'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -142,6 +143,7 @@ export const routesSection: RouteObject[] = [
       { path: 'hierarchy/area', element: <Area />},
       { path: 'hierarchy/create-area', element: <CreateArea />},
       { path: 'hierarchy/edit-area/:id', element: <EditArea />},
+      { path: 'assign-hierarchy', element: <AssignHierarchy />},
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
       

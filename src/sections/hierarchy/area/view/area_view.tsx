@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -25,13 +26,16 @@ import {
 import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
-// Area View
-// ----------------------------------------------------------------------
 
 export function AreaView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
+
+  // Territory filter
+  const [territoryId, setTerritoryId] = useState<number | undefined>(
+    undefined
+  );
 
   const router = useRouter();
 
@@ -43,7 +47,12 @@ export function AreaView() {
     data,
     isLoading,
     isError,
-  } = useGetAreasQuery();
+  } = useGetAreasQuery({
+    search: filterName,
+    territory_id: territoryId,
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+  });
 
   // ==============================
   // Areas
@@ -52,84 +61,11 @@ export function AreaView() {
   const areas = data?.data ?? [];
 
   // ==============================
-  // Search
-  // ==============================
-
-  const filteredAreas = areas.filter(
-    (area) => {
-      const areaName =
-        area.name?.toLowerCase() ?? '';
-
-      const territoryName =
-        area.territory?.name?.toLowerCase() ?? '';
-
-      const search =
-        filterName.toLowerCase();
-
-      return (
-        areaName.includes(search) ||
-        territoryName.includes(search)
-      );
-    }
-  );
-
-  // ==============================
-  // Sorting
-  // ==============================
-
-  const sortedAreas = [
-    ...filteredAreas,
-  ].sort((a, b) => {
-    let valueA = '';
-    let valueB = '';
-
-    // Sort by Territory
-    if (table.orderBy === 'territory') {
-      valueA =
-        a.territory?.name ?? '';
-
-      valueB =
-        b.territory?.name ?? '';
-    }
-
-    // Sort by Area Name / Status
-    else {
-      valueA = String(
-        a[
-          table.orderBy as keyof typeof a
-        ] ?? ''
-      );
-
-      valueB = String(
-        b[
-          table.orderBy as keyof typeof b
-        ] ?? ''
-      );
-    }
-
-    if (valueA < valueB) {
-      return table.order === 'asc'
-        ? -1
-        : 1;
-    }
-
-    if (valueA > valueB) {
-      return table.order === 'asc'
-        ? 1
-        : -1;
-    }
-
-    return 0;
-  });
-
-  // ==============================
   // Create
   // ==============================
 
   const handleCreate = () => {
-    router.push(
-      '/hierarchy/create-area'
-    );
+    router.push('/hierarchy/create-area');
   };
 
   // ==============================
@@ -167,9 +103,7 @@ export function AreaView() {
   return (
     <DashboardContent>
 
-      {/* ============================== */}
       {/* Header */}
-      {/* ============================== */}
 
       <Box
         sx={{
@@ -197,24 +131,17 @@ export function AreaView() {
         </Button>
       </Box>
 
-      {/* ============================== */}
-      {/* Table Card */}
-      {/* ============================== */}
-
       <Card>
 
-        {/* ============================== */}
         {/* Toolbar */}
-        {/* ============================== */}
 
         <UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(e) => {
-            setFilterName(
-              e.target.value
-            );
+            setFilterName(e.target.value);
 
+            // Search করলে first page-এ যাবে
             table.onResetPage();
           }}
         />
@@ -231,31 +158,22 @@ export function AreaView() {
               }}
             >
 
-              {/* ============================== */}
-              {/* Table Header */}
-              {/* ============================== */}
+              {/* Header */}
 
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={
-                  sortedAreas.length
-                }
-                numSelected={
-                  table.selected.length
-                }
+                rowCount={areas.length}
+                numSelected={table.selected.length}
                 onSort={table.onSort}
-
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    sortedAreas.map(
-                      (area) =>
-                        String(area.id)
+                    areas.map((area) =>
+                      String(area.id)
                     )
                   )
                 }
-
                 headLabel={[
                   {
                     id: 'name',
@@ -276,41 +194,30 @@ export function AreaView() {
                 ]}
               />
 
-              {/* ============================== */}
-              {/* Table Body */}
-              {/* ============================== */}
+              {/* Body */}
 
               <TableBody>
 
-                {sortedAreas.map(
-                  (area) => (
-                    <UserTableRow
-                      key={area.id}
-                      row={area}
-                      selected={table.selected.includes(
+                {areas.map((area) => (
+                  <UserTableRow
+                    key={area.id}
+                    row={area}
+                    selected={table.selected.includes(
+                      String(area.id)
+                    )}
+                    onSelectRow={() =>
+                      table.onSelectRow(
                         String(area.id)
-                      )}
-                      onSelectRow={() =>
-                        table.onSelectRow(
-                          String(area.id)
-                        )
-                      }
-                    />
-                  )
+                      )
+                    }
+                  />
+                ))}
+
+                {!areas.length && !isLoading && (
+                  <TableNoData
+                    searchQuery={filterName}
+                  />
                 )}
-
-                {/* ============================== */}
-                {/* No Data */}
-                {/* ============================== */}
-
-                {!sortedAreas.length &&
-                  !isLoading && (
-                    <TableNoData
-                      searchQuery={
-                        filterName
-                      }
-                    />
-                  )}
 
               </TableBody>
 
@@ -320,21 +227,32 @@ export function AreaView() {
 
         </Scrollbar>
 
+        {/* Pagination */}
+
+        <TablePagination
+          component="div"
+          page={table.page}
+          count={data?.meta.total ?? 0}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        />
+
       </Card>
 
     </DashboardContent>
   );
 }
 
-export default AreaView;
-
 // ----------------------------------------------------------------------
 // TABLE HOOK
 // ----------------------------------------------------------------------
 
 export function useTable() {
-  const [page, setPage] =
-    useState(0);
+  const [page, setPage] = useState(0);
 
   const [orderBy, setOrderBy] =
     useState('name');
@@ -359,9 +277,7 @@ export function useTable() {
         order === 'asc';
 
       setOrder(
-        isAsc
-          ? 'desc'
-          : 'asc'
+        isAsc ? 'desc' : 'asc'
       );
 
       setOrderBy(id);
@@ -380,10 +296,7 @@ export function useTable() {
         newSelecteds: string[]
       ) => {
         if (checked) {
-          setSelected(
-            newSelecteds
-          );
-
+          setSelected(newSelecteds);
           return;
         }
 
@@ -400,22 +313,17 @@ export function useTable() {
     useCallback(
       (inputValue: string) => {
         const newSelected =
-          selected.includes(
-            inputValue
-          )
+          selected.includes(inputValue)
             ? selected.filter(
                 (value) =>
-                  value !==
-                  inputValue
+                  value !== inputValue
               )
             : [
                 ...selected,
                 inputValue,
               ];
 
-        setSelected(
-          newSelected
-        );
+        setSelected(newSelected);
       },
       [selected]
     );
@@ -479,3 +387,5 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
+
+export default AreaView;

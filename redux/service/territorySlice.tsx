@@ -21,12 +21,25 @@ export interface Territory {
   id: number;
   sub_district_id: number;
   name: string;
+  code?: string;
   status: number;
   created_at?: string;
   updated_at?: string;
 
-  // Nested SubDistrict
   sub_district?: SubDistrict;
+}
+
+// ----------------------------------------------------------------------
+// Pagination Interface
+// ----------------------------------------------------------------------
+
+export interface Pagination {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number | null;
+  to: number | null;
 }
 
 // ----------------------------------------------------------------------
@@ -35,7 +48,15 @@ export interface Territory {
 
 export interface TerritoryResponse {
   status: number;
-  data: Territory[];
+  data: {
+    data: Territory[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+  };
 }
 
 // ----------------------------------------------------------------------
@@ -46,13 +67,28 @@ export const territorySlice = api.injectEndpoints({
   endpoints: (builder) => ({
 
     // ==============================================================
-    // Get All Territories
+    // Get Territories - Search + Filter + Pagination
     // ==============================================================
 
-    getTerritories: builder.query<TerritoryResponse, void>({
-      query: () => ({
+    getTerritories: builder.query<
+      TerritoryResponse,
+      {
+        page?: number;
+        per_page?: number;
+        search?: string;
+        sub_district_id?: number;
+      } | void
+    >({
+      query: (params) => ({
         url: "territories",
         method: "GET",
+
+        params: {
+          page: params?.page,
+          per_page: params?.per_page,
+          search: params?.search,
+          sub_district_id: params?.sub_district_id,
+        },
       }),
 
       transformResponse: (
@@ -91,6 +127,7 @@ export const territorySlice = api.injectEndpoints({
       {
         sub_district_id: number;
         name: string;
+        code?: string;
         status: number;
       }
     >({
@@ -118,6 +155,7 @@ export const territorySlice = api.injectEndpoints({
         data: {
           sub_district_id: number;
           name: string;
+          code?: string;
           status: number;
         };
       }

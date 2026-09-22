@@ -21,11 +21,25 @@ export interface Zone {
   id: number;
   region_id: number;
   name: string;
+  code?: string;
   status: number;
   created_at?: string;
   updated_at?: string;
 
-  region?: ZoneRegion;
+  region?: ZoneRegion | null;
+}
+
+// ----------------------------------------------------------------------
+// Pagination Interface
+// ----------------------------------------------------------------------
+
+export interface PaginationData {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number | null;
+  to: number | null;
 }
 
 // ----------------------------------------------------------------------
@@ -34,7 +48,32 @@ export interface Zone {
 
 export interface ZoneResponse {
   status: number;
-  data: Zone[];
+
+  data: PaginationData & {
+    data: Zone[];
+  };
+}
+
+// ----------------------------------------------------------------------
+// Query Parameters
+// ----------------------------------------------------------------------
+
+export interface ZoneQueryParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  region_id?: number;
+}
+
+// ----------------------------------------------------------------------
+// Zone Request
+// ----------------------------------------------------------------------
+
+export interface ZoneRequest {
+  region_id: number;
+  name: string;
+  code?: string;
+  status: number;
 }
 
 // ----------------------------------------------------------------------
@@ -43,19 +82,30 @@ export interface ZoneResponse {
 
 export const zoneSlice = api.injectEndpoints({
   endpoints: (builder) => ({
+
     // ------------------------------------------------------------
-    // Get All Zones
+    // Get Zones
     // ------------------------------------------------------------
 
-    getZones: builder.query<ZoneResponse, void>({
-      query: () => ({
+    getZones: builder.query<
+      ZoneResponse,
+      ZoneQueryParams | void
+    >({
+      query: (params) => ({
         url: 'zones',
         method: 'GET',
+
+        params: {
+          page: params?.page,
+          per_page: params?.per_page,
+          search: params?.search,
+          region_id: params?.region_id,
+        },
       }),
 
       transformResponse: (response: any): ZoneResponse => ({
         status: response.status,
-        data: response.data ?? [],
+        data: response.data,
       }),
 
       providesTags: ['zones'],
@@ -66,7 +116,10 @@ export const zoneSlice = api.injectEndpoints({
     // ------------------------------------------------------------
 
     getSingleZone: builder.query<Zone, number>({
-      query: (id) => `zones/${id}`,
+      query: (id) => ({
+        url: `zones/${id}`,
+        method: 'GET',
+      }),
 
       transformResponse: (response: any): Zone => {
         return response.data ?? response;
@@ -79,14 +132,7 @@ export const zoneSlice = api.injectEndpoints({
     // Create Zone
     // ------------------------------------------------------------
 
-    createZone: builder.mutation<
-      Zone,
-      {
-        region_id: number;
-        name: string;
-        status: number;
-      }
-    >({
+    createZone: builder.mutation<Zone, ZoneRequest>({
       query: (body) => ({
         url: 'zones',
         method: 'POST',
@@ -108,11 +154,7 @@ export const zoneSlice = api.injectEndpoints({
       Zone,
       {
         id: number;
-        data: {
-          region_id: number;
-          name: string;
-          status: number;
-        };
+        data: ZoneRequest;
       }
     >({
       query: ({ id, data }) => ({

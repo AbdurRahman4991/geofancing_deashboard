@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -8,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -30,7 +30,8 @@ import { useRouter } from 'src/routes/hooks';
 export function DistrictView() {
   const table = useTable();
 
-  const [filterName, setFilterName] = useState('');
+  const [filterName, setFilterName] =
+    useState('');
 
   const router = useRouter();
 
@@ -41,43 +42,32 @@ export function DistrictView() {
   const {
     data,
     isLoading,
+    isFetching,
     isError,
-  } = useGetDistrictsQuery();
+  } = useGetDistrictsQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName || undefined,
+  });
 
   // ==============================
   // Districts
   // ==============================
 
-  const districts = data?.data ?? [];
-
-  // ==============================
-  // Search
-  // ==============================
-
-  const filteredDistricts = districts.filter(
-    (district) => {
-      const districtName =
-        district.name?.toLowerCase() ?? '';
-
-      const divisionName =
-        district.division?.name?.toLowerCase() ?? '';
-
-      const search =
-        filterName.toLowerCase();
-
-      return (
-        districtName.includes(search) ||
-        divisionName.includes(search)
-      );
-    }
-  );
+  const districts =
+    data?.data?.data ?? [];
 
   // ==============================
   // Sorting
   // ==============================
+  //
+  // Search + pagination backend-e hocche.
+  // Sorting ekhane current page-er data-r
+  // upor hocche.
+  //
 
   const sortedDistricts = [
-    ...filteredDistricts,
+    ...districts,
   ].sort((a, b) => {
     let valueA = '';
     let valueB = '';
@@ -120,6 +110,16 @@ export function DistrictView() {
 
     return 0;
   });
+
+  // ==============================
+  // Pagination
+  // ==============================
+
+  const currentPage =
+    (data?.data?.current_page ?? 1) - 1;
+
+  const total =
+    data?.data?.total ?? 0;
 
   // ==============================
   // Create
@@ -214,14 +214,38 @@ export function DistrictView() {
               e.target.value
             );
 
+            // Search change hole
+            // first page-e jabe
             table.onResetPage();
           }}
         />
 
+        {/* ============================== */}
+        {/* Fetching */}
+        {/* ============================== */}
+
+        {isFetching && (
+          <Box
+            sx={{
+              px: 2,
+              py: 1,
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              Loading...
+            </Typography>
+          </Box>
+        )}
+
         <Scrollbar>
 
           <TableContainer
-            sx={{ overflow: 'unset' }}
+            sx={{
+              overflow: 'unset',
+            }}
           >
 
             <Table
@@ -309,7 +333,7 @@ export function DistrictView() {
                 {/* ============================== */}
 
                 {!sortedDistricts.length &&
-                  !isLoading && (
+                  !isFetching && (
                     <TableNoData
                       searchQuery={
                         filterName
@@ -324,6 +348,31 @@ export function DistrictView() {
           </TableContainer>
 
         </Scrollbar>
+
+        {/* ============================== */}
+        {/* Pagination */}
+        {/* ============================== */}
+
+        <TablePagination
+          component="div"
+          page={currentPage}
+          count={total}
+          rowsPerPage={
+            table.rowsPerPage
+          }
+          onPageChange={
+            table.onChangePage
+          }
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            50,
+          ]}
+        />
 
       </Card>
 
@@ -484,4 +533,3 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
-

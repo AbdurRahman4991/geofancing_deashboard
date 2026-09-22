@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -42,43 +43,26 @@ export function TerritoryView() {
   const {
     data,
     isLoading,
+    isFetching,
     isError,
-  } = useGetTerritoriesQuery();
+  } = useGetTerritoriesQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName || undefined,
+  });
 
   // ==============================
   // Territories
   // ==============================
 
-  const territories = data?.data ?? [];
-
-  // ==============================
-  // Search
-  // ==============================
-
-  const filteredTerritories = territories.filter(
-    (territory) => {
-      const territoryName =
-        territory.name?.toLowerCase() ?? '';
-
-      const subDistrictName =
-        territory.sub_district?.name?.toLowerCase() ?? '';
-
-      const search =
-        filterName.toLowerCase();
-
-      return (
-        territoryName.includes(search) ||
-        subDistrictName.includes(search)
-      );
-    }
-  );
+  const territories = data?.data?.data ?? [];
 
   // ==============================
   // Sorting
   // ==============================
 
   const sortedTerritories = [
-    ...filteredTerritories,
+    ...territories,
   ].sort((a, b) => {
     let valueA = '';
     let valueB = '';
@@ -86,25 +70,25 @@ export function TerritoryView() {
     // Sort by Sub District
     if (table.orderBy === 'sub_district') {
       valueA =
-        a.sub_district?.name ?? '';
+        a.sub_district?.name?.toLowerCase() ?? '';
 
       valueB =
-        b.sub_district?.name ?? '';
+        b.sub_district?.name?.toLowerCase() ?? '';
     }
 
-    // Sort by Territory Name / Status
+    // Sort by other fields
     else {
       valueA = String(
         a[
           table.orderBy as keyof typeof a
         ] ?? ''
-      );
+      ).toLowerCase();
 
       valueB = String(
         b[
           table.orderBy as keyof typeof b
         ] ?? ''
-      );
+      ).toLowerCase();
     }
 
     if (valueA < valueB) {
@@ -159,6 +143,16 @@ export function TerritoryView() {
       </DashboardContent>
     );
   }
+
+  // ==============================
+  // Pagination
+  // ==============================
+
+  const currentPage =
+    (data?.data?.current_page ?? 1) - 1;
+
+  const total =
+    data?.data?.total ?? 0;
 
   // ==============================
   // UI
@@ -222,8 +216,31 @@ export function TerritoryView() {
         <Scrollbar>
 
           <TableContainer
-            sx={{ overflow: 'unset' }}
+            sx={{
+              overflow: 'unset',
+              position: 'relative',
+            }}
           >
+
+            {/* ============================== */}
+            {/* Fetching */}
+            {/* ============================== */}
+
+            {isFetching && !isLoading && (
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  Loading...
+                </Typography>
+              </Box>
+            )}
 
             <Table
               sx={{
@@ -311,7 +328,7 @@ export function TerritoryView() {
                 {/* ============================== */}
 
                 {!sortedTerritories.length &&
-                  !isLoading && (
+                  !isFetching && (
                     <TableNoData
                       searchQuery={
                         filterName
@@ -326,6 +343,32 @@ export function TerritoryView() {
           </TableContainer>
 
         </Scrollbar>
+
+        {/* ============================== */}
+        {/* Pagination */}
+        {/* ============================== */}
+
+        <TablePagination
+          component="div"
+          page={currentPage}
+          count={total}
+          rowsPerPage={
+            table.rowsPerPage
+          }
+          onPageChange={
+            table.onChangePage
+          }
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            50,
+          ]}
+        />
 
       </Card>
 

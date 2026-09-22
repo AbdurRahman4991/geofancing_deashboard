@@ -1,5 +1,17 @@
-
 import { api } from "../api/baseApi";
+
+// ----------------------------------------------------------------------
+// Division Interface
+// ----------------------------------------------------------------------
+
+export interface Division {
+  id: number;
+  zone_id: number;
+  name: string;
+  status: number;
+  created_at?: string;
+  updated_at?: string;
+}
 
 // ----------------------------------------------------------------------
 // District Interface
@@ -9,19 +21,26 @@ export interface District {
   id: number;
   division_id: number;
   name: string;
+  code?: string;
   status: number;
   created_at?: string;
   updated_at?: string;
 
   // Nested Division
-  division?: {
-    id: number;
-    zone_id: number;
-    name: string;
-    status: number;
-    created_at?: string;
-    updated_at?: string;
-  };
+  division?: Division;
+}
+
+// ----------------------------------------------------------------------
+// Pagination Interface
+// ----------------------------------------------------------------------
+
+export interface PaginationData {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+  from: number | null;
+  to: number | null;
 }
 
 // ----------------------------------------------------------------------
@@ -30,7 +49,21 @@ export interface District {
 
 export interface DistrictResponse {
   status: number;
-  data: District[];
+
+  data: PaginationData & {
+    data: District[];
+  };
+}
+
+// ----------------------------------------------------------------------
+// District Query Parameters
+// ----------------------------------------------------------------------
+
+export interface DistrictQueryParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  division_id?: number;
 }
 
 // ----------------------------------------------------------------------
@@ -41,13 +74,23 @@ export const districtSlice = api.injectEndpoints({
   endpoints: (builder) => ({
 
     // ==============================================================
-    // Get All Districts
+    // Get Districts - Search + Filter + Pagination
     // ==============================================================
 
-    getDistricts: builder.query<DistrictResponse, void>({
-      query: () => ({
+    getDistricts: builder.query<
+      DistrictResponse,
+      DistrictQueryParams | void
+    >({
+      query: (params) => ({
         url: "districts",
         method: "GET",
+
+        params: {
+          page: params?.page,
+          per_page: params?.per_page,
+          search: params?.search,
+          division_id: params?.division_id,
+        },
       }),
 
       transformResponse: (
@@ -86,6 +129,7 @@ export const districtSlice = api.injectEndpoints({
       {
         division_id: number;
         name: string;
+        code?: string;
         status: number;
       }
     >({
@@ -113,6 +157,7 @@ export const districtSlice = api.injectEndpoints({
         data: {
           division_id: number;
           name: string;
+          code?: string;
           status: number;
         };
       }
@@ -156,4 +201,3 @@ export const {
   useUpdateDistrictMutation,
   useDeleteDistrictMutation,
 } = districtSlice;
-

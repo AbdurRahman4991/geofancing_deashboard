@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -31,47 +32,37 @@ export function ZoneView() {
 
   const router = useRouter();
 
-  // ==============================
+  // ============================================================
   // API
-  // ==============================
+  // ============================================================
 
   const {
     data,
     isLoading,
+    isFetching,
     isError,
-  } = useGetZonesQuery();
-
-  // ==============================
-  // Zones
-  // ==============================
-
-  const zones = data?.data ?? [];
-
-  // ==============================
-  // Search
-  // ==============================
-
-  const filteredZones = zones.filter((zone) => {
-    const zoneName =
-      zone.name?.toLowerCase() ?? '';
-
-    const regionName =
-      zone.region?.name?.toLowerCase() ?? '';
-
-    const search =
-      filterName.toLowerCase();
-
-    return (
-      zoneName.includes(search) ||
-      regionName.includes(search)
-    );
+  } = useGetZonesQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName || undefined,
   });
 
-  // ==============================
-  // Sorting
-  // ==============================
+  // ============================================================
+  // Zones
+  // ============================================================
 
-  const sortedZones = [...filteredZones].sort((a, b) => {
+  const zones = data?.data?.data ?? [];
+
+  // ============================================================
+  // Sorting
+  // ============================================================
+  // NOTE:
+  // This sorting works only on the current API page.
+  // If you want database/server-side sorting later,
+  // we can add sort_by and sort_order to Laravel API.
+  // ============================================================
+
+  const sortedZones = [...zones].sort((a, b) => {
     let valueA = '';
     let valueB = '';
 
@@ -99,17 +90,27 @@ export function ZoneView() {
     return 0;
   });
 
-  // ==============================
+  // ============================================================
+  // Pagination
+  // ============================================================
+
+  const currentPage =
+    (data?.data?.current_page ?? 1) - 1;
+
+  const total =
+    data?.data?.total ?? 0;
+
+  // ============================================================
   // Create
-  // ==============================
+  // ============================================================
 
   const handleCreate = () => {
     router.push('/hierarchy/create-zone');
   };
 
-  // ==============================
+  // ============================================================
   // Loading
-  // ==============================
+  // ============================================================
 
   if (isLoading) {
     return (
@@ -121,9 +122,9 @@ export function ZoneView() {
     );
   }
 
-  // ==============================
+  // ============================================================
   // Error
-  // ==============================
+  // ============================================================
 
   if (isError) {
     return (
@@ -135,16 +136,16 @@ export function ZoneView() {
     );
   }
 
-  // ==============================
+  // ============================================================
   // UI
-  // ==============================
+  // ============================================================
 
   return (
     <DashboardContent>
 
-      {/* ============================== */}
+      {/* ====================================================== */}
       {/* Header */}
-      {/* ============================== */}
+      {/* ====================================================== */}
 
       <Box
         sx={{
@@ -172,21 +173,23 @@ export function ZoneView() {
         </Button>
       </Box>
 
-      {/* ============================== */}
+      {/* ====================================================== */}
       {/* Table Card */}
-      {/* ============================== */}
+      {/* ====================================================== */}
 
       <Card>
 
-        {/* ============================== */}
+        {/* ==================================================== */}
         {/* Toolbar */}
-        {/* ============================== */}
+        {/* ==================================================== */}
 
         <UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(e) => {
             setFilterName(e.target.value);
+
+            // Search করলে প্রথম page-এ চলে যাবে
             table.onResetPage();
           }}
         />
@@ -197,9 +200,9 @@ export function ZoneView() {
           >
             <Table sx={{ minWidth: 900 }}>
 
-              {/* ============================== */}
+              {/* ================================================= */}
               {/* Table Header */}
-              {/* ============================== */}
+              {/* ================================================= */}
 
               <UserTableHead
                 order={table.order}
@@ -235,11 +238,12 @@ export function ZoneView() {
                 ]}
               />
 
-              {/* ============================== */}
+              {/* ================================================= */}
               {/* Table Body */}
-              {/* ============================== */}
+              {/* ================================================= */}
 
               <TableBody>
+
                 {sortedZones.map((zone) => (
                   <UserTableRow
                     key={zone.id}
@@ -255,18 +259,62 @@ export function ZoneView() {
                   />
                 ))}
 
+                {/* ================================================= */}
                 {/* No Data */}
+                {/* ================================================= */}
 
-                {!sortedZones.length && !isLoading && (
+                {!sortedZones.length && !isFetching && (
                   <TableNoData
                     searchQuery={filterName}
                   />
                 )}
+
               </TableBody>
 
             </Table>
           </TableContainer>
         </Scrollbar>
+
+        {/* ====================================================== */}
+        {/* Pagination */}
+        {/* ====================================================== */}
+
+        <TablePagination
+          component="div"
+          page={currentPage}
+          count={total}
+          rowsPerPage={table.rowsPerPage}
+          onPageChange={table.onChangePage}
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            50,
+          ]}
+        />
+
+        {/* ====================================================== */}
+        {/* Fetching */}
+        {/* ====================================================== */}
+
+        {isFetching && (
+          <Box
+            sx={{
+              px: 2,
+              pb: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              Loading...
+            </Typography>
+          </Box>
+        )}
 
       </Card>
 
@@ -276,9 +324,9 @@ export function ZoneView() {
 
 export default ZoneView;
 
-// ----------------------------------------------------------------------
+// ======================================================================
 // TABLE HOOK
-// ----------------------------------------------------------------------
+// ======================================================================
 
 export function useTable() {
   const [page, setPage] = useState(0);
@@ -295,9 +343,9 @@ export function useTable() {
   const [order, setOrder] =
     useState<'asc' | 'desc'>('asc');
 
-  // ==============================
+  // ============================================================
   // Sort
-  // ==============================
+  // ============================================================
 
   const onSort = useCallback(
     (id: string) => {
@@ -314,9 +362,9 @@ export function useTable() {
     [order, orderBy]
   );
 
-  // ==============================
+  // ============================================================
   // Select All
-  // ==============================
+  // ============================================================
 
   const onSelectAllRows = useCallback(
     (
@@ -333,35 +381,39 @@ export function useTable() {
     []
   );
 
-  // ==============================
+  // ============================================================
   // Select Row
-  // ==============================
+  // ============================================================
 
   const onSelectRow = useCallback(
     (inputValue: string) => {
       const newSelected =
         selected.includes(inputValue)
           ? selected.filter(
-              (value) => value !== inputValue
+              (value) =>
+                value !== inputValue
             )
-          : [...selected, inputValue];
+          : [
+              ...selected,
+              inputValue,
+            ];
 
       setSelected(newSelected);
     },
     [selected]
   );
 
-  // ==============================
+  // ============================================================
   // Reset Page
-  // ==============================
+  // ============================================================
 
   const onResetPage = useCallback(() => {
     setPage(0);
   }, []);
 
-  // ==============================
+  // ============================================================
   // Change Page
-  // ==============================
+  // ============================================================
 
   const onChangePage = useCallback(
     (
@@ -373,9 +425,9 @@ export function useTable() {
     []
   );
 
-  // ==============================
+  // ============================================================
   // Change Rows Per Page
-  // ==============================
+  // ============================================================
 
   const onChangeRowsPerPage =
     useCallback(

@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -25,6 +26,8 @@ import {
 import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
+// SubDistrict View
+// ----------------------------------------------------------------------
 
 export function SubDistrictView() {
   const table = useTable();
@@ -40,43 +43,27 @@ export function SubDistrictView() {
   const {
     data,
     isLoading,
+    isFetching,
     isError,
-  } = useGetSubDistrictsQuery();
+  } = useGetSubDistrictsQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName || undefined,
+  });
 
   // ==============================
   // SubDistricts
   // ==============================
 
-  const subDistricts = data?.data ?? [];
-
-  // ==============================
-  // Search
-  // ==============================
-
-  const filteredSubDistricts = subDistricts.filter(
-    (subDistrict) => {
-      const subDistrictName =
-        subDistrict.name?.toLowerCase() ?? '';
-
-      const districtName =
-        subDistrict.district?.name?.toLowerCase() ?? '';
-
-      const search =
-        filterName.toLowerCase();
-
-      return (
-        subDistrictName.includes(search) ||
-        districtName.includes(search)
-      );
-    }
-  );
+  const subDistricts =
+    data?.data?.data ?? [];
 
   // ==============================
   // Sorting
   // ==============================
 
   const sortedSubDistricts = [
-    ...filteredSubDistricts,
+    ...subDistricts,
   ].sort((a, b) => {
     let valueA = '';
     let valueB = '';
@@ -84,10 +71,10 @@ export function SubDistrictView() {
     // Sort by District
     if (table.orderBy === 'district') {
       valueA =
-        a.district?.name ?? '';
+        a.district?.name?.toLowerCase() ?? '';
 
       valueB =
-        b.district?.name ?? '';
+        b.district?.name?.toLowerCase() ?? '';
     }
 
     // Sort by SubDistrict Name / Status
@@ -96,13 +83,13 @@ export function SubDistrictView() {
         a[
           table.orderBy as keyof typeof a
         ] ?? ''
-      );
+      ).toLowerCase();
 
       valueB = String(
         b[
           table.orderBy as keyof typeof b
         ] ?? ''
-      );
+      ).toLowerCase();
     }
 
     if (valueA < valueB) {
@@ -157,6 +144,16 @@ export function SubDistrictView() {
       </DashboardContent>
     );
   }
+
+  // ==============================
+  // Pagination
+  // ==============================
+
+  const currentPage =
+    (data?.data?.current_page ?? 1) - 1;
+
+  const total =
+    data?.data?.total ?? 0;
 
   // ==============================
   // UI
@@ -220,8 +217,31 @@ export function SubDistrictView() {
         <Scrollbar>
 
           <TableContainer
-            sx={{ overflow: 'unset' }}
+            sx={{
+              overflow: 'unset',
+              position: 'relative',
+            }}
           >
+
+            {/* ============================== */}
+            {/* Fetching */}
+            {/* ============================== */}
+
+            {isFetching && !isLoading && (
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  Loading...
+                </Typography>
+              </Box>
+            )}
 
             <Table
               sx={{
@@ -309,7 +329,7 @@ export function SubDistrictView() {
                 {/* ============================== */}
 
                 {!sortedSubDistricts.length &&
-                  !isLoading && (
+                  !isFetching && (
                     <TableNoData
                       searchQuery={
                         filterName
@@ -324,6 +344,31 @@ export function SubDistrictView() {
           </TableContainer>
 
         </Scrollbar>
+
+        {/* ============================== */}
+        {/* Pagination */}
+        {/* ============================== */}
+
+        <TablePagination
+          component="div"
+          page={currentPage}
+          count={total}
+          rowsPerPage={
+            table.rowsPerPage
+          }
+          onPageChange={
+            table.onChangePage
+          }
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            50,
+          ]}
+        />
 
       </Card>
 

@@ -72,6 +72,11 @@ export const navData = [
 
     children: [
       {
+        title: 'Assign Hierarchy',
+        path: '/assign-hierarchy',
+        icon: icon('ic-analytics'),
+      },
+      {
         title: 'Country',
         path: '/hierarchy/country',
         icon: icon('ic-analytics'),

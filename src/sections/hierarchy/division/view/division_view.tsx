@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -8,6 +7,7 @@ import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -19,7 +19,9 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { UserTableToolbar } from '../user-table-toolbar';
 
-import { useGetDivisionsQuery } from '../../../../../redux/service/divisionSlice';
+import {
+  useGetDivisionsQuery,
+} from '../../../../../redux/service/divisionSlice';
 
 import { useRouter } from 'src/routes/hooks';
 
@@ -28,7 +30,8 @@ import { useRouter } from 'src/routes/hooks';
 export function DivisionView() {
   const table = useTable();
 
-  const [filterName, setFilterName] = useState('');
+  const [filterName, setFilterName] =
+    useState('');
 
   const router = useRouter();
 
@@ -39,87 +42,94 @@ export function DivisionView() {
   const {
     data,
     isLoading,
+    isFetching,
     isError,
-  } = useGetDivisionsQuery();
+  } = useGetDivisionsQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName || undefined,
+  });
 
   // ==============================
   // Divisions
   // ==============================
 
-  const divisions = data?.data ?? [];
-
-  // ==============================
-  // Search
-  // ==============================
-
-  const filteredDivisions = divisions.filter((division) => {
-    const divisionName =
-      division.name?.toLowerCase() ?? '';
-
-    const zoneName =
-      division.zone?.name?.toLowerCase() ?? '';
-
-    const search =
-      filterName.toLowerCase();
-
-    return (
-      divisionName.includes(search) ||
-      zoneName.includes(search)
-    );
-  });
+  const divisions =
+    data?.data?.data ?? [];
 
   // ==============================
   // Sorting
   // ==============================
+  //
+  // Search + Pagination backend-e hocche.
+  // Sorting ekhane current page-er data-r
+  // upor hocche.
+  //
 
-  const sortedDivisions = [...filteredDivisions].sort(
-    (a, b) => {
-      let valueA = '';
-      let valueB = '';
+  const sortedDivisions =
+    [...divisions].sort(
+      (a, b) => {
+        let valueA = '';
+        let valueB = '';
 
-      // Sort by Zone
-      if (table.orderBy === 'zone') {
-        valueA = a.zone?.name ?? '';
-        valueB = b.zone?.name ?? '';
+        // Sort by Zone
+        if (table.orderBy === 'zone') {
+          valueA =
+            a.zone?.name ?? '';
+
+          valueB =
+            b.zone?.name ?? '';
+        }
+
+        // Sort by Division Name / Status
+        else {
+          valueA = String(
+            a[
+              table.orderBy as keyof typeof a
+            ] ?? ''
+          );
+
+          valueB = String(
+            b[
+              table.orderBy as keyof typeof b
+            ] ?? ''
+          );
+        }
+
+        if (valueA < valueB) {
+          return table.order === 'asc'
+            ? -1
+            : 1;
+        }
+
+        if (valueA > valueB) {
+          return table.order === 'asc'
+            ? 1
+            : -1;
+        }
+
+        return 0;
       }
+    );
 
-      // Sort by Division Name / Status
-      else {
-        valueA = String(
-          a[
-            table.orderBy as keyof typeof a
-          ] ?? ''
-        );
+  // ==============================
+  // Pagination
+  // ==============================
 
-        valueB = String(
-          b[
-            table.orderBy as keyof typeof b
-          ] ?? ''
-        );
-      }
+  const currentPage =
+    (data?.data?.current_page ?? 1) - 1;
 
-      if (valueA < valueB) {
-        return table.order === 'asc'
-          ? -1
-          : 1;
-      }
-
-      if (valueA > valueB) {
-        return table.order === 'asc'
-          ? 1
-          : -1;
-      }
-
-      return 0;
-    }
-  );
+  const total =
+    data?.data?.total ?? 0;
 
   // ==============================
   // Create
   // ==============================
 
   const handleCreate = () => {
-    router.push('/hierarchy/create-division');
+    router.push(
+      '/hierarchy/create-division'
+    );
   };
 
   // ==============================
@@ -198,21 +208,54 @@ export function DivisionView() {
         {/* ============================== */}
 
         <UserTableToolbar
-          numSelected={table.selected.length}
+          numSelected={
+            table.selected.length
+          }
           filterName={filterName}
           onFilterName={(e) => {
-            setFilterName(e.target.value);
+            setFilterName(
+              e.target.value
+            );
+
+            // Search change hole
+            // first page-e jabe
             table.onResetPage();
           }}
         />
 
+        {/* ============================== */}
+        {/* Fetching */}
+        {/* ============================== */}
+
+        {isFetching && (
+          <Box
+            sx={{
+              px: 2,
+              py: 1,
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              Loading...
+            </Typography>
+          </Box>
+        )}
+
         <Scrollbar>
 
           <TableContainer
-            sx={{ overflow: 'unset' }}
+            sx={{
+              overflow: 'unset',
+            }}
           >
 
-            <Table sx={{ minWidth: 900 }}>
+            <Table
+              sx={{
+                minWidth: 900,
+              }}
+            >
 
               {/* ============================== */}
               {/* Table Header */}
@@ -234,7 +277,9 @@ export function DivisionView() {
                     checked,
                     sortedDivisions.map(
                       (division) =>
-                        String(division.id)
+                        String(
+                          division.id
+                        )
                     )
                   )
                 }
@@ -271,11 +316,15 @@ export function DivisionView() {
                       key={division.id}
                       row={division}
                       selected={table.selected.includes(
-                        String(division.id)
+                        String(
+                          division.id
+                        )
                       )}
                       onSelectRow={() =>
                         table.onSelectRow(
-                          String(division.id)
+                          String(
+                            division.id
+                          )
                         )
                       }
                     />
@@ -287,7 +336,7 @@ export function DivisionView() {
                 {/* ============================== */}
 
                 {!sortedDivisions.length &&
-                  !isLoading && (
+                  !isFetching && (
                     <TableNoData
                       searchQuery={
                         filterName
@@ -302,6 +351,31 @@ export function DivisionView() {
           </TableContainer>
 
         </Scrollbar>
+
+        {/* ============================== */}
+        {/* Pagination */}
+        {/* ============================== */}
+
+        <TablePagination
+          component="div"
+          page={currentPage}
+          count={total}
+          rowsPerPage={
+            table.rowsPerPage
+          }
+          onPageChange={
+            table.onChangePage
+          }
+          onRowsPerPageChange={
+            table.onChangeRowsPerPage
+          }
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            50,
+          ]}
+        />
 
       </Card>
 
@@ -366,6 +440,7 @@ export function useTable() {
           setSelected(
             newSelecteds
           );
+
           return;
         }
 
