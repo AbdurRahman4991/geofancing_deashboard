@@ -7,6 +7,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 import CompanyUpdateView from 'src/sections/company/view/company-update-view';
+import { ProtectedRoute } from '../../src/routes/components/protected-route';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,9 @@ export const EditTerritory = lazy(() => import('../sections/hierarchy/territory/
 export const Area = lazy(()=> import('src/sections/hierarchy/area/view/area_view'));
 export const CreateArea = lazy(() => import('../sections/hierarchy/area/view/create_area'));
 export const EditArea = lazy(() => import('../sections/hierarchy/area/view/update_area'));
-export const AssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/hierarchy_assign'));
+export const AssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/view_hierarchy_assign'));
+export const CreateAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/create_hierarchy_assign'));
+export const EditAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/update_hierarchy_assign'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -86,69 +89,175 @@ const renderFallback = () => (
   </Box>
 );
 
+// export const routesSection: RouteObject[] = [
+//   {
+//     element: (
+//       <DashboardLayout>
+//         <Suspense fallback={renderFallback()}>
+//           <Outlet />
+//         </Suspense>
+//       </DashboardLayout>
+//     ),
+//     children: [
+//       { index: true, element: <Navigate to="/sign-in" replace /> },
+//       { path: 'roles', element: <RolePage />},
+//       { path: 'roles/create-role', element: <CreateRole />},   
+//       { path: 'roles/edit-role/:id', element: <EditRole /> },
+//       { path: 'roles/assign-role', element: <AssignRole />},
+//       { path: 'permissions', element: <Permissions />},
+//       { path: 'permissions/create-permission', element: <CreatePermission />},   
+//       { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
+//       { path: 'permissions/assign-permission', element: <AssignPermission /> },
+//       { path: 'dashboard', element: <DashboardPage /> },
+//       { path: 'user', element: <UserPage /> },
+//       { path: 'user/create-user', element: <CreateUser />},   
+//       { path: 'user/edit-user/:id', element: <EditUser /> },
+//       { path: 'company', element: <CompanyPage /> },
+//       { path: 'company/create-company', element: <CompanyCreate /> },    
+//       { path: 'company/edit-company/:id', element: <CompanyEdit /> },
+//       { path: 'geofench', element: <GeoenchPage />}, 
+//       { path: 'geofench/create-geofench', element: <GeofenchCreate /> },    
+//       { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> }, 
+//       { path: 'attendance', element: <AttendancePage />},
+//       { path: 'attendance-role', element: <AttendanceRolePage />},
+//       { path: 'employee-location', element: <EmployeeTrackingPage />}, 
+//       { path: 'employee-location-map', element: <EmployeeTrackingMap />},
+//       { path: 'hierarchy/country', element: <Country />},
+//       { path: 'hierarchy/create-country', element: <CreateCountry />},
+//       { path: 'hierarchy/edit-country/:id', element: <EditCountry />},
+//       { path: 'hierarchy/region', element: <Region />},
+//       { path: 'hierarchy/create-region', element: <CreateRegion />},
+//       { path: 'hierarchy/edit-region/:id', element: <EditRegion />},
+//       { path: 'hierarchy/zone', element: <Zone />},
+//       { path: 'hierarchy/create-zone', element: <CreateZone />},
+//       { path: 'hierarchy/edit-zone/:id', element: <EditZone />},
+//       { path: 'hierarchy/division', element: <Division />},
+//       { path: 'hierarchy/create-division', element: <CreateDivision />},
+//       { path: 'hierarchy/edit-division/:id', element: <EditDivision />},
+//       { path: 'hierarchy/district', element: <District />},
+//       { path: 'hierarchy/create-district', element: <CreateDistrict />},
+//       { path: 'hierarchy/edit-district/:id', element: <EditDistrict />},
+//       { path: 'hierarchy/sub-district', element: <SubDistrict />},
+//       { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict />},
+//       { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict />},
+//       { path: 'hierarchy/territory', element: <Territory />},
+//       { path: 'hierarchy/create-territory', element: <CreateTerritory />},
+//       { path: 'hierarchy/edit-territory/:id', element: <EditTerritory />},
+//       { path: 'hierarchy/area', element: <Area />},
+//       { path: 'hierarchy/create-area', element: <CreateArea />},
+//       { path: 'hierarchy/edit-area/:id', element: <EditArea />},
+//       { path: 'assign-hierarchy', element: <AssignHierarchy />},
+//       { path: 'create/assign-hierarchy', element: <CreateAssignHierarchy />},
+//       { path: 'edit/assign-hierarchy/:id', element: <EditAssignHierarchy />},
+//       { path: 'products', element: <ProductsPage /> },
+//       { path: 'blog', element: <BlogPage /> },
+      
+//     ],
+//   },
+//   {
+//     path: 'sign-in',
+//     element: (
+//       <AuthLayout>
+//         <SignInPage />
+//       </AuthLayout>
+//     ),
+//   },
+//   {
+//     path: '404',
+//     element: <Page404 />,
+//   },
+//   { path: '*', element: <Page404 /> },
+// ];
+
 export const routesSection: RouteObject[] = [
   {
-    element: (
-      <DashboardLayout>
-        <Suspense fallback={renderFallback()}>
-          <Outlet />
-        </Suspense>
-      </DashboardLayout>
-    ),
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <Navigate to="/sign-in" replace /> },
-      { path: 'roles', element: <RolePage />},
-      { path: 'roles/create-role', element: <CreateRole />},   
-      { path: 'roles/edit-role/:id', element: <EditRole /> },
-      { path: 'roles/assign-role', element: <AssignRole />},
-      { path: 'permissions', element: <Permissions />},
-      { path: 'permissions/create-permission', element: <CreatePermission />},   
-      { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
-      { path: 'permissions/assign-permission', element: <AssignPermission /> },
-      { path: 'dashboard', element: <DashboardPage /> },
-      { path: 'user', element: <UserPage /> },
-      { path: 'user/create-user', element: <CreateUser />},   
-      { path: 'user/edit-user/:id', element: <EditUser /> },
-      { path: 'company', element: <CompanyPage /> },
-      { path: 'company/create-company', element: <CompanyCreate /> },    
-      { path: 'company/edit-company/:id', element: <CompanyEdit /> },
-      { path: 'geofench', element: <GeoenchPage />}, 
-      { path: 'geofench/create-geofench', element: <GeofenchCreate /> },    
-      { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> }, 
-      { path: 'attendance', element: <AttendancePage />},
-      { path: 'attendance-role', element: <AttendanceRolePage />},
-      { path: 'employee-location', element: <EmployeeTrackingPage />}, 
-      { path: 'employee-location-map', element: <EmployeeTrackingMap />},
-      { path: 'hierarchy/country', element: <Country />},
-      { path: 'hierarchy/create-country', element: <CreateCountry />},
-      { path: 'hierarchy/edit-country/:id', element: <EditCountry />},
-      { path: 'hierarchy/region', element: <Region />},
-      { path: 'hierarchy/create-region', element: <CreateRegion />},
-      { path: 'hierarchy/edit-region/:id', element: <EditRegion />},
-      { path: 'hierarchy/zone', element: <Zone />},
-      { path: 'hierarchy/create-zone', element: <CreateZone />},
-      { path: 'hierarchy/edit-zone/:id', element: <EditZone />},
-      { path: 'hierarchy/division', element: <Division />},
-      { path: 'hierarchy/create-division', element: <CreateDivision />},
-      { path: 'hierarchy/edit-division/:id', element: <EditDivision />},
-      { path: 'hierarchy/district', element: <District />},
-      { path: 'hierarchy/create-district', element: <CreateDistrict />},
-      { path: 'hierarchy/edit-district/:id', element: <EditDistrict />},
-      { path: 'hierarchy/sub-district', element: <SubDistrict />},
-      { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict />},
-      { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict />},
-      { path: 'hierarchy/territory', element: <Territory />},
-      { path: 'hierarchy/create-territory', element: <CreateTerritory />},
-      { path: 'hierarchy/edit-territory/:id', element: <EditTerritory />},
-      { path: 'hierarchy/area', element: <Area />},
-      { path: 'hierarchy/create-area', element: <CreateArea />},
-      { path: 'hierarchy/edit-area/:id', element: <EditArea />},
-      { path: 'assign-hierarchy', element: <AssignHierarchy />},
-      { path: 'products', element: <ProductsPage /> },
-      { path: 'blog', element: <BlogPage /> },
-      
+      {
+        element: (
+          <DashboardLayout>
+            <Suspense fallback={renderFallback()}>
+              <Outlet />
+            </Suspense>
+          </DashboardLayout>
+        ),
+        children: [
+          { index: true, element: <Navigate to="/dashboard" replace /> },
+
+          { path: 'roles', element: <RolePage /> },
+          { path: 'roles/create-role', element: <CreateRole /> },
+          { path: 'roles/edit-role/:id', element: <EditRole /> },
+          { path: 'roles/assign-role', element: <AssignRole /> },
+
+          { path: 'permissions', element: <Permissions /> },
+          { path: 'permissions/create-permission', element: <CreatePermission /> },
+          { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
+          { path: 'permissions/assign-permission', element: <AssignPermission /> },
+
+          { path: 'dashboard', element: <DashboardPage /> },
+
+          { path: 'user', element: <UserPage /> },
+          { path: 'user/create-user', element: <CreateUser /> },
+          { path: 'user/edit-user/:id', element: <EditUser /> },
+
+          { path: 'company', element: <CompanyPage /> },
+          { path: 'company/create-company', element: <CompanyCreate /> },
+          { path: 'company/edit-company/:id', element: <CompanyEdit /> },
+
+          { path: 'geofench', element: <GeoenchPage /> },
+          { path: 'geofench/create-geofench', element: <GeofenchCreate /> },
+          { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> },
+
+          { path: 'attendance', element: <AttendancePage /> },
+          { path: 'attendance-role', element: <AttendanceRolePage /> },
+
+          { path: 'employee-location', element: <EmployeeTrackingPage /> },
+          { path: 'employee-location-map', element: <EmployeeTrackingMap /> },
+
+          { path: 'hierarchy/country', element: <Country /> },
+          { path: 'hierarchy/create-country', element: <CreateCountry /> },
+          { path: 'hierarchy/edit-country/:id', element: <EditCountry /> },
+
+          { path: 'hierarchy/region', element: <Region /> },
+          { path: 'hierarchy/create-region', element: <CreateRegion /> },
+          { path: 'hierarchy/edit-region/:id', element: <EditRegion /> },
+
+          { path: 'hierarchy/zone', element: <Zone /> },
+          { path: 'hierarchy/create-zone', element: <CreateZone /> },
+          { path: 'hierarchy/edit-zone/:id', element: <EditZone /> },
+
+          { path: 'hierarchy/division', element: <Division /> },
+          { path: 'hierarchy/create-division', element: <CreateDivision /> },
+          { path: 'hierarchy/edit-division/:id', element: <EditDivision /> },
+
+          { path: 'hierarchy/district', element: <District /> },
+          { path: 'hierarchy/create-district', element: <CreateDistrict /> },
+          { path: 'hierarchy/edit-district/:id', element: <EditDistrict /> },
+
+          { path: 'hierarchy/sub-district', element: <SubDistrict /> },
+          { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict /> },
+          { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict /> },
+
+          { path: 'hierarchy/territory', element: <Territory /> },
+          { path: 'hierarchy/create-territory', element: <CreateTerritory /> },
+          { path: 'hierarchy/edit-territory/:id', element: <EditTerritory /> },
+
+          { path: 'hierarchy/area', element: <Area /> },
+          { path: 'hierarchy/create-area', element: <CreateArea /> },
+          { path: 'hierarchy/edit-area/:id', element: <EditArea /> },
+
+          { path: 'assign-hierarchy', element: <AssignHierarchy /> },
+          { path: 'create/assign-hierarchy', element: <CreateAssignHierarchy /> },
+          { path: 'edit/assign-hierarchy/:id', element: <EditAssignHierarchy /> },
+
+          { path: 'products', element: <ProductsPage /> },
+          { path: 'blog', element: <BlogPage /> },
+        ],
+      },
     ],
   },
+
+  // Public route
   {
     path: 'sign-in',
     element: (
@@ -157,9 +266,16 @@ export const routesSection: RouteObject[] = [
       </AuthLayout>
     ),
   },
+
+  // Public route
   {
     path: '404',
     element: <Page404 />,
   },
-  { path: '*', element: <Page404 /> },
+
+  // Public route
+  {
+    path: '*',
+    element: <Page404 />,
+  },
 ];

@@ -21,7 +21,8 @@ import { toast } from 'react-toastify';
 export type UserProps = {
   id: number;
   // company_id: number;
-  user_id: number;
+  firm_name: string;
+  area_id: number;
   latitude: number;
   longitude: number;
   radius: number;
@@ -90,9 +91,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
             {/* <TableCell>{row.company?.company_name ?? '-'}</TableCell> */}
 
-            <TableCell>{row.user?.employee?.name ?? '-'}</TableCell>
+            <TableCell>{row.firm_name}</TableCell>
 
-            <TableCell>{row.user?.employee?.employee_id ?? '-'}</TableCell>
+            {/* <TableCell>{row.user?.employee?.employee_id ?? '-'}</TableCell> */}
 
             <TableCell>{row.latitude}</TableCell>
 

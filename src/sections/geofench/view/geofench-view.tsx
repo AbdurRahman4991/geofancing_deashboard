@@ -95,8 +95,8 @@ const total = data?.pagination?.total ?? 0;
                 }
 
                 headLabel={[
-                    { id: "name", label: "Employee name" },
-                    { id: "employee_id", label: "Code" },
+                    { id: "name", label: "Area name" },
+                    // { id: "employee_id", label: "Code" },
                     { id: "latitude", label: "Latitude" },
                     { id: "longitude", label: "Longitude" },
                     { id: "radius", label: "Radius (M)" },

@@ -18,7 +18,7 @@ export interface User {
 export interface Geofence {
   id: number;
   company_id: number;
-  user_id: number;
+  area_id: number;
   latitude: string;
   longitude: string;
   radius: number;
@@ -31,7 +31,7 @@ export interface Geofence {
 
 export interface GeofenceRequest {
   company_id: number;
-  user_id: number;
+  area_id: number;
   latitude: string;
   longitude: string;
   radius: number;
@@ -61,17 +61,17 @@ export const geofenceSlice = api.injectEndpoints({
       {
         page?: number;
         per_page?: number;
-        user_id?: number | string;
+        area_id?: number | string;
         search?: string;
         company_id?: number | string;
       }
     >({
-      query: ({ page = 1, per_page = 10, user_id = "", search= "", company_id="", }) => ({
+      query: ({ page = 1, per_page = 10, area_id = "", search= "", company_id="", }) => ({
         url: "geofences",
         params: {
           page,
           per_page,
-          user_id,
+          area_id,
           search,
           company_id
           

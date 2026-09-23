@@ -4,42 +4,32 @@ import { api } from '../api/baseApi';
 // Employee Hierarchy Assignment Interface
 // ======================================================================
 
+// ======================================================================
+// Employee Hierarchy Assignment - GET/List Response
+// ======================================================================
+
 export interface EmployeeHierarchyAssignment {
   id: number;
 
-  user_id: number;
+  user: string | null;
 
-  country_id?: number | null;
-  region_id?: number | null;
-  zone_id?: number | null;
-  division_id?: number | null;
-  district_id?: number | null;
-  sub_district_id?: number | null;
-  territory_id?: number | null;
-  area_id?: number | null;
+  country: string | null;
+  region: string | null;
+  zone: string | null;
+  division: string | null;
+  district: string | null;
+  sub_district: string | null;
+  territory: string | null;
+  area: string | null;
 
-  effective_from?: string | null;
+  effective_from: string | null;
+  effective_to: string | null;
 
   is_current: boolean;
 
-  assigned_by?: number | null;
+  assigned_by: string | null;
 
-  reason?: string | null;
-
-  created_at?: string;
-  updated_at?: string;
-
-  // Optional relationships
-  user?: any;
-  country?: any;
-  region?: any;
-  zone?: any;
-  division?: any;
-  district?: any;
-  sub_district?: any;
-  territory?: any;
-  area?: any;
-  assigned_by_user?: any;
+  reason: string | null;
 }
 
 // ======================================================================
@@ -188,7 +178,7 @@ export const employeeHierarchyAssignmentSlice =
           number
         >({
           query: (id) => ({
-            url: `assign-hierarchy/${id}`,
+            url: `employee-hierarchy-assignments/${id}`,
             method: 'GET',
           }),
 
@@ -212,7 +202,7 @@ export const employeeHierarchyAssignmentSlice =
         AssignUserRequest
       >({
         query: (body) => ({
-          url: 'assign-hierarchy',
+          url: 'employee-hierarchy-assignments',
           method: 'POST',
           body,
         }),
@@ -243,7 +233,7 @@ export const employeeHierarchyAssignmentSlice =
           }
         >({
           query: ({ id, data }) => ({
-            url: `assign-hierarchy/${id}`,
+            url: `employee-hierarchy-assignments/${id}`,
             method: 'PUT',
             body: data,
           }),
@@ -266,7 +256,7 @@ export const employeeHierarchyAssignmentSlice =
       deleteEmployeeHierarchyAssignment:
         builder.mutation<void, number>({
           query: (id) => ({
-            url: `assign-hierarchy/${id}`,
+            url: `employee-hierarchy-assignments/${id}`,
             method: 'DELETE',
           }),
 

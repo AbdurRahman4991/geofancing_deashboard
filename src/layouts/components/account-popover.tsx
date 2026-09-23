@@ -14,6 +14,8 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter, usePathname } from 'src/routes/hooks';
 
+import { useLogoutMutation } from '../../../redux/api/authApi';
+
 import { _myAccount } from 'src/_mock';
 
 // ----------------------------------------------------------------------
@@ -27,16 +29,25 @@ export type AccountPopoverProps = IconButtonProps & {
   }[];
 };
 
-export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
+export function AccountPopover({
+  data = [],
+  sx,
+  ...other
+}: AccountPopoverProps) {
   const router = useRouter();
-
   const pathname = usePathname();
 
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  const [openPopover, setOpenPopover] =
+    useState<HTMLButtonElement | null>(null);
 
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
+  const [logout, { isLoading }] = useLogoutMutation();
+
+  const handleOpenPopover = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      setOpenPopover(event.currentTarget);
+    },
+    []
+  );
 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
@@ -49,6 +60,34 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     },
     [handleClosePopover, router]
   );
+
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+
+      // Clear authentication data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      // Close popover
+      handleClosePopover();
+
+      // Go to login page
+      router.push('/sign-in');
+    } catch (error) {
+      console.error('Logout failed:', error);
+
+      // Optional:
+      // Backend logout fail হলেও local session clear করতে চাইলে
+      // নিচের code ব্যবহার করতে পারেন।
+
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+
+      handleClosePopover();
+      router.push('/sign-in');
+    }
+  };
 
   return (
     <>
@@ -64,7 +103,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         }}
         {...other}
       >
-        <Avatar src={_myAccount.photoURL} alt={_myAccount.displayName} sx={{ width: 1, height: 1 }}>
+        <Avatar
+          src={_myAccount.photoURL}
+          alt={_myAccount.displayName}
+          sx={{ width: 1, height: 1 }}
+        >
           {_myAccount.displayName.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
@@ -73,8 +116,14 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
         slotProps={{
           paper: {
             sx: { width: 200 },
@@ -86,7 +135,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
             {_myAccount?.displayName}
           </Typography>
 
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          <Typography
+            variant="body2"
+            sx={{ color: 'text.secondary' }}
+            noWrap
+          >
             {_myAccount?.email}
           </Typography>
         </Box>
@@ -105,7 +158,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
               gap: 2,
               borderRadius: 0.75,
               color: 'text.secondary',
-              '&:hover': { color: 'text.primary' },
+
+              '&:hover': {
+                color: 'text.primary',
+              },
+
               [`&.${menuItemClasses.selected}`]: {
                 color: 'text.primary',
                 bgcolor: 'action.selected',
@@ -129,11 +186,19 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
-            Logout
+          <Button
+            fullWidth
+            color="error"
+            size="medium"
+            variant="text"
+            onClick={handleLogout}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging out...' : 'Logout'}
           </Button>
         </Box>
       </Popover>
     </>
   );
 }
+
