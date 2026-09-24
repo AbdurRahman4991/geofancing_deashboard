@@ -63,6 +63,13 @@ export const permissionSlice = api.injectEndpoints({
       invalidatesTags: ["permission", "role"],
     }),
 
+
+    getRolePermissions: builder.query({
+    query: (roleId) => `roles/${roleId}/permissions`,
+    transformResponse: (response: any) => response.data,
+    providesTags: ["permission"],
+    }),
+
   }),
 });
 
@@ -74,4 +81,5 @@ export const {
   useUpdatePermissionMutation,
   useDeletePermissionMutation,
   useAssignPermissionMutation,
+  useGetRolePermissionsQuery,
 } = permissionSlice;

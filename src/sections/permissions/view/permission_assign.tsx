@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Box,
@@ -26,6 +26,7 @@ import { useGetRolesQuery } from "../../../../redux/service/roleSlice";
 
 import {
   useGetPermissionGroupsQuery,
+  useGetRolePermissionsQuery,
   useAssignPermissionMutation,
 } from "../../../../redux/service/permissionSlice";
 
@@ -51,6 +52,25 @@ export default function AssignPermissionView() {
     data: permissionGroups,
     isLoading: permissionLoading,
   } = useGetPermissionGroupsQuery();
+
+  const {
+  data: rolePermissions,
+  isLoading: rolePermissionLoading,
+} = useGetRolePermissionsQuery(roleId, {
+  skip: !roleId,
+});
+
+useEffect(() => {
+  if (rolePermissions) {
+    const permissionIds = rolePermissions.map(
+      (permission: any) => permission.id
+    );
+
+    setSelectedPermissions(permissionIds);
+  } else {
+    setSelectedPermissions([]);
+  }
+}, [rolePermissions]);
 
   // ==========================
   // Mutation
@@ -114,7 +134,7 @@ export default function AssignPermissionView() {
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Assign Permission
+        Assign Permission ?
       </Typography>
 
       <Card
