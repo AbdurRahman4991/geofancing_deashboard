@@ -32,7 +32,8 @@ export const GeofenchCreate = lazy(() => import('src/sections/geofench/view/crea
 export const GeofenchEdit = lazy(() => import('src/sections/geofench/view/update_geofench'));
 export const AttendancePage = lazy(()=>import('src/pages/attendance'))
 export const AttendanceRolePage = lazy(()=>import('src/pages/attendance-roles'))
-export const AttendanceRoleCreate = lazy(()=>import('src/pages/attendance-roles'))
+export const AttendanceRoleCreate = lazy(()=>import('src/sections/attendance-roles/view/create-attendance-role'))
+export const AttendanceRoleEdit = lazy(()=>import('src/sections/attendance-roles/view/update-attendance-role'))
 export const EmployeeTrackingPage = lazy(()=>import('src/pages/employee-location'))
 export const EmployeeTrackingMap = lazy(()=> import('src/pages/employee-location-map-view'))
 // Hiearchy
@@ -89,85 +90,6 @@ const renderFallback = () => (
   </Box>
 );
 
-// export const routesSection: RouteObject[] = [
-//   {
-//     element: (
-//       <DashboardLayout>
-//         <Suspense fallback={renderFallback()}>
-//           <Outlet />
-//         </Suspense>
-//       </DashboardLayout>
-//     ),
-//     children: [
-//       { index: true, element: <Navigate to="/sign-in" replace /> },
-//       { path: 'roles', element: <RolePage />},
-//       { path: 'roles/create-role', element: <CreateRole />},   
-//       { path: 'roles/edit-role/:id', element: <EditRole /> },
-//       { path: 'roles/assign-role', element: <AssignRole />},
-//       { path: 'permissions', element: <Permissions />},
-//       { path: 'permissions/create-permission', element: <CreatePermission />},   
-//       { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
-//       { path: 'permissions/assign-permission', element: <AssignPermission /> },
-//       { path: 'dashboard', element: <DashboardPage /> },
-//       { path: 'user', element: <UserPage /> },
-//       { path: 'user/create-user', element: <CreateUser />},   
-//       { path: 'user/edit-user/:id', element: <EditUser /> },
-//       { path: 'company', element: <CompanyPage /> },
-//       { path: 'company/create-company', element: <CompanyCreate /> },    
-//       { path: 'company/edit-company/:id', element: <CompanyEdit /> },
-//       { path: 'geofench', element: <GeoenchPage />}, 
-//       { path: 'geofench/create-geofench', element: <GeofenchCreate /> },    
-//       { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> }, 
-//       { path: 'attendance', element: <AttendancePage />},
-//       { path: 'attendance-role', element: <AttendanceRolePage />},
-//       { path: 'employee-location', element: <EmployeeTrackingPage />}, 
-//       { path: 'employee-location-map', element: <EmployeeTrackingMap />},
-//       { path: 'hierarchy/country', element: <Country />},
-//       { path: 'hierarchy/create-country', element: <CreateCountry />},
-//       { path: 'hierarchy/edit-country/:id', element: <EditCountry />},
-//       { path: 'hierarchy/region', element: <Region />},
-//       { path: 'hierarchy/create-region', element: <CreateRegion />},
-//       { path: 'hierarchy/edit-region/:id', element: <EditRegion />},
-//       { path: 'hierarchy/zone', element: <Zone />},
-//       { path: 'hierarchy/create-zone', element: <CreateZone />},
-//       { path: 'hierarchy/edit-zone/:id', element: <EditZone />},
-//       { path: 'hierarchy/division', element: <Division />},
-//       { path: 'hierarchy/create-division', element: <CreateDivision />},
-//       { path: 'hierarchy/edit-division/:id', element: <EditDivision />},
-//       { path: 'hierarchy/district', element: <District />},
-//       { path: 'hierarchy/create-district', element: <CreateDistrict />},
-//       { path: 'hierarchy/edit-district/:id', element: <EditDistrict />},
-//       { path: 'hierarchy/sub-district', element: <SubDistrict />},
-//       { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict />},
-//       { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict />},
-//       { path: 'hierarchy/territory', element: <Territory />},
-//       { path: 'hierarchy/create-territory', element: <CreateTerritory />},
-//       { path: 'hierarchy/edit-territory/:id', element: <EditTerritory />},
-//       { path: 'hierarchy/area', element: <Area />},
-//       { path: 'hierarchy/create-area', element: <CreateArea />},
-//       { path: 'hierarchy/edit-area/:id', element: <EditArea />},
-//       { path: 'assign-hierarchy', element: <AssignHierarchy />},
-//       { path: 'create/assign-hierarchy', element: <CreateAssignHierarchy />},
-//       { path: 'edit/assign-hierarchy/:id', element: <EditAssignHierarchy />},
-//       { path: 'products', element: <ProductsPage /> },
-//       { path: 'blog', element: <BlogPage /> },
-      
-//     ],
-//   },
-//   {
-//     path: 'sign-in',
-//     element: (
-//       <AuthLayout>
-//         <SignInPage />
-//       </AuthLayout>
-//     ),
-//   },
-//   {
-//     path: '404',
-//     element: <Page404 />,
-//   },
-//   { path: '*', element: <Page404 /> },
-// ];
 
 export const routesSection: RouteObject[] = [
   {
@@ -210,6 +132,8 @@ export const routesSection: RouteObject[] = [
 
           { path: 'attendance', element: <AttendancePage /> },
           { path: 'attendance-role', element: <AttendanceRolePage /> },
+          { path: 'create/attendance-role', element: <AttendanceRoleCreate /> },
+          { path: 'edit/attendance-role/:id', element: <AttendanceRoleEdit /> },
 
           { path: 'employee-location', element: <EmployeeTrackingPage /> },
           { path: 'employee-location-map', element: <EmployeeTrackingMap /> },

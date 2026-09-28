@@ -24,7 +24,8 @@ export const api = createApi({
   endpoints: () => ({}),
   tagTypes: [
     "company", "employees", "geofences", "attendance", "employeeLocations","role", "permission", "user", "users",
-    "countries","regions", "zones", "divisions", "districts", "subDistricts", "territories", "areas","employeeHierarchyAssignments"
+    "countries","regions", "zones", "divisions", "districts", "subDistricts", "territories", "areas","employeeHierarchyAssignments",
+    "AttendanceRole"
   ],
 });
 

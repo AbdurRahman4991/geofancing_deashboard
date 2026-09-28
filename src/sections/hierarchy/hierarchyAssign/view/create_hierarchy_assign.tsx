@@ -391,50 +391,50 @@ const areas = areaData?.data ?? [];
       return;
     }
 
-    if (!countryId) {
-      toast.error('Please select country');
-      return;
-    }
+    // if (!countryId) {
+    //   toast.error('Please select country');
+    //   return;
+    // }
 
-    if (!regionId) {
-      toast.error('Please select region');
-      return;
-    }
+    // if (!regionId) {
+    //   toast.error('Please select region');
+    //   return;
+    // }
 
-    if (!zoneId) {
-      toast.error('Please select zone');
-      return;
-    }
+    // if (!zoneId) {
+    //   toast.error('Please select zone');
+    //   return;
+    // }
 
-    if (!divisionId) {
-      toast.error('Please select division');
-      return;
-    }
+    // if (!divisionId) {
+    //   toast.error('Please select division');
+    //   return;
+    // }
 
-    if (!districtId) {
-      toast.error('Please select district');
-      return;
-    }
+    // if (!districtId) {
+    //   toast.error('Please select district');
+    //   return;
+    // }
 
-    if (!subDistrictId) {
-      toast.error('Please select sub district');
-      return;
-    }
+    // if (!subDistrictId) {
+    //   toast.error('Please select sub district');
+    //   return;
+    // }
 
-    if (!territoryId) {
-      toast.error('Please select territory');
-      return;
-    }
+    // if (!territoryId) {
+    //   toast.error('Please select territory');
+    //   return;
+    // }
 
-    if (!areaId) {
-      toast.error('Please select area');
-      return;
-    }
+    // if (!areaId) {
+    //   toast.error('Please select area');
+    //   return;
+    // }
 
-    if (!effectiveFrom) {
-      toast.error('Please select effective date');
-      return;
-    }
+    // if (!effectiveFrom) {
+    //   toast.error('Please select effective date');
+    //   return;
+    // }
 
     try {
 

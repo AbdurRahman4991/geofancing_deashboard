@@ -1,177 +1,492 @@
+// import { useState, useCallback } from 'react';
+
+// import Box from '@mui/material/Box';
+// import Avatar from '@mui/material/Avatar';
+// import Popover from '@mui/material/Popover';
+// import TableRow from '@mui/material/TableRow';
+// import Checkbox from '@mui/material/Checkbox';
+// import MenuList from '@mui/material/MenuList';
+// import TableCell from '@mui/material/TableCell';
+// import IconButton from '@mui/material/IconButton';
+// import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+// import { useRouter } from 'src/routes/hooks';
+
+// import { Label } from 'src/components/label';
+// import { Iconify } from 'src/components/iconify';
+// import { useDeleteEmployeeMutation } from '../../../redux/service/employeeSlice';
+// import { toast } from 'react-toastify';
+
+// // ----------------------------------------------------------------------
+
+// export type UserProps = {
+//   id: number;
+//   name: string;
+//   employee_id: string;
+//   phone: string;
+//   company_id?: string;
+//   nature_of_employment: string;
+//   department?: string;
+//   unit?: string;
+//   date_of_joining: string;
+//   division?: string;
+//   designation?: string;
+//   reporting_person?: string;
+//   email?: string;
+//   dob?: string;
+//   section_info?: string;
+//   status: string;
+// };
+
+
+
+
+// type UserTableRowProps = {
+//   row: UserProps;
+//   selected: boolean;
+//   onSelectRow: () => void;
+// };
+
+// export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+//   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+//    const router = useRouter();
+//    const [deleteUser] = useDeleteEmployeeMutation();
+
+//   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+//     setOpenPopover(event.currentTarget);
+//   }, []);
+
+//   const handleClosePopover = useCallback(() => {
+//     setOpenPopover(null);
+//   }, []);
+
+//       const handleDelete = async () => {
+//       if (!confirm("Are you sure you want to delete this company?")) return;
+  
+//       try {
+//         await deleteUser(row.id).unwrap();
+//         toast.success("Company deleted successfully");
+//       } catch (err) {
+//         toast.error("Failed to delete company");
+//       }
+  
+//       handleClosePopover();
+//     };
+
+//   return (
+//     <>
+//       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
+//          <TableCell padding="checkbox">
+//           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
+//         </TableCell>
+// {/*
+//         <TableCell component="th" scope="row">
+//           <Box
+//             sx={{
+//               gap: 2,
+//               display: 'flex',
+//               alignItems: 'center',
+//             }}
+//           >
+//             <Avatar alt={row.name} src={row.avatarUrl} />
+//             {row.name}
+//           </Box>
+//         </TableCell>
+
+//         <TableCell>{row.company}</TableCell>
+
+//         <TableCell>{row.role}</TableCell>
+
+//         <TableCell align="center">
+//           {row.isVerified ? (
+//             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+//           ) : (
+//             '-'
+//           )}
+//         </TableCell>
+
+//         <TableCell>
+//           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+//         </TableCell>
+
+//         <TableCell align="right">
+//           <IconButton onClick={handleOpenPopover}>
+//             <Iconify icon="eva:more-vertical-fill" />
+//           </IconButton>
+//         </TableCell> */}
+//         <TableCell component="th" scope="row">
+//   {row.name}
+// </TableCell>
+
+// <TableCell>{row.employee_id}</TableCell>
+// <TableCell>{row.phone}</TableCell>
+// <TableCell>{row.company_id}</TableCell>
+// <TableCell>{row.nature_of_employment}</TableCell>
+// <TableCell>{row.department}</TableCell>
+// <TableCell>{row.unit}</TableCell>
+// <TableCell>{row.date_of_joining}</TableCell>
+// <TableCell>{row.designation}</TableCell>
+// <TableCell>{row.email}</TableCell>
+
+// <TableCell>
+//   <Label color={row.status === "active" ? "success" : "error"}>
+//     {row.status}
+//   </Label>
+// </TableCell>
+//         <TableCell align="right">
+//           <IconButton onClick={handleOpenPopover}>
+//             <Iconify icon="eva:more-vertical-fill" />
+//           </IconButton>
+//         </TableCell>
+
+//       </TableRow>
+
+//       <Popover
+//         open={!!openPopover}
+//         anchorEl={openPopover}
+//         onClose={handleClosePopover}
+//         anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+//         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+//       >
+//         <MenuList
+//           disablePadding
+//           sx={{
+//             p: 0.5,
+//             gap: 0.5,
+//             width: 140,
+//             display: 'flex',
+//             flexDirection: 'column',
+//             [`& .${menuItemClasses.root}`]: {
+//               px: 1,
+//               gap: 2,
+//               borderRadius: 0.75,
+//               [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
+//             },
+//           }}
+//         >
+//           <MenuItem  onClick={() => router.push(`edit-user/${row.id}`)}>
+//             <Iconify icon="solar:pen-bold" />
+//             Edit
+//           </MenuItem>
+
+//           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+//             <Iconify icon="solar:trash-bin-trash-bold" />
+//             Delete
+//           </MenuItem>
+//         </MenuList>
+//       </Popover>
+//     </>
+//   );
+// }
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import MenuItem, {
+  menuItemClasses,
+} from '@mui/material/MenuItem';
+
 import { useRouter } from 'src/routes/hooks';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { useDeleteEmployeeMutation } from '../../../redux/service/employeeSlice';
+
 import { toast } from 'react-toastify';
 
+// Change this to your attendance rule delete API
+// import {
+//   useDeleteAttendanceRuleMutation,
+// } from '../../../redux/service/attendanceRuleSlice';
+
+// ----------------------------------------------------------------------
+// TYPES
 // ----------------------------------------------------------------------
 
 export type UserProps = {
   id: number;
-  name: string;
-  employee_id: string;
-  phone: string;
-  company_id?: string;
-  nature_of_employment: string;
-  department?: string;
-  unit?: string;
-  date_of_joining: string;
-  division?: string;
-  designation?: string;
-  reporting_person?: string;
-  email?: string;
-  dob?: string;
-  section_info?: string;
-  status: string;
+
+  user_id: number | null;
+
+  company_id: number;
+
+  office_in_time: string;
+
+  office_out_time: string;
+
+  weekend_holidays: string;
+
+  government_holidays: string;
+
+  is_active: boolean;
+
+  created_at: string;
+
+  updated_at: string;
+
+  company?: {
+    id: number;
+    company_name: string;
+    avatar_url?: string;
+    media?: unknown[];
+  } | null;
+
+  user?: unknown | null;
 };
 
-
-
+// ----------------------------------------------------------------------
 
 type UserTableRowProps = {
   row: UserProps;
+
   selected: boolean;
+
   onSelectRow: () => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-   const router = useRouter();
-   const [deleteUser] = useDeleteEmployeeMutation();
+// ----------------------------------------------------------------------
 
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
+export function UserTableRow({
+  row,
+  selected,
+  onSelectRow,
+}: UserTableRowProps) {
+  const [openPopover, setOpenPopover] =
+    useState<HTMLButtonElement | null>(null);
+
+  const router = useRouter();
+
+  // const [deleteAttendanceRule] =
+  //   useDeleteAttendanceRuleMutation();
+
+  // ============================================================
+  // OPEN MENU
+  // ============================================================
+
+  const handleOpenPopover = useCallback(
+    (
+      event: React.MouseEvent<HTMLButtonElement>
+    ) => {
+      setOpenPopover(event.currentTarget);
+    },
+    []
+  );
+
+  // ============================================================
+  // CLOSE MENU
+  // ============================================================
 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
 
-      const handleDelete = async () => {
-      if (!confirm("Are you sure you want to delete this company?")) return;
-  
-      try {
-        await deleteUser(row.id).unwrap();
-        toast.success("Company deleted successfully");
-      } catch (err) {
-        toast.error("Failed to delete company");
-      }
-  
-      handleClosePopover();
-    };
+  // ============================================================
+  // DELETE
+  // ============================================================
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        'Are you sure you want to delete this attendance role?'
+      )
+    ) {
+      return;
+    }
+
+    // try {
+    //   await deleteAttendanceRule(row.id).unwrap();
+
+    //   toast.success(
+    //     'Attendance role deleted successfully'
+    //   );
+    // } catch (err) {
+    //   toast.error(
+    //     'Failed to delete attendance role'
+    //   );
+    // }
+
+    handleClosePopover();
+  };
+
+  // ============================================================
+  // EDIT
+  // ============================================================
+
+  const handleEdit = () => {
+    router.push(
+      `/edit/attendance-role/${row.id}`
+    );
+
+    handleClosePopover();
+  };
+
+  // ============================================================
+  // RENDER
+  // ============================================================
 
   return (
     <>
-      <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-         <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
+      <TableRow
+        hover
+        tabIndex={-1}
+        role="checkbox"
+        selected={selected}
+      >
+        {/* ======================================================
+            CHECKBOX
+        ====================================================== */}
+
+        <TableCell padding="checkbox">
+          <Checkbox
+            disableRipple
+            checked={selected}
+            onChange={onSelectRow}
+          />
         </TableCell>
-{/*
-        <TableCell component="th" scope="row">
+
+        {/* ======================================================
+            COMPANY
+        ====================================================== */}
+
+        <TableCell
+          component="th"
+          scope="row"
+        >
           <Box
             sx={{
-              gap: 2,
               display: 'flex',
               alignItems: 'center',
+              gap: 1,
             }}
           >
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
+            {row.company?.company_name ?? '-'}
           </Box>
         </TableCell>
 
-        <TableCell>{row.company}</TableCell>
-
-        <TableCell>{row.role}</TableCell>
-
-        <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )}
-        </TableCell>
+        {/* ======================================================
+            OFFICE IN TIME
+        ====================================================== */}
 
         <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+          {row.office_in_time ?? '-'}
         </TableCell>
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell> */}
-        <TableCell component="th" scope="row">
-  {row.name}
-</TableCell>
+        {/* ======================================================
+            OFFICE OUT TIME
+        ====================================================== */}
 
-<TableCell>{row.employee_id}</TableCell>
-<TableCell>{row.phone}</TableCell>
-<TableCell>{row.company_id}</TableCell>
-<TableCell>{row.nature_of_employment}</TableCell>
-<TableCell>{row.department}</TableCell>
-<TableCell>{row.unit}</TableCell>
-<TableCell>{row.date_of_joining}</TableCell>
-<TableCell>{row.designation}</TableCell>
-<TableCell>{row.email}</TableCell>
+        <TableCell>
+          {row.office_out_time ?? '-'}
+        </TableCell>
 
-<TableCell>
-  <Label color={row.status === "active" ? "success" : "error"}>
-    {row.status}
-  </Label>
-</TableCell>
+        {/* ======================================================
+            WEEKEND HOLIDAYS
+        ====================================================== */}
+
+        <TableCell>
+          {row.weekend_holidays ?? '-'}
+        </TableCell>
+
+        {/* ======================================================
+            GOVERNMENT HOLIDAYS
+        ====================================================== */}
+
+        <TableCell>
+          {row.government_holidays ?? '-'}
+        </TableCell>
+
+        {/* ======================================================
+            STATUS
+        ====================================================== */}
+
+        <TableCell>
+          <Label
+            color={
+              row.is_active
+                ? 'success'
+                : 'error'
+            }
+          >
+            {row.is_active
+              ? 'Active'
+              : 'Inactive'}
+          </Label>
+        </TableCell>
+
+        {/* ======================================================
+            ACTION
+        ====================================================== */}
+
         <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
+          <IconButton
+            onClick={handleOpenPopover}
+          >
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
-
       </TableRow>
+
+      {/* ========================================================
+          ACTION POPOVER
+      ======================================================== */}
 
       <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
       >
         <MenuList
           disablePadding
           sx={{
             p: 0.5,
             gap: 0.5,
-            width: 140,
+            width: 160,
             display: 'flex',
             flexDirection: 'column',
+
             [`& .${menuItemClasses.root}`]: {
               px: 1,
               gap: 2,
               borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
+
+              [`&.${menuItemClasses.selected}`]: {
+                bgcolor:
+                  'action.selected',
+              },
             },
           }}
         >
-          <MenuItem  onClick={() => router.push(`edit-user/${row.id}`)}>
+          {/* EDIT */}
+
+          <MenuItem onClick={handleEdit}>
             <Iconify icon="solar:pen-bold" />
+
             Edit
           </MenuItem>
 
-          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+          {/* DELETE */}
+
+          {/* <MenuItem
+            onClick={handleDelete}
+            sx={{
+              color: 'error.main',
+            }}
+          >
             <Iconify icon="solar:trash-bin-trash-bold" />
+
             Delete
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </Popover>
     </>

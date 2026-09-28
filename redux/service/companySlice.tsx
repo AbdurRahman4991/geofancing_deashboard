@@ -7,6 +7,11 @@ export interface Company {
   email: string
   phone: string
   address: string
+  package: string
+  details: string
+  billing_cycle: string
+  status: string
+
 }
 
 export interface CompanyRequest {
@@ -15,6 +20,10 @@ export interface CompanyRequest {
   email: string
   phone: string
   address: string
+  package: string
+  details: string
+  billing_cycle: string
+  status: string
 }
 
 export const companySlice = api.injectEndpoints({
