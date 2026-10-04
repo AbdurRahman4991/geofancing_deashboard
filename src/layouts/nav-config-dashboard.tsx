@@ -48,10 +48,14 @@ export const navData = [
       icon: icon('ic-analytics'),
     },
     ],
-  },
-  
+  },  
   {
     title: 'Employee',
+    path: '/employee',
+    icon: icon('ic-user'),
+  },
+  {
+    title: 'User',
     path: '/user',
     icon: icon('ic-user'),
   },

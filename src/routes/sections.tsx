@@ -13,7 +13,10 @@ import { ProtectedRoute } from '../../src/routes/components/protected-route';
 
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
-export const UserPage = lazy(() => import('src/pages/user'));
+export const Employee = lazy(() => import('src/pages/user'));
+export const CreateEmployee = lazy(() => import('src/sections/user/view/create_user'));
+export const EditEmployee = lazy(() => import('src/sections/user/view/update_user'));
+export const User = lazy(() => import('src/pages/user'));
 export const CreateUser = lazy(() => import('src/sections/user/view/create_user'));
 export const EditUser = lazy(() => import('src/sections/user/view/update_user'));
 export const CompanyPage = lazy(()=>import('src/pages/company'));
@@ -118,7 +121,11 @@ export const routesSection: RouteObject[] = [
 
           { path: 'dashboard', element: <DashboardPage /> },
 
-          { path: 'user', element: <UserPage /> },
+          { path: 'employee', element: <Employee /> },
+          { path: 'user/create-user', element: <CreateEmployee /> },
+          { path: 'user/edit-user/:id', element: <EditEmployee /> },
+
+          { path: 'employee', element: <User /> },
           { path: 'user/create-user', element: <CreateUser /> },
           { path: 'user/edit-user/:id', element: <EditUser /> },
 
