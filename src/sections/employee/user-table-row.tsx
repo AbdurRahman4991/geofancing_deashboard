@@ -104,7 +104,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
       </TableRow>
 
-      {/* <Popover
+      <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
@@ -127,17 +127,17 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem  onClick={() => router.push(`edit-user/${row.id}`)}>
+          <MenuItem  onClick={() => router.push(`/employee/edit-employee/${row.id}`)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
 
-          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+          {/* <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
-      </Popover> */}
+      </Popover>
     </>
   );
 }

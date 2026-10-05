@@ -83,14 +83,11 @@ export default function EmployeeUpdateView() {
   const handleSubmit = async () => {
     if (!validate()) return;
 
-    const formData = new FormData();
-
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
     try {
-      await updateEmployee({ id, data: formData }).unwrap();
+      await updateEmployee({
+        id,
+        params: { ...form, __method: 'POST' },
+      }).unwrap();
       toast.success("Employee updated successfully!");
     } catch (err: any) {
       if (err?.data) {

@@ -13,12 +13,12 @@ import { ProtectedRoute } from '../../src/routes/components/protected-route';
 
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
-export const Employee = lazy(() => import('src/pages/user'));
-export const CreateEmployee = lazy(() => import('src/sections/user/view/create_user'));
-export const EditEmployee = lazy(() => import('src/sections/user/view/update_user'));
-export const User = lazy(() => import('src/pages/user'));
-export const CreateUser = lazy(() => import('src/sections/user/view/create_user'));
-export const EditUser = lazy(() => import('src/sections/user/view/update_user'));
+export const Employee = lazy(() => import('src/pages/employee'));
+export const CreateEmployee = lazy(() => import('src/sections/employee/view/create_employee'));
+export const EditEmployee = lazy(() => import('src/sections/employee/view/update_employee'));
+export const User = lazy(() => import('src/pages/users'));
+export const CreateUser = lazy(() => import('src/sections/users/view/create_user'));
+export const EditUser = lazy(() => import('src/sections/users/view/update_user'));
 export const CompanyPage = lazy(()=>import('src/pages/company'));
 export const CompanyCreate = lazy(() => import('src/sections/company/view/company-create-view'));
 export const CompanyEdit = lazy(() => import('src/sections/company/view/company-update-view'));
@@ -122,12 +122,12 @@ export const routesSection: RouteObject[] = [
           { path: 'dashboard', element: <DashboardPage /> },
 
           { path: 'employee', element: <Employee /> },
-          { path: 'user/create-user', element: <CreateEmployee /> },
-          { path: 'user/edit-user/:id', element: <EditEmployee /> },
+          { path: 'employee/create-employee', element: <CreateEmployee /> },
+          { path: 'employee/edit-employee/:id', element: <EditEmployee /> },
 
-          { path: 'employee', element: <User /> },
-          { path: 'user/create-user', element: <CreateUser /> },
-          { path: 'user/edit-user/:id', element: <EditUser /> },
+          { path: 'users', element: <User /> },
+          { path: 'users/create-user', element: <CreateUser /> },
+          { path: 'users/edit-user/:id', element: <EditUser /> },
 
           { path: 'company', element: <CompanyPage /> },
           { path: 'company/create-company', element: <CompanyCreate /> },

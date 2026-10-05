@@ -29,7 +29,7 @@ import { useGetEmployeesQuery, useSyncEmployeeMutation } from '../../../../redux
 import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
-export function UserView() {
+export function EmployeeView() {
   const table = useTable();
   const [filterName, setFilterName] = useState("");
   const [search, setSearch] = useState("");
@@ -71,16 +71,16 @@ const handleSyncEmployee = async () => {
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Employee
         </Typography>
-        {/* <Button 
-          onClick={() => router.push('create-user')}
+        <Button 
+          onClick={() => router.push('employee/create-employee')}
             variant="contained"
             color="inherit"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New user
-          </Button> */}
+            New Employee
+          </Button>
          <LoadingButton
           loading={syncing}
           variant="contained"
