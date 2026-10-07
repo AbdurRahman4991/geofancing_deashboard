@@ -46,10 +46,36 @@ export interface UserListResponse {
   total: number;
 }
 
+export interface AssignedRoleUser {
+  id: number;
+  employee_id: number;
+  name: string;
+  employee?: {
+    id: number;
+    employee_id: string;
+    name: string;
+  } | null;
+  roles: Array<{ id: number; name: string }>;
+}
+
+export interface AssignRoleUsersResponse {
+  data: {
+    data: AssignedRoleUser[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
 export const userSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // User list for Role Assign
-    getAssignRoleUsers: builder.query({
+    getAssignRoleUsers: builder.query<AssignRoleUsersResponse, {
+      page?: number;
+      per_page?: number;
+      search?: string;
+    }>({
       query: ({
         page = 1,
         per_page = 10,

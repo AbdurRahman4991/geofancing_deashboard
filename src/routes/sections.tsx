@@ -27,6 +27,7 @@ export const RolePage = lazy(() => import('src/pages/roles'));
 export const CreateRole = lazy(() => import('src/sections/roles/view/create_role'));
 export const EditRole = lazy(() => import('src/sections/roles/view/update_role'));
 export const AssignRole = lazy(() => import('src/sections/roles/view/assign_role'));
+export const AssignRoleList = lazy(() => import('src/sections/roles/view/assign-role-list'));
 export const Permissions = lazy(() => import('src/pages/permissions'));
 export const CreatePermission = lazy(() => import('src/sections/permissions/view/create_permission'));
 export const EditPermission = lazy(() => import('src/sections/permissions/view/update_permission'));
@@ -113,6 +114,7 @@ export const routesSection: RouteObject[] = [
           { path: 'roles/create-role', element: <CreateRole /> },
           { path: 'roles/edit-role/:id', element: <EditRole /> },
           { path: 'roles/assign-role', element: <AssignRole /> },
+          { path: 'roles/assign-role-list', element: <AssignRoleList /> },
 
           { path: 'permissions', element: <Permissions /> },
           { path: 'permissions/create-permission', element: <CreatePermission /> },

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Card,
   Stack,
@@ -24,8 +25,13 @@ import {
 } from "../../../../redux/service/roleSlice";
 
 export default function AssignRoleView() {
-  const [userId, setUserId] = useState<number | "">("");
-  const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
+  const location = useLocation();
+  const initialAssignment = location.state as {
+    userId?: number;
+    roleIds?: number[];
+  } | null;
+  const [userId, setUserId] = useState<number | "">(initialAssignment?.userId ?? "");
+  const [selectedRoles, setSelectedRoles] = useState<number[]>(initialAssignment?.roleIds ?? []);
 
   // ===========================
   // User List
