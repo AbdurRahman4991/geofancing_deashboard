@@ -33,8 +33,7 @@ export function EmployeeView() {
   const table = useTable();
   const [filterName, setFilterName] = useState("");
   const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("");
-  const [syncEmployee, { isLoading: syncing }] = useSyncEmployeeMutation();
+  const [department, setDepartment] = useState(""); 
 
   const { data, isLoading } = useGetEmployeesQuery({
     page: table.page + 1,
@@ -49,15 +48,7 @@ const employees = data?.data ?? [];
 // FIX: pagination total
 const total = data?.total ?? 0;
 
-const handleSyncEmployee = async () => {
-  try {
-    const res = await syncEmployee().unwrap();
 
-    toast.success(res.message);
-  } catch (error: any) {
-    toast.error(error?.data?.message || "Employee Sync Failed");
-  }
-};
 
 
   return (
@@ -74,22 +65,13 @@ const handleSyncEmployee = async () => {
           Employee
         </Typography>
         <Button 
-          onClick={() => router.push('employee/create-employee')}
+          onClick={() => router.push('/employee/create-employee')}
             variant="contained"
             color="inherit"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
             New Employee
           </Button>
-         <LoadingButton
-          loading={syncing}
-          variant="contained"
-          color="primary"
-          startIcon={<Iconify icon="mdi:sync" />}
-          onClick={handleSyncEmployee}
-        >
-          Sync Employees
-        </LoadingButton>
       </Box>
       <Card>
       

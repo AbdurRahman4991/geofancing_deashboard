@@ -73,11 +73,17 @@ export const employeeApi = api.injectEndpoints({
     // ===========================
     // Sync Employee
     // ===========================
-    syncEmployee: builder.mutation({
-      query: () => ({
-        url: "/employees/sync",
-        method: "POST",
-      }),
+    syncEmployee: builder.mutation<{ message: string }, File>({
+      query: (file) => {
+        const body = new FormData();
+        body.append('file', file);
+
+        return {
+          url: "/employees/sync",
+          method: "POST",
+          body,
+        };
+      },
       invalidatesTags: ["employees"],
     }),
 

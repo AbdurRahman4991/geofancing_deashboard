@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useCreateEmployeeMutation } from '../../../../redux/service/employeeSlice';
+import { useCreateEmployeeMutation, useSyncEmployeeMutation } from '../../../../redux/service/employeeSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,9 +12,13 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function EmployeeCreateView() {
 
   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
+  const [syncEmployee, { isLoading: isImporting }] = useSyncEmployeeMutation();
+  const [isImportMode, setIsImportMode] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
 
   const [form, setForm] = useState({
     search: '',
+    name: '',
     employee_id: '',
     phone: '',
     company_id: '',
@@ -76,6 +80,7 @@ export default function EmployeeCreateView() {
       toast.success('Employee created successfully!');
 
       setForm({
+        search: '',
         name: '',
         employee_id: '',
         phone: '',
@@ -102,15 +107,60 @@ export default function EmployeeCreateView() {
     }
   };
 
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error('Please select a file');
+      return;
+    }
+
+    try {
+      const response = await syncEmployee(importFile).unwrap();
+      toast.success(response.message || 'Employees imported successfully!');
+      setImportFile(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Employee import failed');
+    }
+  };
+
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 3 }}>
         Create New Employee
       </Typography>
 
+      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+        <Button variant={isImportMode ? 'outlined' : 'contained'} onClick={() => setIsImportMode(false)}>
+          Manual Entry
+        </Button>
+        <Button variant={isImportMode ? 'contained' : 'outlined'} onClick={() => setIsImportMode(true)}>
+          Import
+        </Button>
+      </Stack>
+
       <Card sx={{ p: 3, maxWidth: 700 }}>
         <Stack spacing={2}>
-
+          {isImportMode ? (
+            <>
+              <Typography variant="h6">Import Employees</Typography>
+              <Button component="label" variant="outlined">
+                Choose file
+                <input hidden type="file" onChange={(event) => setImportFile(event.target.files?.[0] ?? null)} />
+              </Button>
+              <Typography variant="body2" color="text.secondary">
+                {importFile?.name ?? 'No file selected'}
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                onClick={handleImport}
+                disabled={!importFile || isImporting}
+              >
+                {isImporting ? 'Importing...' : 'Submit Import'}
+              </Button>
+            </>
+          ) : (
+            <>
           <TextField
             name="name"
             label="Employee Name"
@@ -185,6 +235,8 @@ export default function EmployeeCreateView() {
           >
             {isLoading ? 'Creating...' : 'Create Employee'}
           </Button>
+            </>
+          )}
 
         </Stack>
       </Card>
