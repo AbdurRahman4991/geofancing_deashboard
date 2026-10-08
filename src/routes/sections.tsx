@@ -22,6 +22,9 @@ export const EditUser = lazy(() => import('src/sections/users/view/update_user')
 export const CompanyPage = lazy(()=>import('src/pages/company'));
 export const CompanyCreate = lazy(() => import('src/sections/company/view/company-create-view'));
 export const CompanyEdit = lazy(() => import('src/sections/company/view/company-update-view'));
+export const Department = lazy(()=>import('src/pages/department'));
+export const DepartmentCreate = lazy(() => import('src/sections/department/view/create-department'));
+export const DepartmentEdit = lazy(() => import('src/sections/department/view/update-department'));
 export const GeoenchPage = lazy(()=>import('src/pages/geofench'));
 export const RolePage = lazy(() => import('src/pages/roles'));
 export const CreateRole = lazy(() => import('src/sections/roles/view/create_role'));
@@ -134,6 +137,10 @@ export const routesSection: RouteObject[] = [
           { path: 'company', element: <CompanyPage /> },
           { path: 'company/create-company', element: <CompanyCreate /> },
           { path: 'company/edit-company/:id', element: <CompanyEdit /> },
+
+          { path: 'department', element: <Department /> },
+          { path: 'department/create-department', element: <DepartmentCreate /> },
+          { path: 'department/edit-department/:id', element: <DepartmentEdit /> },          
 
           { path: 'geofench', element: <GeoenchPage /> },
           { path: 'geofench/create-geofench', element: <GeofenchCreate /> },
