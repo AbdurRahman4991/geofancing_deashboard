@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -97,8 +97,7 @@ const total = data?.pagination?.total ?? 0;
                 headLabel={[
                     { id: "name", label: "Area name" },
                     // { id: "employee_id", label: "Code" },
-                    { id: "latitude", label: "Latitude" },
-                    { id: "longitude", label: "Longitude" },
+                    { id: "address", label: "Address" },
                     { id: "radius", label: "Radius (M)" },
                     { id: "", label: "Action" },
                   ]}
@@ -131,6 +130,7 @@ const total = data?.pagination?.total ?? 0;
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[10]}
         />
+        <Typography variant="caption" color="text.secondary" sx={{ display: "block", textAlign: "right", px: 2, pb: 1 }}>Map data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a></Typography>
       </Card>
     </DashboardContent>
   );
@@ -204,3 +204,10 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
+
+
+
+
+
+
+

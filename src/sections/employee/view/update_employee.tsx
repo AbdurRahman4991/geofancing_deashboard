@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Box, Card, Stack, TextField, Button, Typography } from '@mui/material';
+﻿import { useState, useEffect } from 'react';
+import { Card, Stack, TextField, Button, Typography, Autocomplete } from '@mui/material';
 import { useParams } from "react-router-dom";
 import { DashboardContent } from 'src/layouts/dashboard';
 import { 
@@ -9,20 +9,24 @@ import {
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetCompanyQuery } from '../../../../redux/service/companySlice';
+import { useGetDepartmentsQuery } from '../../../../redux/service/departmentsSlice';
 
 
 export default function EmployeeUpdateView() {
 
-  // 1️⃣ Get ID first (fixes your error)
+  // 1ï¸âƒ£ Get ID first (fixes your error)
   const { id } = useParams();
 
-  // 2️⃣ Fetch employee data
+  // 2ï¸âƒ£ Fetch employee data
   const { data, isLoading: isFetching } = useGetSingleEmployeeQuery(id || "");
 
-  // 3️⃣ Update mutation
+  // 3ï¸âƒ£ Update mutation
   const [updateEmployee, { isLoading }] = useUpdateEmployeeMutation();
+  const { data: companyResponse, isLoading: companiesLoading } = useGetCompanyQuery({ page: 1, limit: 100 });
+  const companies = companyResponse?.data ?? [];
 
-  // 4️⃣ Form State
+  // 4ï¸âƒ£ Form State
   const [form, setForm] = useState({
     name: '',
     employee_id: '',
@@ -42,11 +46,16 @@ export default function EmployeeUpdateView() {
   });
 
   const [errors, setErrors] = useState<any>({});
+  const { data: departmentResponse, isLoading: departmentsLoading } = useGetDepartmentsQuery(
+    { page: 1, per_page: 100, company_id: form.company_id ? Number(form.company_id) : undefined },
+    { skip: !form.company_id }
+  );
+  const departments = departmentResponse?.data.data ?? [];
 
-  // 5️⃣ Prefill form when API returns data
+  // 5ï¸âƒ£ Prefill form when API returns data
   useEffect(() => {
     if (data) {
-      setForm({ ...data });
+      setForm({ ...data, company_id: String(data.company_id ?? data.company?.id ?? ''), department: typeof data.department === 'string' ? data.department : data.department?.name ?? '' });
     }
   }, [data]);
 
@@ -138,11 +147,19 @@ export default function EmployeeUpdateView() {
             helperText={errors.phone}
           />
 
-          <TextField
-            name="company_id"
-            label="Company ID"
-            value={form.company_id}
-            onChange={handleChange}
+          <Autocomplete
+            options={companies}
+            value={companies.find((company) => String(company.id) === String(form.company_id)) ?? null}
+            loading={companiesLoading}
+            onChange={(_, company) => {
+              setForm((previous) => ({ ...previous, company_id: company ? String(company.id) : '', department: '' }));
+              setErrors((previous: any) => ({ ...previous, company_id: '', department: '' }));
+            }}
+            getOptionLabel={(company) => company.company_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} name="company_id" label="Company" error={!!errors.company_id} helperText={errors.company_id} />
+            )}
           />
 
           <TextField
@@ -154,7 +171,21 @@ export default function EmployeeUpdateView() {
             helperText={errors.nature_of_employment}
           />
 
-          <TextField name="department" label="Department" value={form.department} onChange={handleChange} />
+          <Autocomplete
+            options={departments}
+            value={departments.find((department) => department.name === form.department) ?? null}
+            loading={departmentsLoading}
+            disabled={!form.company_id}
+            onChange={(_, department) => {
+              setForm((previous) => ({ ...previous, department: department?.name ?? '' }));
+              setErrors((previous: any) => ({ ...previous, department: '' }));
+            }}
+            getOptionLabel={(department) => department.name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} name="department" label="Department" error={!!errors.department} helperText={errors.department} />
+            )}
+          />
           <TextField name="unit" label="Unit" value={form.unit} onChange={handleChange} />
 
           <TextField
@@ -202,3 +233,4 @@ export default function EmployeeUpdateView() {
     </DashboardContent>
   );
 }
+

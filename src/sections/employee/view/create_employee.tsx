@@ -1,18 +1,22 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { 
-  Box, Card, Stack, TextField, Button, Typography
+  Box, Card, Stack, TextField, Button, Typography, Autocomplete
 } from '@mui/material';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useCreateEmployeeMutation, useSyncEmployeeMutation } from '../../../../redux/service/employeeSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetCompanyQuery } from '../../../../redux/service/companySlice';
+import { useGetDepartmentsQuery } from '../../../../redux/service/departmentsSlice';
 
 
 export default function EmployeeCreateView() {
 
   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
   const [syncEmployee, { isLoading: isImporting }] = useSyncEmployeeMutation();
+  const { data: companyResponse = { data: [] }, isLoading: companiesLoading } = useGetCompanyQuery({ page: 1, limit: 100 });
+  const companies = companyResponse.data ?? [];
   const [isImportMode, setIsImportMode] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
 
@@ -36,6 +40,11 @@ export default function EmployeeCreateView() {
   });
 
   const [errors, setErrors] = useState<any>({});
+  const { data: departmentResponse, isLoading: departmentsLoading } = useGetDepartmentsQuery(
+    { page: 1, per_page: 100, company_id: form.company_id ? Number(form.company_id) : undefined },
+    { skip: !form.company_id }
+  );
+  const departments = departmentResponse?.data.data ?? [];
 
   // -------------------------
   // HANDLE INPUT CHANGE
@@ -188,11 +197,19 @@ export default function EmployeeCreateView() {
             helperText={errors.phone}
           />
 
-          <TextField
-            name="company_id"
-            label="Company ID"
-            value={form.company_id}
-            onChange={handleChange}
+          <Autocomplete
+            options={companies}
+            value={companies.find((company) => String(company.id) === form.company_id) ?? null}
+            loading={companiesLoading}
+            onChange={(_, company) => {
+              setForm((previous) => ({ ...previous, company_id: company ? String(company.id) : '', department: '' }));
+              setErrors((previous: any) => ({ ...previous, company_id: '', department: '' }));
+            }}
+            getOptionLabel={(company) => company.company_name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} name="company_id" label="Company" error={!!errors.company_id} helperText={errors.company_id} />
+            )}
           />
 
           <TextField
@@ -204,7 +221,21 @@ export default function EmployeeCreateView() {
             helperText={errors.nature_of_employment}
           />
 
-          <TextField name="department" label="Department" value={form.department} onChange={handleChange} />
+                    <Autocomplete
+            options={departments}
+            value={departments.find((department) => department.name === form.department) ?? null}
+            loading={departmentsLoading}
+            disabled={!form.company_id}
+            onChange={(_, department) => {
+              setForm((previous) => ({ ...previous, department: department?.name ?? '' }));
+              setErrors((previous: any) => ({ ...previous, department: '' }));
+            }}
+            getOptionLabel={(department) => department.name}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderInput={(params) => (
+              <TextField {...params} name="department" label="Department" error={!!errors.department} helperText={errors.department} />
+            )}
+          />
           <TextField name="unit" label="Unit" value={form.unit} onChange={handleChange} />
 
           <TextField
@@ -245,3 +276,5 @@ export default function EmployeeCreateView() {
     </DashboardContent>
   );
 }
+
+

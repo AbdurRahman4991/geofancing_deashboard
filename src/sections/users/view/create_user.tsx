@@ -1,12 +1,13 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import { Box, Card, Stack, TextField, Button, Typography } from '@mui/material';
+import { Box, Card, Stack, TextField, Button, Typography, Autocomplete } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useCreateUserMutation } from '../../../../redux/service/userSlice';
 import type { CreateUserRequest } from '../../../../redux/service/userSlice';
+import { useGetEmployeesQuery } from '../../../../redux/service/employeeSlice';
 
 type FormErrors = Partial<Record<keyof CreateUserRequest, string>>;
 
@@ -19,6 +20,8 @@ const initialForm: CreateUserRequest = {
 
 export default function UserCreateView() {
   const [createUser, { isLoading }] = useCreateUserMutation();
+  const { data: employeeResponse, isLoading: employeesLoading } = useGetEmployeesQuery({ page: 1, per_page: 100 });
+  const employees = employeeResponse?.data ?? [];
   const [form, setForm] = useState<CreateUserRequest>(initialForm);
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -87,16 +90,28 @@ export default function UserCreateView() {
       <Card sx={{ p: 3, maxWidth: 700 }}>
         <Box component="form" onSubmit={handleSubmit}>
           <Stack spacing={2}>
-            <TextField
-              name="employee_id"
-              label="Employee ID"
-              placeholder="e.g. EMP-1002"
-              value={form.employee_id}
-              onChange={handleChange}
-              error={!!errors.employee_id}
-              helperText={errors.employee_id || 'Enter the employee code assigned to this employee'}
-              required
-              fullWidth
+            <Autocomplete
+              options={employees}
+              value={employees.find((employee) => String(employee.employee_id) === form.employee_id) ?? null}
+              loading={employeesLoading}
+              onChange={(_, employee) => {
+                setForm((current) => ({ ...current, employee_id: employee ? String(employee.employee_id) : '' }));
+                setErrors((current) => ({ ...current, employee_id: undefined }));
+              }}
+              getOptionLabel={(employee) => `${employee.name} (${employee.employee_id})`}
+              isOptionEqualToValue={(option, value) => String(option.employee_id) === String(value.employee_id)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  name="employee_id"
+                  label="Employee"
+                  placeholder="Search employee..."
+                  error={!!errors.employee_id}
+                  helperText={errors.employee_id || 'Select an employee for this user'}
+                  required
+                  fullWidth
+                />
+              )}
             />
 
             <TextField

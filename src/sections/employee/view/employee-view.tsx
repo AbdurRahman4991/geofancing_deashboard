@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -46,7 +46,7 @@ export function EmployeeView() {
 const employees = data?.data ?? [];
 
 // FIX: pagination total
-const total = data?.total ?? 0;
+const total = data?.pagination?.total ?? 0;
 
 
 
@@ -222,3 +222,4 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
+
