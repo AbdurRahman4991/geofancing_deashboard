@@ -1,5 +1,5 @@
-
-import { useState, useCallback } from 'react';
+﻿
+import { useState, useCallback, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
@@ -12,12 +12,28 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
+import { reverseGeocode } from '../../utils/reverse-geocode';
 
 //import { useDeleteGeofenceMutation } from '../../../redux/service/geofenchSlice';
 import { toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
 
+function formatDhakaLocalTime(timestamp: string): string {
+  if (!timestamp) return '-';
+
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(timestamp);
+  const normalizedTimestamp = hasTimezone ? timestamp : `${timestamp.replace(' ', 'T')}Z`;
+  const date = new Date(normalizedTimestamp);
+  if (Number.isNaN(date.getTime())) return '-';
+
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Dhaka',
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    hour12: true,
+  }).format(date);
+}
 export type UserProps = {
   id: number;
   employee_id: number;
@@ -44,6 +60,22 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     useState<HTMLButtonElement | null>(null);
 
   const router = useRouter();
+  const [address, setAddress] = useState('Loading address...');
+  const latitude = Number(row.latitude);
+  const longitude = Number(row.longitude);
+
+  useEffect(() => {
+    let mounted = true;
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      setAddress('Address unavailable');
+      return () => { mounted = false; };
+    }
+    setAddress('Loading address...');
+    reverseGeocode(latitude, longitude)
+      .then((value) => { if (mounted) setAddress(value); })
+      .catch(() => { if (mounted) setAddress('Address unavailable'); });
+    return () => { mounted = false; };
+  }, [latitude, longitude]);
   //const [deleteGeofence] = useDeleteGeofenceMutation();
 
   const handleOpenPopover = useCallback(
@@ -81,12 +113,10 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
           <TableCell>{row.employee?.employee_id ?? '-'}</TableCell>
 
-          <TableCell>{row.latitude}</TableCell>
-
-          <TableCell>{row.longitude}</TableCell>
+          <TableCell sx={{ minWidth: 280, maxWidth: 520, whiteSpace: "normal" }}>{address}</TableCell>
 
           <TableCell>
-            {new Date(row.created_at).toLocaleString("sv-SE")}
+            {formatDhakaLocalTime(row.created_at)}
           </TableCell>
 
         <TableCell align="right">
@@ -149,3 +179,8 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     </>
   );
 }
+
+
+
+
+

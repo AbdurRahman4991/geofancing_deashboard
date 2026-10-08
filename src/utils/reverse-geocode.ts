@@ -1,4 +1,4 @@
-﻿const CACHE_KEY = 'geofence-reverse-geocode-cache-v1';
+﻿const CACHE_KEY = 'reverse-geocode-cache-v1';
 const GEOCODER_BASE_URL = import.meta.env.VITE_NOMINATIM_BASE_URL || 'https://nominatim.openstreetmap.org';
 const addressCache = new Map<string, string>();
 let nextRequestAt = 0;
@@ -80,4 +80,5 @@ export function reverseGeocode(latitude: number, longitude: number): Promise<str
 
   return result;
 }
+
 

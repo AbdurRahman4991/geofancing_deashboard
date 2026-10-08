@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+﻿import { useEffect, useState, useCallback } from 'react';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -10,7 +10,7 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { useDeleteGeofenceMutation } from '../../../redux/service/geofenchSlice';
 import { toast } from 'react-toastify';
-import { reverseGeocode } from './reverse-geocode';
+import { reverseGeocode } from '../../utils/reverse-geocode';
 
 export type UserProps = {
   id: number;
@@ -72,4 +72,5 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     </Popover>
   </>;
 }
+
 

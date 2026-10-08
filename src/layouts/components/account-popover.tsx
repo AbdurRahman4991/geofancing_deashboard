@@ -1,4 +1,4 @@
-import type { IconButtonProps } from '@mui/material/IconButton';
+﻿import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { useState, useCallback } from 'react';
 
@@ -16,7 +16,23 @@ import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { useLogoutMutation } from '../../../redux/api/authApi';
 
-import { _myAccount } from 'src/_mock';
+type LoggedInUser = {
+  name?: string;
+  display_name?: string;
+  displayName?: string;
+  email?: string;
+  avatar_url?: string;
+  photo_url?: string;
+  employee?: { name?: string };
+};
+
+function readLoggedInUser(): LoggedInUser {
+  try {
+    return JSON.parse(localStorage.getItem('user') || '{}') as LoggedInUser;
+  } catch {
+    return {};
+  }
+}
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +52,10 @@ export function AccountPopover({
 }: AccountPopoverProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [user] = useState(readLoggedInUser);
+  const displayName = user.name || user.display_name || user.displayName || user.employee?.name || user.email?.split('@')[0] || 'Account';
+  const email = user.email || '';
+  const photoURL = user.avatar_url || user.photo_url || '/assets/images/avatar/avatar-25.webp';
 
   const [openPopover, setOpenPopover] =
     useState<HTMLButtonElement | null>(null);
@@ -78,8 +98,8 @@ export function AccountPopover({
       console.error('Logout failed:', error);
 
       // Optional:
-      // Backend logout fail হলেও local session clear করতে চাইলে
-      // নিচের code ব্যবহার করতে পারেন।
+      // Backend logout fail à¦¹à¦²à§‡à¦“ local session clear à¦•à¦°à¦¤à§‡ à¦šà¦¾à¦‡à¦²à§‡
+      // à¦¨à¦¿à¦šà§‡à¦° code à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¤à§‡ à¦ªà¦¾à¦°à§‡à¦¨à¥¤
 
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
@@ -104,11 +124,11 @@ export function AccountPopover({
         {...other}
       >
         <Avatar
-          src={_myAccount.photoURL}
-          alt={_myAccount.displayName}
+          src={photoURL}
+          alt={displayName}
           sx={{ width: 1, height: 1 }}
         >
-          {_myAccount.displayName.charAt(0).toUpperCase()}
+          {displayName.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
@@ -132,7 +152,7 @@ export function AccountPopover({
       >
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {_myAccount?.displayName}
+            {displayName}
           </Typography>
 
           <Typography
@@ -140,7 +160,7 @@ export function AccountPopover({
             sx={{ color: 'text.secondary' }}
             noWrap
           >
-            {_myAccount?.email}
+            {email}
           </Typography>
         </Box>
 
@@ -201,4 +221,5 @@ export function AccountPopover({
     </>
   );
 }
+
 
