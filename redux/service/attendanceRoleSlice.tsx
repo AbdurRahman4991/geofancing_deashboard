@@ -43,6 +43,7 @@ export interface AttendanceRole {
   government_holidays: string | string[];
 
   is_active: boolean;
+  tracking_enabled: boolean;
 
   created_at: string;
   updated_at: string;
@@ -119,6 +120,7 @@ export interface CreateAttendanceRoleRequest {
   government_holidays: string | string[];
 
   is_active?: boolean;
+  tracking_enabled?: boolean;
 }
 
 // =====================================================
@@ -136,6 +138,7 @@ export interface UpdateAttendanceRoleRequest {
   government_holidays?: string | string[];
 
   is_active?: boolean;
+  tracking_enabled?: boolean;
 }
 
 // =====================================================

@@ -43,6 +43,7 @@ export type UserProps = {
   government_holidays: string;
 
   is_active: boolean;
+  tracking_enabled: boolean;
 
   created_at: string;
 
@@ -55,7 +56,10 @@ export type UserProps = {
     media?: unknown[];
   } | null;
 
-  user?: unknown | null;
+  user?: {
+    name?: string;
+    employee?: { name?: string; employee_id?: string } | null;
+  } | null;
 };
 
 // ----------------------------------------------------------------------
@@ -187,6 +191,10 @@ export function UserTableRow({
           </Box>
         </TableCell>
 
+        <TableCell>
+          {row.user?.name ?? row.user?.employee?.name ?? 'Company-wide'}
+        </TableCell>
+
         {/* ======================================================
             OFFICE IN TIME
         ====================================================== */}
@@ -217,6 +225,12 @@ export function UserTableRow({
 
         <TableCell>
           {row.government_holidays ?? '-'}
+        </TableCell>
+
+        <TableCell>
+          <Label color={row.tracking_enabled ? 'success' : 'default'}>
+            {row.tracking_enabled ? 'Enabled' : 'Disabled'}
+          </Label>
         </TableCell>
 
         {/* ======================================================

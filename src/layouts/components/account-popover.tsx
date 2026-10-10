@@ -97,10 +97,6 @@ export function AccountPopover({
     } catch (error) {
       console.error('Logout failed:', error);
 
-      // Optional:
-      // Backend logout fail à¦¹à¦²à§‡à¦“ local session clear à¦•à¦°à¦¤à§‡ à¦šà¦¾à¦‡à¦²à§‡
-      // à¦¨à¦¿à¦šà§‡à¦° code à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à¦¤à§‡ à¦ªà¦¾à¦°à§‡à¦¨à¥¤
-
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
 

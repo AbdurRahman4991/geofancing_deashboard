@@ -404,6 +404,10 @@ export function AttendanceRoleView() {
                     label: 'Company',
                   },
                   {
+                    id: 'user',
+                    label: 'User',
+                  },
+                  {
                     id: 'office_in_time',
                     label: 'Office In',
                   },
@@ -418,6 +422,10 @@ export function AttendanceRoleView() {
                   {
                     id: 'government_holidays',
                     label: 'Government Holidays',
+                  },
+                  {
+                    id: 'tracking_enabled',
+                    label: 'Tracking',
                   },
                   {
                     id: 'is_active',

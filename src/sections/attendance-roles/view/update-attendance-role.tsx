@@ -21,6 +21,7 @@ import {
 } from '../../../../redux/service/attendanceRoleSlice';
 
 import { useGetCompanyQuery } from '../../../../redux/service/companySlice';
+import { useGetUsersQuery } from '../../../../redux/service/userSlice';
 
 import {
   toast,
@@ -35,11 +36,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 type FormState = {
   company_id: string;
+  user_id: string;
   office_in_time: string;
   office_out_time: string;
   weekend_holidays: string;
   government_holidays: string;
   is_active: boolean;
+  tracking_enabled: boolean;
 };
 
 type FormErrors = Partial<
@@ -88,6 +91,7 @@ export default function AttendanceRoleUpdateView() {
   });
 
   const companies = companyData?.data ?? [];
+  const { data: usersData, isLoading: usersLoading } = useGetUsersQuery({ page: 1, per_page: 100 });
 
   // ============================================================
   // FORM
@@ -95,12 +99,18 @@ export default function AttendanceRoleUpdateView() {
 
   const [form, setForm] = useState<FormState>({
     company_id: '',
+    user_id: '',
     office_in_time: '',
     office_out_time: '',
     weekend_holidays: '',
     government_holidays: '',
     is_active: true,
+    tracking_enabled: false,
   });
+
+  const users = (usersData?.data ?? []).filter(
+    (user) => !form.company_id || String(user.company_id ?? user.employee?.company_id) === form.company_id
+  );
 
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -113,6 +123,8 @@ export default function AttendanceRoleUpdateView() {
       (company) =>
         String(company.id) === form.company_id
     ) ?? null;
+
+  const selectedUser = users.find((user) => String(user.id) === form.user_id) ?? null;
 
   // ============================================================
   // PREFILL DATA
@@ -166,6 +178,8 @@ export default function AttendanceRoleUpdateView() {
         ? String(attendanceRule.company_id)
         : '',
 
+      user_id: attendanceRule.user_id ? String(attendanceRule.user_id) : '',
+
       office_in_time:
         attendanceRule.office_in_time
           ? attendanceRule.office_in_time.substring(
@@ -196,6 +210,9 @@ export default function AttendanceRoleUpdateView() {
         Boolean(
           attendanceRule.is_active
         ),
+
+      tracking_enabled:
+        Boolean(attendanceRule.tracking_enabled),
     });
   }, [attendanceRule]);
 
@@ -232,6 +249,7 @@ export default function AttendanceRoleUpdateView() {
       company_id: company
         ? String(company.id)
         : '',
+      user_id: '',
     }));
 
     setErrors((prev) => ({
@@ -250,6 +268,15 @@ export default function AttendanceRoleUpdateView() {
     setForm((prev) => ({
       ...prev,
       is_active: e.target.checked,
+    }));
+  };
+
+  const handleTrackingChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setForm((prev) => ({
+      ...prev,
+      tracking_enabled: e.target.checked,
     }));
   };
 
@@ -332,6 +359,8 @@ export default function AttendanceRoleUpdateView() {
         form.company_id
       ),
 
+      user_id: form.user_id ? Number(form.user_id) : null,
+
       office_in_time:
         form.office_in_time,
 
@@ -350,6 +379,9 @@ export default function AttendanceRoleUpdateView() {
 
       is_active:
         form.is_active,
+
+      tracking_enabled:
+        form.tracking_enabled,
     };
 
     console.log(
@@ -466,6 +498,17 @@ export default function AttendanceRoleUpdateView() {
             )}
           />
 
+          <Autocomplete
+            options={users}
+            value={selectedUser}
+            loading={usersLoading}
+            onChange={(_event, user) => setForm((current) => ({ ...current, user_id: user ? String(user.id) : '' }))}
+            getOptionLabel={(user) => `${user.name ?? user.employee?.name ?? 'User'}${user.employee?.employee_id ? ` (${user.employee.employee_id})` : ''}`}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            noOptionsText="No users found for this company"
+            renderInput={(params) => <TextField {...params} label="User (Optional)" helperText="Leave empty to apply this role to the whole company." />}
+          />
+
           {/* ==================================================
               OFFICE IN TIME
           ================================================== */}
@@ -578,6 +621,16 @@ export default function AttendanceRoleUpdateView() {
                 ? 'Active'
                 : 'Inactive'
             }
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={form.tracking_enabled}
+                onChange={handleTrackingChange}
+              />
+            }
+            label={form.tracking_enabled ? 'Tracking Enabled' : 'Tracking Disabled'}
           />
 
           {/* ==================================================

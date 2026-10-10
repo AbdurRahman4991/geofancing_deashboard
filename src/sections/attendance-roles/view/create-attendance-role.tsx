@@ -35,6 +35,7 @@ import {
 import {
   useGetCompanyQuery,
 } from '../../../../redux/service/companySlice';
+import { useGetUsersQuery } from '../../../../redux/service/userSlice';
 
 // ----------------------------------------------------------------------
 
@@ -63,18 +64,26 @@ export default function AttendanceRoleCreateView() {
   const companies =
     companyData?.data ?? [];
 
+  const { data: usersData, isLoading: usersLoading } = useGetUsersQuery({ page: 1, per_page: 100 });
+
   // ============================================================
   // FORM
   // ============================================================
 
   const [form, setForm] = useState({
     company_id: '',
+    user_id: '',
     office_in_time: '',
     office_out_time: '',
     weekend_holidays: '',
     government_holidays: '',
     is_active: true,
+    tracking_enabled: false,
   });
+
+  const users = (usersData?.data ?? []).filter(
+    (user) => !form.company_id || String(user.company_id ?? user.employee?.company_id) === form.company_id
+  );
 
   // ============================================================
   // ERRORS
@@ -93,6 +102,8 @@ export default function AttendanceRoleCreateView() {
         String(company.id) ===
         form.company_id
     ) ?? null;
+
+  const selectedUser = users.find((user) => String(user.id) === form.user_id) ?? null;
 
   // ============================================================
   // HANDLE INPUT
@@ -132,6 +143,7 @@ export default function AttendanceRoleCreateView() {
       company_id: company
         ? String(company.id)
         : '',
+      user_id: '',
     });
 
     setErrors({
@@ -151,6 +163,15 @@ export default function AttendanceRoleCreateView() {
       ...form,
       is_active:
         e.target.checked,
+    });
+  };
+
+  const handleTrackingChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setForm({
+      ...form,
+      tracking_enabled: e.target.checked,
     });
   };
 
@@ -212,6 +233,8 @@ export default function AttendanceRoleCreateView() {
       form.company_id
     );
 
+    if (form.user_id) formData.append('user_id', form.user_id);
+
     formData.append(
       'office_in_time',
       form.office_in_time
@@ -239,6 +262,11 @@ export default function AttendanceRoleCreateView() {
         : '0'
     );
 
+    formData.append(
+      'tracking_enabled',
+      form.tracking_enabled ? '1' : '0'
+    );
+
     try {
       await createAttendanceRule(
         formData
@@ -251,11 +279,13 @@ export default function AttendanceRoleCreateView() {
       // Reset
       setForm({
         company_id: '',
+        user_id: '',
         office_in_time: '',
         office_out_time: '',
         weekend_holidays: '',
         government_holidays: '',
         is_active: true,
+        tracking_enabled: false,
       });
 
       setErrors({});
@@ -338,6 +368,17 @@ export default function AttendanceRoleCreateView() {
                 overflow: 'auto',
               },
             }}
+          />
+
+          <Autocomplete
+            options={users}
+            value={selectedUser}
+            loading={usersLoading}
+            onChange={(_event, user) => setForm((current) => ({ ...current, user_id: user ? String(user.id) : '' }))}
+            getOptionLabel={(user) => `${user.name ?? user.employee?.name ?? 'User'}${user.employee?.employee_id ? ` (${user.employee.employee_id})` : ''}`}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            noOptionsText="No users found for this company"
+            renderInput={(params) => <TextField {...params} label="User (Optional)" helperText="Leave empty to apply this role to the whole company." />}
           />
 
           {/* ==================================================
@@ -452,6 +493,16 @@ export default function AttendanceRoleCreateView() {
                 ? 'Active'
                 : 'Inactive'
             }
+          />
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={form.tracking_enabled}
+                onChange={handleTrackingChange}
+              />
+            }
+            label={form.tracking_enabled ? 'Tracking Enabled' : 'Tracking Disabled'}
           />
 
           {/* ==================================================
