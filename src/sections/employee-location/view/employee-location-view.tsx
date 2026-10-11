@@ -1,4 +1,4 @@
-﻿
+
 import { useState, useEffect, useCallback } from "react";
 
 import Box from "@mui/material/Box";
@@ -23,10 +23,8 @@ import { UserTableHead } from "../user-table-head";
 
 import { useRouter } from "src/routes/hooks";
 
-import {
-  useGetEmployeeLocationsQuery,
-   useGetLocationEmployeesQuery,
-} from "../../../../redux/service/employeeLocationSlice";
+import { useGetEmployeeLocationsQuery } from "../../../../redux/service/employeeLocationSlice";
+import { useGetUsersQuery } from "../../../../redux/service/userSlice";
 
 
 // ----------------------------------------------------------------------
@@ -52,9 +50,10 @@ export function EmployeeLocationView() {
   const [employeeSearch, setEmployeeSearch] = useState("");
 
   const {
-    data: employeeData = [],
+    data: usersResponse,
     isLoading: employeeLoading,
-  } = useGetLocationEmployeesQuery(employeeSearch);
+  } = useGetUsersQuery({ page: 1, per_page: 100, search: employeeSearch });
+  const employeeData = usersResponse?.data ?? [];
 
   // ----------------------------------------------------------------------
   // Reset Pagination
@@ -81,7 +80,7 @@ export function EmployeeLocationView() {
     page: table.page + 1,
     per_page: table.rowsPerPage,
     search,
-    employee_id: selectedEmployee?.id ?? "",
+    user_id: selectedEmployee?.id ?? "",
     from_date: fromDate,
     to_date: toDate,
   });
@@ -150,7 +149,7 @@ export function EmployeeLocationView() {
                   setSelectedEmployee(newValue);
                 }}
                 getOptionLabel={(option) =>
-                  `${option.name} (${option.employee_id})`
+                  `${option.employee?.name ?? option.name ?? "Unnamed user"} (${option.employee?.employee_id ?? option.employee_id ?? "No ID"})`
                 }
                 isOptionEqualToValue={(option, value) =>
                   option.id === value.id
@@ -159,8 +158,8 @@ export function EmployeeLocationView() {
                   <TextField
                     {...params}
                     fullWidth
-                    label="Select Employee"
-                    placeholder="Search employee..."
+                    label="Select User"
+                    placeholder="Search users..."
                   />
                 )}
               />
@@ -268,7 +267,7 @@ export function EmployeeLocationView() {
                   }
 
                   router.push(
-                    `/employee-location-map?employee_id=${selectedEmployee.id}&date=${fromDate}`
+                    `/employee-location-map?user_id=${selectedEmployee.id}&date=${fromDate}`
                   );
                 }}
               >
@@ -750,6 +749,3 @@ function useTable() {
 //     onResetPage,
 //   };
 // }
-
-
-

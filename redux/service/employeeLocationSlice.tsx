@@ -1,15 +1,63 @@
-import { api } from "../api/baseApi";
+﻿import { api } from "../api/baseApi";
 
+export interface EmployeeLocation {
+  id: number;
+  user_id: number;
+  company_id: number;
+  latitude: string;
+  longitude: string;
+  activity_type: string | null;
+  transport_mode: string | null;
+  speed: number | string | null;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: number;
+    name: string | null;
+    employee_id: number | string | null;
+    company_id: number | string | null;
+    employee: {
+      id: number;
+      name: string;
+      employee_id: string;
+    } | null;
+  } | null;
+}
+
+export interface EmployeeLocationPagination {
+  current_page: number;
+  data: EmployeeLocation[];
+  first_page_url: string;
+  from: number | null;
+  last_page: number;
+  last_page_url: string;
+  links: { url: string | null; label: string; page: number | null; active: boolean }[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number | null;
+  total: number;
+}
+
+export interface EmployeeLocationParams {
+  page?: number;
+  per_page?: number;
+  user_id?: number | string;
+  search?: string;
+  from_date?: string;
+  to_date?: string;
+}
 export const employeeLocationSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // ===========================
     // Employee Location List (Pagination + Filter)
     // ===========================
-    getEmployeeLocations: builder.query({
+    getEmployeeLocations: builder.query<EmployeeLocationPagination, EmployeeLocationParams>({
       query: ({
         page = 1,
         per_page = 10,
-        employee_id = "",
+        user_id = "",
         search = "",
         from_date = "",
         to_date = "",
@@ -20,7 +68,7 @@ export const employeeLocationSlice = api.injectEndpoints({
         params: {
           page,
           per_page,
-          employee_id,
+          user_id,
           search,
           from_date,
           to_date,
@@ -88,16 +136,10 @@ export const employeeLocationSlice = api.injectEndpoints({
     }),
 
     getEmployeeLocationHistory: builder.query({
-      query: ({
-        employee_id,
-        date,
-      }) => ({
+      query: ({ user_id, date }) => ({
         url: "/locations/history",
         method: "POST",
-        body: {
-          employee_id,
-          date,
-        },
+        body: { user_id, date },
       }),
     }),
 
@@ -113,3 +155,6 @@ export const {
   useGetLocationEmployeesQuery, 
   useGetEmployeeLocationHistoryQuery,
 } = employeeLocationSlice;
+
+
+

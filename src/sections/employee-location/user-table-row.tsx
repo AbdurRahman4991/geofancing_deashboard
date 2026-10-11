@@ -36,17 +36,23 @@ function formatDhakaLocalTime(timestamp: string): string {
 }
 export type UserProps = {
   id: number;
-  employee_id: number;
+  user_id: number;
+  company_id: number;
   latitude: string;
   longitude: string;
   created_at: string;
   updated_at: string;
-
-  employee?: {
+  user?: {
     id: number;
-    name: string;
-    employee_id: string;
-  };
+    name: string | null;
+    employee_id: number | string | null;
+    company_id: number | string | null;
+    employee?: {
+      id: number;
+      name: string;
+      employee_id: string;
+    } | null;
+  } | null;
 };
 
 type UserTableRowProps = {
@@ -109,9 +115,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Checkbox checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-          <TableCell>{row.employee?.name ?? '-'}</TableCell>
+          <TableCell>{row.user?.employee?.name ?? row.user?.name ?? '-'}</TableCell>
 
-          <TableCell>{row.employee?.employee_id ?? '-'}</TableCell>
+          <TableCell>{row.user?.employee?.employee_id ?? row.user?.employee_id ?? '-'}</TableCell>
 
           <TableCell sx={{ minWidth: 280, maxWidth: 520, whiteSpace: "normal" }}>{address}</TableCell>
 
@@ -179,6 +185,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
     </>
   );
 }
+
 
 
 

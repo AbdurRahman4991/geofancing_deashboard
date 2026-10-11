@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -26,8 +26,10 @@ export type UserProps = {
   work_hour?: string;
   late?: string;
   status: string;
-  distance_from_office?: number;
-  remarks?: string;
+  distance_from_office?: string | number | null;
+  remarks?: string | null;
+  user?: { name: string | null } | null;
+  geofence?: { firm_name: string } | null;
 };
 
 
@@ -71,6 +73,9 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
           <Checkbox checked={selected} onChange={onSelectRow} />
         </TableCell>
 
+        <TableCell>{row.user?.name || "-"}</TableCell>
+        <TableCell>{row.geofence?.firm_name || "-"}</TableCell>
+
         <TableCell>
             {row.check_in_time
               ? format(new Date(row.check_in_time), "dd-MM-yyyy HH:mm:ss")
@@ -103,7 +108,7 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
         </TableCell>
 
         <TableCell>
-          {row.distance_from_office ? `${row.distance_from_office} m` : "-"}
+          {row.distance_from_office != null ? `${row.distance_from_office} m` : "-"}
         </TableCell>
 
         <TableCell>{row.remarks ?? "-"}</TableCell>
@@ -137,3 +142,6 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
     </>
   );
 }
+
+
+

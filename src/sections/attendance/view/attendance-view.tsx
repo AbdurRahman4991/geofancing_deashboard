@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -104,6 +104,8 @@ const total = data?.pagination?.total ?? 0;
                 }
 
                 headLabel={[
+                  { id: "user", label: "User Name" },
+                  { id: "geofence", label: "Firm Name" },
                   { id: "check_in_time", label: "Check In" },
                   { id: "check_out_time", label: "Check Out" },
                   // { id: "work_hour", label: "Work Hour" },
@@ -215,3 +217,7 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
+
+
+
+

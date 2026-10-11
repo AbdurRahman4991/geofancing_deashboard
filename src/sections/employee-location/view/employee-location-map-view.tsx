@@ -87,15 +87,15 @@ import {
 export function EmployeeLocationMapView() {
   const [searchParams] = useSearchParams();
 
-  // URL থেকে employee_id এবং date নেওয়া
-  const employeeId =
-    searchParams.get("employee_id") || "";
+  // URL à¦¥à§‡à¦•à§‡ employee_id à¦à¦¬à¦‚ date à¦¨à§‡à¦“à§Ÿà¦¾
+  const userId =
+    searchParams.get("user_id") || "";
 
   const date =
     searchParams.get("date") || "";
 
 
-  console.log("Employee ID:", employeeId);
+  console.log("User ID:", userId);
   console.log("Date:", date);
 
 
@@ -108,7 +108,7 @@ export function EmployeeLocationMapView() {
     isLoading,
     error,
   } = useGetEmployeeLocationHistoryQuery({
-    employee_id: employeeId,
+    user_id: userId,
     date,
   });
 
@@ -177,7 +177,7 @@ export function EmployeeLocationMapView() {
   }
 
 
-  // প্রথম location map center
+  // à¦ªà§à¦°à¦¥à¦® location map center
   const center = positions[0];
 
 
@@ -241,7 +241,7 @@ export function EmployeeLocationMapView() {
 
               <br />
 
-              Employee ID: {location.employee_id}
+              User ID: {location.employee_id}
 
               <br />
 
