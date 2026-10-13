@@ -91,6 +91,17 @@ export const navData = [
         path: '/assign-hierarchy',
         icon: icon('ic-analytics'),
       },
+
+      {
+        title: 'Hierarchy Level',
+        path: '/hierarchy/level',
+        icon: icon('ic-analytics'),
+      },
+      {
+        title: 'Hierarchy Node',
+        path: '/hierarchy/node',
+        icon: icon('ic-analytics'),
+      },
       {
         title: 'Country',
         path: '/hierarchy/country',

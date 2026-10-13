@@ -1,4 +1,4 @@
-
+﻿
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -25,8 +25,9 @@ export const api = createApi({
   tagTypes: [
     "company", "employees", "geofences", "attendance", "employeeLocations","role", "permission", "user", "users",
     "countries","regions", "zones", "divisions", "districts", "subDistricts", "territories", "areas","employeeHierarchyAssignments",
-    "AttendanceRole", "departments"
+    "AttendanceRole", "departments", "hierarchyNodes"
   ],
 });
 
 export const imageUrl = "http://192.168.20.203:8000/image/";
+

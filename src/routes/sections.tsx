@@ -1,4 +1,4 @@
-import type { RouteObject } from 'react-router';
+﻿import type { RouteObject } from 'react-router';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate  } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
@@ -44,6 +44,13 @@ export const AttendanceRoleEdit = lazy(()=>import('src/sections/attendance-roles
 export const EmployeeTrackingPage = lazy(()=>import('src/pages/employee-location'))
 export const EmployeeTrackingMap = lazy(()=> import('src/pages/employee-location-map-view'))
 // Hiearchy
+export const Level = lazy(()=> import('src/sections/hierarchy/level/view/view-level'));
+export const CreateLevel = lazy(() => import('../sections/hierarchy/level/view/create-level'));
+export const EditLevel = lazy(() => import('../sections/hierarchy/level/view/update-level'));
+export const Node = lazy(()=> import('src/sections/hierarchy/node/view/node-view'));
+export const CreateNode = lazy(() => import('../sections/hierarchy/node/view/create-node'));
+export const EditNode = lazy(() => import('../sections/hierarchy/node/view/update-node'));
+
 export const Country = lazy(()=>import('src/sections/hierarchy/country/view/country_view'));
 export const CreateCountry = lazy(() => import('../sections/hierarchy/country/view/create_country'));
 export const EditCountry = lazy(() => import('../sections/hierarchy/country/view/update_country'));
@@ -153,6 +160,13 @@ export const routesSection: RouteObject[] = [
 
           { path: 'employee-location', element: <EmployeeTrackingPage /> },
           { path: 'employee-location-map', element: <EmployeeTrackingMap /> },
+
+          { path: 'hierarchy/level', element: <Level /> },
+          { path: 'hierarchy/create-level', element: <CreateLevel /> },
+          { path: 'hierarchy/edit-level/:id', element: <EditLevel /> },
+          { path: 'hierarchy/node', element: <Node /> },
+          { path: 'hierarchy/create-node', element: <CreateNode /> },
+          { path: 'hierarchy/edit-node/:id', element: <EditNode /> },          
 
           { path: 'hierarchy/country', element: <Country /> },
           { path: 'hierarchy/create-country', element: <CreateCountry /> },
