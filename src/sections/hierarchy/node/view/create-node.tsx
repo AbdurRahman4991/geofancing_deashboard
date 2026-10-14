@@ -16,7 +16,17 @@ import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
 import { useGetLevelsQuery } from '../../../../../redux/service/levelSlice';
 import { useCreateNodeMutation, useGetNodesQuery, type NodeStatus } from '../../../../../redux/service/nodeSlice';
 
-const COMPANY_ID = 1;
+const getLoggedInCompanyId = (): number => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const companyId = Number(user.company_id);
+    return Number.isInteger(companyId) && companyId > 0 ? companyId : 0;
+  } catch {
+    return 0;
+  }
+};
+
+const COMPANY_ID = getLoggedInCompanyId();
 
 type NodeForm = {
   company_id: string;
@@ -45,7 +55,7 @@ export default function CreateNodeView() {
   const nodes = nodeData?.data?.data ?? [];
 
   const [form, setForm] = useState<NodeForm>({
-    company_id: String(COMPANY_ID),
+    company_id: COMPANY_ID ? String(COMPANY_ID) : '',
     hierarchy_level_id: '',
     parent_id: '',
     name: '',
@@ -55,13 +65,15 @@ export default function CreateNodeView() {
   const [errors, setErrors] = useState<Partial<Record<keyof NodeForm, string>>>({});
 
   const selectedLevel = levels.find((level) => String(level.id) === form.hierarchy_level_id);
-  const parentOptions = nodes.filter(
-    (node) => node.level?.level_order === (selectedLevel?.level_order ?? 0) - 1
-  );
+  const parentOptions = selectedLevel
+    ? nodes.filter(
+        (node) => Number(node.level?.level_order) === Number(selectedLevel.level_order) - 1
+      )
+    : [];
 
   const handleSubmit = async () => {
     const nextErrors: Partial<Record<keyof NodeForm, string>> = {};
-    if (!form.company_id) nextErrors.company_id = 'Company is required';
+    if (!form.company_id) nextErrors.company_id = 'Logged-in user company is missing';
     if (!form.hierarchy_level_id) nextErrors.hierarchy_level_id = 'Hierarchy level is required';
     if (!form.name.trim()) nextErrors.name = 'Node name is required';
     setErrors(nextErrors);
@@ -69,7 +81,7 @@ export default function CreateNodeView() {
 
     try {
       await createNode({
-        company_id: Number(form.company_id),
+        company_id: COMPANY_ID,
         hierarchy_level_id: Number(form.hierarchy_level_id),
         parent_id: form.parent_id ? Number(form.parent_id) : null,
         name: form.name.trim(),
@@ -94,7 +106,7 @@ export default function CreateNodeView() {
 
   return (
     <DashboardContent>
-      <Typography variant="h4" sx={{ mb: 3 }}>Create Hierarchy Node</Typography>
+      <Typography variant="h4" sx={{ mb: 3 }}>Create  Node</Typography>
       <Card sx={{ p: 3, maxWidth: 600 }}>
         <Stack spacing={2}>
           <TextField
@@ -102,10 +114,9 @@ export default function CreateNodeView() {
             required
             label="Company"
             value={form.company_id}
-            onChange={(event) => setForm((previous) => ({ ...previous, company_id: event.target.value }))}
             error={!!errors.company_id}
             helperText={errors.company_id}
-            disabled={isCompaniesLoading}
+            disabled={isCompaniesLoading || !COMPANY_ID}
             fullWidth
           >
             {companies.map((company) => (
@@ -119,7 +130,28 @@ export default function CreateNodeView() {
             label="Hierarchy Level"
             value={form.hierarchy_level_id}
             onChange={(event) => {
-              setForm((previous) => ({ ...previous, hierarchy_level_id: event.target.value, parent_id: '' }));
+              const selectedLevelId = String(event.target.value);
+              const nextLevel = levels.find((level) => String(level.id) === selectedLevelId);
+              const matchingParents = nextLevel
+                ? nodes.filter(
+                    (node) => Number(node.level?.level_order) === Number(nextLevel.level_order) - 1
+                  )
+                : [];
+
+              console.log('[CreateNode] Hierarchy level changed', {
+                selectedLevelId,
+                selectedLevel: nextLevel,
+                companyId: COMPANY_ID,
+                nodesCount: nodes.length,
+                nodeLevels: nodes.map((node) => ({
+                  id: node.id,
+                  name: node.name,
+                  levelOrder: node.level?.level_order,
+                })),
+                parentOptions: matchingParents.map((node) => ({ id: node.id, name: node.name })),
+              });
+
+              setForm((previous) => ({ ...previous, hierarchy_level_id: selectedLevelId, parent_id: '' }));
               setErrors((previous) => ({ ...previous, hierarchy_level_id: '' }));
             }}
             error={!!errors.hierarchy_level_id}
