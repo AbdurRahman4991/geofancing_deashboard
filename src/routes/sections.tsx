@@ -79,6 +79,10 @@ export const AssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarc
 export const CreateAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/create_hierarchy_assign'));
 export const EditAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/update_hierarchy_assign'));
 
+export const AssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/view-node-assign'));
+export const CreateAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/create-node-assign'));
+// export const EditAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/update-node-assign'));
+
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -203,6 +207,10 @@ export const routesSection: RouteObject[] = [
           { path: 'assign-hierarchy', element: <AssignHierarchy /> },
           { path: 'create/assign-hierarchy', element: <CreateAssignHierarchy /> },
           { path: 'edit/assign-hierarchy/:id', element: <EditAssignHierarchy /> },
+
+          { path: 'assign-node', element: <AssignNode /> },
+          { path: 'create/assign-node', element: <CreateAssignNode /> },
+          // { path: 'edit/assign-node/:id', element: <EditAssignNode /> },
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },

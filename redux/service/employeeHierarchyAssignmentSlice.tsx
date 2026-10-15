@@ -12,6 +12,7 @@ export interface EmployeeHierarchyAssignment {
   id: number;
 
   user: string | null;
+  hierarchy_node_id: number | null;
 
   country: string | null;
   region: string | null;
@@ -71,6 +72,7 @@ export interface EmployeeHierarchyAssignmentQueryParams {
   search?: string;
 
   user_id?: number;
+  hierarchy_node_id?: number;
 
   country_id?: number;
   region_id?: number;
@@ -90,17 +92,18 @@ export interface EmployeeHierarchyAssignmentQueryParams {
 
 export interface AssignUserRequest {
   user_id: number;
+  hierarchy_node_id?: number | null;
 
-  country_id: number;
-  region_id: number;
-  zone_id: number;
-  division_id: number;
-  district_id: number;
-  sub_district_id: number;
-  territory_id: number;
-  area_id: number;
+  country_id?: number | null;
+  region_id?: number | null;
+  zone_id?: number | null;
+  division_id?: number | null;
+  district_id?: number | null;
+  sub_district_id?: number | null;
+  territory_id?: number | null;
+  area_id?: number | null;
 
-  effective_from: string;
+  effective_from?: string | null;
 
   reason?: string;
 }
@@ -142,6 +145,7 @@ export const employeeHierarchyAssignmentSlice =
             search: params?.search,
 
             user_id: params?.user_id,
+            hierarchy_node_id: params?.hierarchy_node_id,
 
             country_id: params?.country_id,
             region_id: params?.region_id,

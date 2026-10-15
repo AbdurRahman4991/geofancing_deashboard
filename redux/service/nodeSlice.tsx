@@ -87,9 +87,32 @@ export const nodeSlice = api.injectEndpoints({
           status,
         },
       }),
+      transformResponse: (response: any): NodeResponse => {
+        // Accept both a plain Laravel paginator and an extra `{ data: ... }` envelope.
+        const pageData = response?.data?.data?.data
+          ? response.data.data
+          : response?.data ?? response;
+        const rows = Array.isArray(pageData)
+          ? pageData
+          : Array.isArray(pageData?.data)
+            ? pageData.data
+            : [];
+
+        return {
+          status: response?.status ?? 200,
+          data: {
+            current_page: pageData?.current_page ?? 1,
+            last_page: pageData?.last_page ?? 1,
+            per_page: pageData?.per_page ?? rows.length,
+            total: pageData?.total ?? rows.length,
+            from: pageData?.from ?? (rows.length ? 1 : null),
+            to: pageData?.to ?? (rows.length ? rows.length : null),
+            data: rows,
+          },
+        };
+      },
       providesTags: ['hierarchyNodes'],
     }),
-
     getSingleNode: builder.query<HierarchyNode, SingleNodeQueryParams>({
       query: ({ id, company_id }) => ({
         url: `hierarchy-nodes/${id}`,
@@ -132,6 +155,7 @@ export const nodeSlice = api.injectEndpoints({
       }),
       invalidatesTags: ['hierarchyNodes'],
     }),
+
   }),
 });
 
