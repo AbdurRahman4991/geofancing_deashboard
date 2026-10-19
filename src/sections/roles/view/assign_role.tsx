@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Card,
@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
+import { isSuperAdmin } from "src/utils/auth";
+import { useGetCompanyQuery } from "../../../../redux/service/companySlice";
 import { toast, ToastContainer } from "react-toastify";
 
 import { useGetAssignRoleUsersQuery } from "../../../../redux/service/userSlice";
@@ -30,24 +32,31 @@ export default function AssignRoleView() {
     userId?: number;
     roleIds?: number[];
   } | null;
+  const isAdmin = isSuperAdmin();
+  const [companyId, setCompanyId] = useState<number | "">("");
   const [userId, setUserId] = useState<number | "">(initialAssignment?.userId ?? "");
   const [selectedRoles, setSelectedRoles] = useState<number[]>(initialAssignment?.roleIds ?? []);
 
   // ===========================
   // User List
   // ===========================
-  const { data: userData, isLoading: userLoading } =
-    useGetAssignRoleUsersQuery({
-      page: 1,
-      per_page: 100,
-      search: "",
-    });
+  const { data: companyData, isLoading: companyLoading } = useGetCompanyQuery(
+    { page: 1, limit: 100 },
+    { skip: !isAdmin }
+  );
+  const companies = companyData?.data ?? [];
+  const { data: userData, isLoading: userLoading } = useGetAssignRoleUsersQuery(
+    { page: 1, per_page: 100, search: "", ...(isAdmin && companyId ? { company_id: companyId } : {}) },
+    { skip: isAdmin && !companyId }
+  );
 
   // ===========================
   // Role List
   // ===========================
-  const { data: roleData, isLoading: roleLoading } =
-    useGetRolesQuery();
+  const { data: roleData, isLoading: roleLoading } = useGetRolesQuery(
+    isAdmin && companyId ? { company_id: companyId } : undefined,
+    { skip: isAdmin && !companyId }
+  );
 
   // ===========================
   // Assign Mutation
@@ -89,7 +98,7 @@ export default function AssignRoleView() {
     }
   };
 
-  if (userLoading || roleLoading) {
+  if (companyLoading || userLoading || roleLoading) {
     return (
       <DashboardContent>
         <CircularProgress />
@@ -110,9 +119,30 @@ export default function AssignRoleView() {
         }}
       >
         <Stack spacing={3}>
+          {isAdmin && (
+            <FormControl fullWidth>
+              <InputLabel>Company</InputLabel>
+              <Select
+                value={companyId}
+                label="Company"
+                onChange={(event) => {
+                  setCompanyId(Number(event.target.value));
+                  setUserId("");
+                  setSelectedRoles([]);
+                }}
+              >
+                {companies.map((company) => (
+                  <MenuItem key={company.id} value={company.id}>
+                    {company.company_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+
           {/* User */}
 
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={isAdmin && !companyId}>
             <InputLabel>User</InputLabel>
 
             <Select
@@ -138,7 +168,7 @@ export default function AssignRoleView() {
 
           {/* Roles */}
 
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={isAdmin && !companyId}>
             <InputLabel>Roles</InputLabel>
 
             <Select
@@ -183,7 +213,7 @@ export default function AssignRoleView() {
             color="inherit"
             size="large"
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={isLoading || (isAdmin && !companyId)}
           >
             {isLoading
               ? "Assigning..."

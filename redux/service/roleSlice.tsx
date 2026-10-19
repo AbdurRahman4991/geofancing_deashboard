@@ -1,10 +1,13 @@
-import { api } from "../api/baseApi";
+﻿import { api } from "../api/baseApi";
 
 export const roleSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // ---------------- GET ROLES ----------------
-    getRoles: builder.query({
-      query: () => "roles",
+    getRoles: builder.query<any, { company_id?: number | string } | void>({
+      query: (params) => ({
+        url: "roles",
+        params: params?.company_id ? { company_id: params.company_id } : undefined,
+      }),
       providesTags: ["role"],
     }),
 

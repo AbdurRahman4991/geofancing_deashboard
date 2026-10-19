@@ -1,4 +1,4 @@
-import { api } from "../api/baseApi";
+﻿import { api } from "../api/baseApi";
 
 export interface UserRecord {
   id: number;
@@ -75,17 +75,20 @@ export const userSlice = api.injectEndpoints({
       page?: number;
       per_page?: number;
       search?: string;
+      company_id?: number | string;
     }>({
       query: ({
         page = 1,
         per_page = 10,
         search = "",
+        company_id,
       }) => ({
         url: "assign-role/users",
         params: {
           page,
           per_page,
           search,
+          ...(company_id ? { company_id } : {}),
         },
       }),
       providesTags: ["users"],

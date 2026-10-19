@@ -59,11 +59,11 @@ export const navData = [
   //   path: '/employee',
   //   icon: icon('ic-user'),
   // },
-  // {
-  //   title: 'User',
-  //   path: '/users',
-  //   icon: icon('ic-user'),
-  // },
+  {
+    title: 'User',
+    path: '/users',
+    icon: icon('ic-user'),
+  },
   // {
   //   title: 'Company',
   //   path: '/company',

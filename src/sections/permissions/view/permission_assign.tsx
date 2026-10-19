@@ -18,7 +18,8 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
-import { getCurrentUser } from "src/utils/auth";
+import { getCurrentUser, isSuperAdmin } from "src/utils/auth";
+import { useGetCompanyQuery } from "../../../../redux/service/companySlice";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,6 +33,8 @@ import {
 } from "../../../../redux/service/permissionSlice";
 
 export default function AssignPermissionView() {
+  const isAdmin = isSuperAdmin();
+  const [companyId, setCompanyId] = useState<number | "">("");
   const [roleId, setRoleId] = useState<number | "">("");
 
   const [selectedPermissions, setSelectedPermissions] = useState<number[]>([]);
@@ -40,10 +43,19 @@ export default function AssignPermissionView() {
   // Role List
   // ==========================
 
+  const { data: companyData, isLoading: companyLoading } = useGetCompanyQuery(
+    { page: 1, limit: 100 },
+    { skip: !isAdmin }
+  );
+  const companies = companyData?.data ?? [];
+
   const {
     data: roleData,
     isLoading: roleLoading,
-  } = useGetRolesQuery();
+  } = useGetRolesQuery(
+    isAdmin && companyId ? { company_id: companyId } : undefined,
+    { skip: isAdmin && !companyId }
+  );
 
   // ==========================
   // Permission Groups
@@ -88,7 +100,7 @@ useEffect(() => {
   const somePermissionsChecked = allPermissionIds.some((id) => selectedPermissions.includes(id));
 
   useEffect(() => {
-    if (!roles.length) return;
+    if (isAdmin || !roles.length) return;
 
     const userRoles = getCurrentUser().roles ?? [];
     const normalizeRole = (name: string) => name.toLowerCase().replace(/[_-]/g, " ");
@@ -100,7 +112,7 @@ useEffect(() => {
     );
 
     if (matchingRole) setRoleId(matchingRole.id);
-  }, [roles]);
+  }, [roles, isAdmin]);
 
   // ==========================
   // Checkbox Toggle
@@ -153,7 +165,7 @@ useEffect(() => {
     }
   };
 
-  if (roleLoading || permissionLoading) {
+  if (roleLoading || permissionLoading || (isAdmin && companyLoading)) {
     return (
       <DashboardContent>
         <CircularProgress />
@@ -164,7 +176,7 @@ useEffect(() => {
   return (
     <DashboardContent>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Assign Permission ?
+        Assign Permission
       </Typography>
 
       <Card
@@ -176,12 +188,35 @@ useEffect(() => {
         <Stack spacing={4}>
           {/* Role and action */}
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }}>
-            <FormControl fullWidth>
+            {isAdmin && (
+              <FormControl fullWidth>
+                <InputLabel>Company</InputLabel>
+                <Select
+                  value={companyId}
+                  label="Company"
+                  onChange={(event) => {
+                    setCompanyId(Number(event.target.value));
+                    setRoleId("");
+                    setSelectedPermissions([]);
+                  }}
+                >
+                  {companies.map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.company_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+            <FormControl fullWidth disabled={isAdmin && !companyId}>
               <InputLabel>Role</InputLabel>
               <Select
                 value={roleId}
                 label="Role"
-                onChange={(e) => setRoleId(Number(e.target.value))}
+                onChange={(e) => {
+                  setRoleId(Number(e.target.value));
+                  setSelectedPermissions([]);
+                }}
               >
                 {roles.map((role: any) => (
                   <MenuItem key={role.id} value={role.id}>
