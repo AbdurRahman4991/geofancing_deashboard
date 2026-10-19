@@ -13,6 +13,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getCurrentCompanyId } from 'src/utils/auth';
 import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
 import { useGetLevelsQuery } from '../../../../../redux/service/levelSlice';
 import {
@@ -22,7 +23,7 @@ import {
   type NodeStatus,
 } from '../../../../../redux/service/nodeSlice';
 
-const COMPANY_ID = 1;
+const COMPANY_ID = getCurrentCompanyId();
 
 type NodeForm = {
   company_id: string;

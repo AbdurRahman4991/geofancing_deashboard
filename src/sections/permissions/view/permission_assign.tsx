@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 import {
   Box,
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 
 import { DashboardContent } from "src/layouts/dashboard";
+import { getCurrentUser } from "src/utils/auth";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -80,6 +81,26 @@ useEffect(() => {
     useAssignPermissionMutation();
 
   const roles = roleData?.data ?? [];
+  const allPermissionIds: number[] = Object.values(permissionGroups ?? {}).flatMap(
+    (permissions: any) => permissions.map((permission: any) => permission.id)
+  );
+  const allPermissionsChecked = allPermissionIds.length > 0 && allPermissionIds.every((id) => selectedPermissions.includes(id));
+  const somePermissionsChecked = allPermissionIds.some((id) => selectedPermissions.includes(id));
+
+  useEffect(() => {
+    if (!roles.length) return;
+
+    const userRoles = getCurrentUser().roles ?? [];
+    const normalizeRole = (name: string) => name.toLowerCase().replace(/[_-]/g, " ");
+    const matchingRole = roles.find((role: any) =>
+      userRoles.some((userRole) => {
+        const userRoleName = typeof userRole === "string" ? userRole : userRole.name;
+        return userRoleName && normalizeRole(userRoleName) === normalizeRole(role.name);
+      })
+    );
+
+    if (matchingRole) setRoleId(matchingRole.id);
+  }, [roles]);
 
   // ==========================
   // Checkbox Toggle
@@ -91,6 +112,15 @@ useEffect(() => {
         ? prev.filter((item) => item !== id)
         : [...prev, id]
     );
+  };
+
+  const handleToggleMany = (ids: number[]) => {
+    setSelectedPermissions((previous) => {
+      const areAllSelected = ids.length > 0 && ids.every((id) => previous.includes(id));
+      return areAllSelected
+        ? previous.filter((id) => !ids.includes(id))
+        : Array.from(new Set([...previous, ...ids]));
+    });
   };
 
   // ==========================
@@ -144,26 +174,44 @@ useEffect(() => {
         }}
       >
         <Stack spacing={4}>
-          {/* Role */}
-
-          <FormControl fullWidth>
-            <InputLabel>Role</InputLabel>
-
-            <Select
-              value={roleId}
-              label="Role"
-              onChange={(e) => setRoleId(Number(e.target.value))}
+          {/* Role and action */}
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }}>
+            <FormControl fullWidth>
+              <InputLabel>Role</InputLabel>
+              <Select
+                value={roleId}
+                label="Role"
+                onChange={(e) => setRoleId(Number(e.target.value))}
+              >
+                {roles.map((role: any) => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="contained"
+              color="inherit"
+              size="large"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
             >
-              {roles.map((role: any) => (
-                <MenuItem
-                  key={role.id}
-                  value={role.id}
-                >
-                  {role.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              {isLoading ? "Assigning..." : "Assign Permission"}
+            </Button>
+          </Stack>
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={allPermissionsChecked}
+                indeterminate={somePermissionsChecked && !allPermissionsChecked}
+                onChange={() => handleToggleMany(allPermissionIds)}
+              />
+            }
+            label="Select all permissions"
+          />
 
           {/* Permission Groups */}
 
@@ -171,16 +219,20 @@ useEffect(() => {
             Object.entries(permissionGroups).map(
               ([group, permissions]: any) => (
                 <Box key={group}>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mb: 1,
-                      textTransform: "capitalize",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {group}
-                  </Typography>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={permissions.length > 0 && permissions.every((permission: any) => selectedPermissions.includes(permission.id))}
+                        indeterminate={permissions.some((permission: any) => selectedPermissions.includes(permission.id)) && !permissions.every((permission: any) => selectedPermissions.includes(permission.id))}
+                        onChange={() => handleToggleMany(permissions.map((permission: any) => permission.id))}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ textTransform: "capitalize", fontWeight: 700 }}>
+                        {group}
+                      </Typography>
+                    }
+                  />
 
                   <Divider sx={{ mb: 2 }} />
 
@@ -205,18 +257,6 @@ useEffect(() => {
                 </Box>
               )
             )}
-
-          <Button
-            variant="contained"
-            color="inherit"
-            size="large"
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading
-              ? "Assigning..."
-              : "Assign Permission"}
-          </Button>
         </Stack>
       </Card>
 

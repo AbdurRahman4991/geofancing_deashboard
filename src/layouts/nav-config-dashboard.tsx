@@ -161,19 +161,16 @@ export const navData = [
   //   title: 'Attendance',
   //   path: '/attendance',
   //   icon: icon('ic-cart'),
-
   // },
   // {
   //   title: 'Attendance Role',
   //   path: '/attendance-role',
   //   icon: icon('ic-cart'),
-
   // },
   // {
   //   title: 'Employee Tracking',
   //   path: '/employee-location',
   //   icon: icon('ic-cart'),
-
   // },
   // {
   //   title: 'Product',

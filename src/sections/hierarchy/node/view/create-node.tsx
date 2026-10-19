@@ -12,21 +12,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getCurrentCompanyId } from 'src/utils/auth';
 import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
 import { useGetLevelsQuery } from '../../../../../redux/service/levelSlice';
 import { useCreateNodeMutation, useGetNodesQuery, type NodeStatus } from '../../../../../redux/service/nodeSlice';
 
-const getLoggedInCompanyId = (): number => {
-  try {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const companyId = Number(user.company_id);
-    return Number.isInteger(companyId) && companyId > 0 ? companyId : 0;
-  } catch {
-    return 0;
-  }
-};
-
-const COMPANY_ID = getLoggedInCompanyId();
+const COMPANY_ID = getCurrentCompanyId();
 
 type NodeForm = {
   company_id: string;
@@ -46,7 +37,7 @@ export default function CreateNodeView() {
     page: 1,
     per_page: 100,
   });
-  const levels = levelData?.data?.data ?? [];
+  const levels = levelData?.data?.data ?? [];  
   const { data: nodeData } = useGetNodesQuery({
     company_id: COMPANY_ID,
     page: 1,

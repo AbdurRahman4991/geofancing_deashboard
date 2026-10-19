@@ -23,6 +23,7 @@ export const employeeApi = api.injectEndpoints({
         name?: string;
         department?: string;
         search?: string;
+        company_id?: number | string;
       }
     >({
       query: ({
@@ -31,6 +32,7 @@ export const employeeApi = api.injectEndpoints({
         name = "",
         department = "",
         search = "",
+        company_id,
       }) => ({
         url: "/employees",
         method: "GET",
@@ -40,6 +42,7 @@ export const employeeApi = api.injectEndpoints({
           name,
           department,
           search,
+          ...(company_id ? { company_id } : {}),
         },
       }),
 

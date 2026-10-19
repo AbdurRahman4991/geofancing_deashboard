@@ -13,21 +13,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { getCurrentCompanyId } from 'src/utils/auth';
 import { useGetNodesQuery, type HierarchyNode } from '../../../../../redux/service/nodeSlice';
 import { useGetUsersQuery, type UserRecord } from '../../../../../redux/service/userSlice';
 import { useAssignUserMutation } from '../../../../../redux/service/employeeHierarchyAssignmentSlice';
 
-const getLoggedInCompanyId = (): number => {
-  try {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const companyId = Number(user.company_id ?? user.employee?.company_id);
-    return Number.isInteger(companyId) && companyId > 0 ? companyId : 0;
-  } catch {
-    return 0;
-  }
-};
-
-const COMPANY_ID = getLoggedInCompanyId();
+const COMPANY_ID = getCurrentCompanyId();
 
 export default function CreateNodeView() {
   const { data: usersData, isLoading: usersLoading, isError: usersError } = useGetUsersQuery({ page: 1, per_page: 100 });
@@ -205,5 +196,7 @@ export default function CreateNodeView() {
     </DashboardContent>
   );
 }
+
+
 
 

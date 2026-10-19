@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+﻿import { useState, useCallback } from "react";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -39,6 +39,10 @@ export function PermissionView() {
   const filteredData = permissions.filter((item: PermissionProps) =>
     item.name.toLowerCase().includes(filterName.toLowerCase())
   );
+  const paginatedData = filteredData.slice(
+    table.page * table.rowsPerPage,
+    table.page * table.rowsPerPage + table.rowsPerPage
+  );
 
   return (
     <DashboardContent>
@@ -74,9 +78,10 @@ export function PermissionView() {
         <UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
-          onFilterName={(e) =>
-            setFilterName(e.target.value)
-          }
+          onFilterName={(e) => {
+            setFilterName(e.target.value);
+            table.onPageChange(null, 0);
+          }}
         />
 
         <Scrollbar>
@@ -113,7 +118,7 @@ export function PermissionView() {
               />
 
               <TableBody>
-                {filteredData.map(
+                {paginatedData.map(
                   (row: PermissionProps) => (
                     <PermissionTableRow
                       key={row.id}
@@ -130,7 +135,7 @@ export function PermissionView() {
                   )
                 )}
 
-                {!filteredData.length &&
+                {!paginatedData.length &&
                   !isLoading && (
                     <TableNoData
                       searchQuery={filterName}
@@ -143,11 +148,12 @@ export function PermissionView() {
 
         <TablePagination
           component="div"
-          page={0}
+          page={table.page}
           count={filteredData.length}
-          rowsPerPage={filteredData.length || 10}
-          rowsPerPageOptions={[10]}
-          onPageChange={() => {}}
+          rowsPerPage={table.rowsPerPage}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          onPageChange={table.onPageChange}
+          onRowsPerPageChange={table.onRowsPerPageChange}
         />
       </Card>
     </DashboardContent>
@@ -171,6 +177,15 @@ export function useTable() {
   const [order, setOrder] = useState<
     "asc" | "desc"
   >("asc");
+
+  const onPageChange = useCallback((_event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const onRowsPerPageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  }, []);
 
   const onSort = useCallback(
     (id: string) => {
@@ -215,6 +230,8 @@ export function useTable() {
     rowsPerPage,
     selected,
     onSort,
+    onPageChange,
+    onRowsPerPageChange,
     onSelectRow,
     onSelectAllRows,
   };

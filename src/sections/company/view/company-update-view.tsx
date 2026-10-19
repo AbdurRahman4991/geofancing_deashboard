@@ -39,7 +39,7 @@ export default function CompanyUpdateView() {
     package: '',
     details: '',
     billing_cycle: '',
-    status: 1,
+    status: 'Active',
     avatar: null as File | null,
   });
 
@@ -59,7 +59,9 @@ export default function CompanyUpdateView() {
         package: data.package || '',
         details: data.details || '',
         billing_cycle: data.billing_cycle || '',
-        status: data.status ?? 1,
+        status: String(data.status).toLowerCase() === 'inactive' || data.status === 0 || data.status === false || data.status === '0'
+          ? 'Inactive'
+          : 'Active',
         avatar: null,
       });
 
@@ -415,7 +417,7 @@ export default function CompanyUpdateView() {
             onChange={(e) => {
               setForm((prev) => ({
                 ...prev,
-                status: Number(e.target.value),
+                status: e.target.value,
               }));
 
               setErrors((prev: any) => ({
@@ -425,11 +427,11 @@ export default function CompanyUpdateView() {
             }}
             fullWidth
           >
-            <MenuItem value={1}>
+            <MenuItem value="Active">
               Active
             </MenuItem>
 
-            <MenuItem value={0}>
+            <MenuItem value="Inactive">
               Inactive
             </MenuItem>
           </TextField>

@@ -1,6 +1,8 @@
-﻿import { useState } from 'react';
+import { isSuperAdmin as hasSuperAdminRole } from 'src/utils/auth';
 
-import { Box, Card, Stack, TextField, Button, Typography, Autocomplete } from '@mui/material';
+import { useState } from 'react';
+
+import { Box, Card, Stack, TextField, Button, Typography, Autocomplete, MenuItem } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,6 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { useCreateUserMutation } from '../../../../redux/service/userSlice';
 import type { CreateUserRequest } from '../../../../redux/service/userSlice';
 import { useGetEmployeesQuery } from '../../../../redux/service/employeeSlice';
+import { useGetCompanyQuery } from '../../../../redux/service/companySlice';
 
 type FormErrors = Partial<Record<keyof CreateUserRequest, string>>;
 
@@ -20,7 +23,17 @@ const initialForm: CreateUserRequest = {
 
 export default function UserCreateView() {
   const [createUser, { isLoading }] = useCreateUserMutation();
-  const { data: employeeResponse, isLoading: employeesLoading } = useGetEmployeesQuery({ page: 1, per_page: 100 });
+  const isSuperAdmin = hasSuperAdminRole();
+  const [selectedCompanyId, setSelectedCompanyId] = useState('');
+  const { data: companyResponse, isLoading: companiesLoading } = useGetCompanyQuery(
+    { page: 1, limit: 100 },
+    { skip: !isSuperAdmin }
+  );
+  const { data: employeeResponse, isLoading: employeesLoading } = useGetEmployeesQuery(
+    { page: 1, per_page: 100, ...(isSuperAdmin && selectedCompanyId ? { company_id: selectedCompanyId } : {}) },
+    { skip: isSuperAdmin && !selectedCompanyId }
+  );
+  const companies = companyResponse?.data ?? [];
   const employees = employeeResponse?.data ?? [];
   const [form, setForm] = useState<CreateUserRequest>(initialForm);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -90,10 +103,30 @@ export default function UserCreateView() {
       <Card sx={{ p: 3, maxWidth: 700 }}>
         <Box component="form" onSubmit={handleSubmit}>
           <Stack spacing={2}>
+            {isSuperAdmin && (
+              <TextField
+                select
+                label="Company"
+                value={selectedCompanyId}
+                onChange={(event) => {
+                  setSelectedCompanyId(event.target.value);
+                  setForm((current) => ({ ...current, employee_id: '' }));
+                  setErrors((current) => ({ ...current, employee_id: undefined }));
+                }}
+                disabled={companiesLoading}
+                required
+                fullWidth
+              >
+                {companies.map((company) => (
+                  <MenuItem key={company.id} value={String(company.id)}>{company.company_name}</MenuItem>
+                ))}
+              </TextField>
+            )}
             <Autocomplete
               options={employees}
               value={employees.find((employee) => String(employee.employee_id) === form.employee_id) ?? null}
               loading={employeesLoading}
+              disabled={isSuperAdmin && !selectedCompanyId}
               onChange={(_, employee) => {
                 setForm((current) => ({ ...current, employee_id: employee ? String(employee.employee_id) : '' }));
                 setErrors((current) => ({ ...current, employee_id: undefined }));
@@ -105,7 +138,7 @@ export default function UserCreateView() {
                   {...params}
                   name="employee_id"
                   label="Employee"
-                  placeholder="Search employee..."
+                  placeholder={isSuperAdmin && !selectedCompanyId ? 'Select a company first' : 'Search employee...'}
                   error={!!errors.employee_id}
                   helperText={errors.employee_id || 'Select an employee for this user'}
                   required
@@ -168,3 +201,5 @@ export default function UserCreateView() {
     </DashboardContent>
   );
 }
+
+
