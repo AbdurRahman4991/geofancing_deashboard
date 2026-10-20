@@ -11,12 +11,12 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
-import type { HierarchyNode } from '../../../../redux/service/nodeSlice';
+import type { EmployeeHierarchyAssignment } from '../../../../redux/service/employeeHierarchyAssignmentSlice';
 
-export type UserProps = HierarchyNode;
+export type UserProps = EmployeeHierarchyAssignment;
 
 type UserTableRowProps = {
-  row: HierarchyNode;
+  row: EmployeeHierarchyAssignment;
   selected: boolean;
   onSelectRow: () => void;
 };
@@ -35,7 +35,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
   const handleEdit = () => {
     handleClosePopover();
-    router.push('/hierarchy/edit-node/' + row.id);
+    router.push('/edit/assign-node/' + row.id);
   };
 
   return (
@@ -44,20 +44,24 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         <TableCell padding="checkbox">
           <Checkbox checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell>{row.name}</TableCell>
-        <TableCell>{row.code ?? '—'}</TableCell>
-        <TableCell>{row.level?.name ?? '—'}</TableCell>
-        <TableCell>{row.parent?.name ?? '—'}</TableCell>
-        <TableCell>{row.children_count ?? 0}</TableCell>
+        <TableCell>{row.id}</TableCell>
+        <TableCell>{row.user ?? '—'}</TableCell>
+        <TableCell>{row.company_id ?? '—'}</TableCell>
+        <TableCell>{row.company ?? '—'}</TableCell>
+        <TableCell>{row.hierarchy_node_id ?? '—'}</TableCell>
+        <TableCell>{row.hierarchy_node ?? '—'}</TableCell>
+        <TableCell>{row.hierarchy_level ?? '—'}</TableCell>
+        <TableCell>{row.hierarchy_level_code ?? '—'}</TableCell>
         <TableCell>
           <Chip
             size="small"
-            label={row.status}
-            color={row.status === 'active' ? 'success' : 'default'}
+            label={row.is_current ? 'Current' : 'Previous'}
+            color={row.is_current ? 'success' : 'default'}
           />
         </TableCell>
+        <TableCell>{row.assigned_by ?? '—'}</TableCell>
         <TableCell align="right">
-          <IconButton aria-label={'Actions for ' + row.name} onClick={handleOpenPopover}>
+          <IconButton aria-label={'Actions for ' + (row.user ?? 'assignment')} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>

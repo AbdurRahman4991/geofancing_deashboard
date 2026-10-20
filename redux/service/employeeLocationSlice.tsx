@@ -143,6 +143,14 @@ export const employeeLocationSlice = api.injectEndpoints({
       }),
     }),
 
+    getLatestEmployeeLocation: builder.query<any, { user_id: string | number; refreshKey: number }>({
+      query: ({ user_id, refreshKey }) => ({
+        url: "/employee-locations",
+        method: "GET",
+        params: { user_id, per_page: 1, _refresh: refreshKey },
+      }),
+    }),
+
   }),
 });
 
@@ -154,6 +162,7 @@ export const {
   useDeleteEmployeeLocationMutation,
   useGetLocationEmployeesQuery, 
   useGetEmployeeLocationHistoryQuery,
+  useLazyGetLatestEmployeeLocationQuery,
 } = employeeLocationSlice;
 
 

@@ -12,7 +12,12 @@ export interface EmployeeHierarchyAssignment {
   id: number;
 
   user: string | null;
+  company_id?: number | null;
+  company?: string | null;
   hierarchy_node_id: number | null;
+  hierarchy_node?: string | null;
+  hierarchy_level?: string | null;
+  hierarchy_level_code?: string | null;
 
   country: string | null;
   region: string | null;
@@ -53,13 +58,7 @@ export interface PaginationData {
 
 export interface EmployeeHierarchyAssignmentResponse {
   status: number;
-
-  data:
-    | PaginationData & {
-        data: EmployeeHierarchyAssignment[];
-      }
-    | EmployeeHierarchyAssignment[]
-    | null;
+  data: (PaginationData & { data: EmployeeHierarchyAssignment[] }) | null;
 }
 
 // ======================================================================
@@ -162,10 +161,25 @@ export const employeeHierarchyAssignmentSlice =
 
         transformResponse: (
           response: any
-        ): EmployeeHierarchyAssignmentResponse => ({
-          status: response.status,
-          data: response.data,
-        }),
+        ): EmployeeHierarchyAssignmentResponse => {
+          const page = response?.data?.data ? response.data : null;
+          const rows = page?.data ?? (Array.isArray(response?.data) ? response.data : []);
+
+          return {
+            status: response?.status ?? 200,
+            data: page
+              ? { ...page, data: rows }
+              : {
+                  current_page: 1,
+                  last_page: 1,
+                  per_page: rows.length,
+                  total: rows.length,
+                  from: rows.length ? 1 : null,
+                  to: rows.length || null,
+                  data: rows,
+                },
+          };
+        },
 
         providesTags: [
           'employeeHierarchyAssignments',

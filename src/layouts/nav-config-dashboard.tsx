@@ -16,11 +16,11 @@ export type NavItem = {
 };
 
 export const navData = [
-  // {
-  //   title: 'Dashboard',
-  //   path: '/',
-  //   icon: icon('ic-analytics'),
-  // },
+  {
+    title: 'Dashboard',
+    path: '/',
+    icon: icon('ic-analytics'),
+  },
   {
     title: 'Access control',
     path: '/access-control',
@@ -54,27 +54,32 @@ export const navData = [
     },
     ],
   },  
-  // {
-  //   title: 'Employee',
-  //   path: '/employee',
-  //   icon: icon('ic-user'),
-  // },
+  {
+    title: 'Employee',
+    path: '/employee',
+    icon: icon('ic-user'),
+  },
+  {
+    title: 'Live Location',
+    path: '/employee-live-location',
+    icon: icon('ic-analytics'),
+  },
   {
     title: 'User',
     path: '/users',
     icon: icon('ic-user'),
   },
-  // {
-  //   title: 'Company',
-  //   path: '/company',
-  //   icon: icon('ic-user'),
-  // },
+  {
+    title: 'Company',
+    path: '/company',
+    icon: icon('ic-user'),
+  },
 
-  //   {
-  //   title: 'Department',
-  //   path: '/department',
-  //   icon: icon('ic-user'),
-  // },
+  {
+    title: 'Department',
+    path: '/department',
+    icon: icon('ic-user'),
+  },
 
   // ------------------------------------------------
   // HIERARCHY DROPDOWN
@@ -85,19 +90,7 @@ export const navData = [
     path: '/hierarchy',
     icon: icon('ic-analytics'),
 
-    children: [
-      {
-        title: 'Assign Hierarchy',
-        path: '/assign-hierarchy',
-        icon: icon('ic-analytics'),
-      },
-
-      {
-        title: 'Assign Node',
-        path: '/assign-node',
-        icon: icon('ic-analytics'),
-      },      
-
+    children: [        
       {
         title: 'Hierarchy Level',
         path: '/hierarchy/level',
@@ -108,70 +101,35 @@ export const navData = [
         path: '/hierarchy/node',
         icon: icon('ic-analytics'),
       },
-      // {
-      //   title: 'Country',
-      //   path: '/hierarchy/country',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Region',
-      //   path: '/hierarchy/region',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Zone',
-      //   path: '/hierarchy/zone',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Division',
-      //   path: '/hierarchy/division',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'District',
-      //   path: '/hierarchy/district',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Sub District',
-      //   path: '/hierarchy/sub-district',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Territory',
-      //   path: '/hierarchy/territory',
-      //   icon: icon('ic-analytics'),
-      // },
-      // {
-      //   title: 'Area',
-      //   path: '/hierarchy/area',
-      //   icon: icon('ic-analytics'),
-      // },
+      {
+        title: 'Assign Node',
+        path: '/assign-node',
+        icon: icon('ic-analytics'),
+      },        
      ],
    },
 
-  // {
-  //   title: 'Geofench',
-  //   path: '/geofench',
-  //   icon: icon('ic-cart'),
+  {
+    title: 'Geofench',
+    path: '/geofench',
+    icon: icon('ic-cart'),
 
-  // },
-  // {
-  //   title: 'Attendance',
-  //   path: '/attendance',
-  //   icon: icon('ic-cart'),
-  // },
-  // {
-  //   title: 'Attendance Role',
-  //   path: '/attendance-role',
-  //   icon: icon('ic-cart'),
-  // },
-  // {
-  //   title: 'Employee Tracking',
-  //   path: '/employee-location',
-  //   icon: icon('ic-cart'),
-  // },
+  },
+  {
+    title: 'Attendance',
+    path: '/attendance',
+    icon: icon('ic-cart'),
+  },
+  {
+    title: 'Attendance Role',
+    path: '/attendance-role',
+    icon: icon('ic-cart'),
+  },
+   {
+    title: 'Tracking',
+    path: '/employee-location',
+    icon: icon('ic-cart'),
+  },
   // {
   //   title: 'Product',
   //   path: '/products',

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,62 +18,48 @@ import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { UserTableToolbar } from '../user-table-toolbar';
 
-import { useGetNodesQuery, type HierarchyNode } from '../../../../../redux/service/nodeSlice';
+import { useGetEmployeeHierarchyAssignmentsQuery } from '../../../../../redux/service/employeeHierarchyAssignmentSlice';
 import { useRouter } from 'src/routes/hooks';
 
-const COMPANY_ID = 1;
 const DEFAULT_ROWS_PER_PAGE = 15;
 
 export function ViewNodeAssign() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const [filterName, setFilterName] = useState('');
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('user');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
   const router = useRouter();
 
-  const { data, isLoading, isError } = useGetNodesQuery({
-    company_id: COMPANY_ID,
+  const { data, isLoading, isError } = useGetEmployeeHierarchyAssignmentsQuery({
     page: page + 1,
     per_page: rowsPerPage,
+    search: filterName || undefined,
   });
 
-  const nodes = data?.data?.data ?? [];
+  const assignments = data?.data?.data ?? [];
   const search = filterName.trim().toLowerCase();
-  const filteredNodes = nodes.filter((node) =>
+  const filteredAssignments = assignments.filter((assignment) =>
     [
-      node.name,
-      node.code ?? '',
-      node.level?.name ?? '',
-      node.parent?.name ?? '',
-      node.status,
-      String(node.id),
+      assignment.user ?? '',
+      assignment.company ?? '',
+      assignment.hierarchy_node ?? '',
+      assignment.hierarchy_level ?? '',
+      assignment.hierarchy_level_code ?? '',
+      assignment.assigned_by ?? '',
+      String(assignment.id),
     ].some((value) => value.toLowerCase().includes(search))
   );
-
-  const getSortValue = (node: HierarchyNode, key: string) => {
-    if (key === 'level') return node.level?.name ?? '';
-    if (key === 'parent') return node.parent?.name ?? '';
-    if (key === 'children_count') return node.children_count ?? 0;
-    return node[key as keyof HierarchyNode] ?? '';
-  };
-
-  const sortedNodes = [...filteredNodes].sort((a, b) => {
-    const left = getSortValue(a, orderBy);
-    const right = getSortValue(b, orderBy);
-    const comparison =
-      typeof left === 'number' && typeof right === 'number'
-        ? left - right
-        : String(left).localeCompare(String(right), undefined, {
-            numeric: true,
-            sensitivity: 'base',
-          });
+  const sortedAssignments = [...filteredAssignments].sort((a, b) => {
+    const left = String(a[orderBy as keyof typeof a] ?? '');
+    const right = String(b[orderBy as keyof typeof b] ?? '');
+    const comparison = left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' });
     return order === 'asc' ? comparison : -comparison;
   });
 
-  const visibleSelectedCount = sortedNodes.filter((node) =>
-    selected.includes(String(node.id))
+  const visibleSelectedCount = sortedAssignments.filter((assignment) =>
+    selected.includes(String(assignment.id))
   ).length;
 
   const handleSelectRow = (id: string) => {
@@ -85,7 +71,7 @@ export function ViewNodeAssign() {
   };
 
   const handleSelectAllRows = (checked: boolean) => {
-    const visibleIds = sortedNodes.map((node) => String(node.id));
+    const visibleIds = sortedAssignments.map((assignment) => String(assignment.id));
     setSelected((current) =>
       checked
         ? Array.from(new Set([...current, ...visibleIds]))
@@ -93,32 +79,30 @@ export function ViewNodeAssign() {
     );
   };
 
-  const handleSort = useCallback((id: string) => {
-    setOrder((current) =>
-      orderBy === id && current === 'asc' ? 'desc' : 'asc'
-    );
+  const handleSort = (id: string) => {
+    setOrder((current) => orderBy === id && current === 'asc' ? 'desc' : 'asc');
     setOrderBy(id);
-  }, [orderBy]);
+  };
 
   if (isLoading) {
-    return <DashboardContent><Typography>Loading nodes...</Typography></DashboardContent>;
+    return <DashboardContent><Typography>Loading employee hierarchy assignments...</Typography></DashboardContent>;
   }
 
   if (isError) {
-    return <DashboardContent><Typography color="error">Failed to load nodes.</Typography></DashboardContent>;
+    return <DashboardContent><Typography color="error">Failed to load employee hierarchy assignments.</Typography></DashboardContent>;
   }
 
   return (
     <DashboardContent>
       <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>Nodes</Typography>
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>Employee Hierarchy Assignments</Typography>
         <Button
           onClick={() => router.push('/create/assign-node')}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New Node
+          New Assignment
         </Button>
       </Box>
 
@@ -134,35 +118,39 @@ export function ViewNodeAssign() {
 
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 1000 }}>
+            <Table sx={{ minWidth: 1400 }}>
               <UserTableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={sortedNodes.length}
+                rowCount={sortedAssignments.length}
                 numSelected={visibleSelectedCount}
                 onSort={handleSort}
                 onSelectAllRows={handleSelectAllRows}
                 headLabel={[
-                  { id: 'name', label: 'Node Name' },
-                  { id: 'code', label: 'Code' },
-                  { id: 'level', label: 'Hierarchy Level' },
-                  { id: 'parent', label: 'Parent Node' },
-                  { id: 'children_count', label: 'Children' },
-                  { id: 'status', label: 'Status' },
+                  { id: 'id', label: 'Assignment ID' },
+                  { id: 'user', label: 'Employee' },
+                  { id: 'company_id', label: 'Company ID' },
+                  { id: 'company', label: 'Company' },
+                  { id: 'hierarchy_node_id', label: 'Node ID' },
+                  { id: 'hierarchy_node', label: 'Hierarchy Node' },
+                  { id: 'hierarchy_level', label: 'Hierarchy Level' },
+                  { id: 'hierarchy_level_code', label: 'Level Code' },
+                  { id: 'is_current', label: 'Current' },
+                  { id: 'assigned_by', label: 'Assigned By' },
                   { id: '', label: 'Action' },
                 ]}
               />
 
               <TableBody>
-                {sortedNodes.map((node) => (
+                {sortedAssignments.map((assignment) => (
                   <UserTableRow
-                    key={node.id}
-                    row={node}
-                    selected={selected.includes(String(node.id))}
-                    onSelectRow={() => handleSelectRow(String(node.id))}
+                    key={assignment.id}
+                    row={assignment}
+                    selected={selected.includes(String(assignment.id))}
+                    onSelectRow={() => handleSelectRow(String(assignment.id))}
                   />
                 ))}
-                {!sortedNodes.length && <TableNoData searchQuery={filterName} />}
+                {!sortedAssignments.length && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>

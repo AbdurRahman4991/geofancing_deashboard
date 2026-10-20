@@ -43,6 +43,7 @@ export const AttendanceRoleCreate = lazy(()=>import('src/sections/attendance-rol
 export const AttendanceRoleEdit = lazy(()=>import('src/sections/attendance-roles/view/update-attendance-role'))
 export const EmployeeTrackingPage = lazy(()=>import('src/pages/employee-location'))
 export const EmployeeTrackingMap = lazy(()=> import('src/pages/employee-location-map-view'))
+export const EmployeeLiveLocation = lazy(()=> import('src/pages/employee-live-location-view'))
 // Hiearchy
 export const Level = lazy(()=> import('src/sections/hierarchy/level/view/view-level'));
 export const CreateLevel = lazy(() => import('../sections/hierarchy/level/view/create-level'));
@@ -50,38 +51,9 @@ export const EditLevel = lazy(() => import('../sections/hierarchy/level/view/upd
 export const Node = lazy(()=> import('src/sections/hierarchy/node/view/node-view'));
 export const CreateNode = lazy(() => import('../sections/hierarchy/node/view/create-node'));
 export const EditNode = lazy(() => import('../sections/hierarchy/node/view/update-node'));
-
-export const Country = lazy(()=>import('src/sections/hierarchy/country/view/country_view'));
-export const CreateCountry = lazy(() => import('../sections/hierarchy/country/view/create_country'));
-export const EditCountry = lazy(() => import('../sections/hierarchy/country/view/update_country'));
-export const Region = lazy(()=> import('src/sections/hierarchy/region/view/region_view'));
-export const CreateRegion = lazy(() => import('../sections/hierarchy/region/view/create_region'));
-export const EditRegion = lazy(() => import('../sections/hierarchy/region/view/update_region'));
-export const Zone = lazy(()=> import('src/sections/hierarchy/zone/view/zone_view'));
-export const CreateZone = lazy(() => import('../sections/hierarchy/zone/view/create_zone'));
-export const EditZone = lazy(() => import('../sections/hierarchy/zone/view/update_zone'));
-export const Division = lazy(()=> import('src/sections/hierarchy/division/view/division_view'));
-export const CreateDivision = lazy(() => import('../sections/hierarchy/division/view/create_division'));
-export const EditDivision = lazy(() => import('../sections/hierarchy/division/view/update_division'));
-export const District = lazy(()=> import('src/sections/hierarchy/district/view/district_view'));
-export const CreateDistrict = lazy(() => import('../sections/hierarchy/district/view/create_district'));
-export const EditDistrict = lazy(() => import('../sections/hierarchy/district/view/update_district'));
-export const SubDistrict = lazy(()=> import('src/sections/hierarchy/sub_district/view/sub_district_view'));
-export const CreateSubDistrict = lazy(() => import('../sections/hierarchy/sub_district/view/create_sub_district'));
-export const EditSubDistrict = lazy(() => import('../sections/hierarchy/sub_district/view/update_sub_district'));
-export const Territory = lazy(()=> import('src/sections/hierarchy/territory/view/territory_view'));
-export const CreateTerritory = lazy(() => import('../sections/hierarchy/territory/view/create_territory'));
-export const EditTerritory = lazy(() => import('../sections/hierarchy/territory/view/update_territory'));
-export const Area = lazy(()=> import('src/sections/hierarchy/area/view/area_view'));
-export const CreateArea = lazy(() => import('../sections/hierarchy/area/view/create_area'));
-export const EditArea = lazy(() => import('../sections/hierarchy/area/view/update_area'));
-export const AssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/view_hierarchy_assign'));
-export const CreateAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/create_hierarchy_assign'));
-export const EditAssignHierarchy = lazy(() => import('src/sections/hierarchy/hierarchyAssign/view/update_hierarchy_assign'));
-
 export const AssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/view-node-assign'));
 export const CreateAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/create-node-assign'));
-// export const EditAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/update-node-assign'));
+export const EditAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/update-node-assign'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -164,53 +136,17 @@ export const routesSection: RouteObject[] = [
 
           { path: 'employee-location', element: <EmployeeTrackingPage /> },
           { path: 'employee-location-map', element: <EmployeeTrackingMap /> },
+          { path: 'employee-live-location', element: <EmployeeLiveLocation /> },
 
           { path: 'hierarchy/level', element: <Level /> },
           { path: 'hierarchy/create-level', element: <CreateLevel /> },
           { path: 'hierarchy/edit-level/:id', element: <EditLevel /> },
           { path: 'hierarchy/node', element: <Node /> },
           { path: 'hierarchy/create-node', element: <CreateNode /> },
-          { path: 'hierarchy/edit-node/:id', element: <EditNode /> },          
-
-          { path: 'hierarchy/country', element: <Country /> },
-          { path: 'hierarchy/create-country', element: <CreateCountry /> },
-          { path: 'hierarchy/edit-country/:id', element: <EditCountry /> },
-
-          { path: 'hierarchy/region', element: <Region /> },
-          { path: 'hierarchy/create-region', element: <CreateRegion /> },
-          { path: 'hierarchy/edit-region/:id', element: <EditRegion /> },
-
-          { path: 'hierarchy/zone', element: <Zone /> },
-          { path: 'hierarchy/create-zone', element: <CreateZone /> },
-          { path: 'hierarchy/edit-zone/:id', element: <EditZone /> },
-
-          { path: 'hierarchy/division', element: <Division /> },
-          { path: 'hierarchy/create-division', element: <CreateDivision /> },
-          { path: 'hierarchy/edit-division/:id', element: <EditDivision /> },
-
-          { path: 'hierarchy/district', element: <District /> },
-          { path: 'hierarchy/create-district', element: <CreateDistrict /> },
-          { path: 'hierarchy/edit-district/:id', element: <EditDistrict /> },
-
-          { path: 'hierarchy/sub-district', element: <SubDistrict /> },
-          { path: 'hierarchy/create-sub-district', element: <CreateSubDistrict /> },
-          { path: 'hierarchy/edit-sub-district/:id', element: <EditSubDistrict /> },
-
-          { path: 'hierarchy/territory', element: <Territory /> },
-          { path: 'hierarchy/create-territory', element: <CreateTerritory /> },
-          { path: 'hierarchy/edit-territory/:id', element: <EditTerritory /> },
-
-          { path: 'hierarchy/area', element: <Area /> },
-          { path: 'hierarchy/create-area', element: <CreateArea /> },
-          { path: 'hierarchy/edit-area/:id', element: <EditArea /> },
-
-          { path: 'assign-hierarchy', element: <AssignHierarchy /> },
-          { path: 'create/assign-hierarchy', element: <CreateAssignHierarchy /> },
-          { path: 'edit/assign-hierarchy/:id', element: <EditAssignHierarchy /> },
-
+          { path: 'hierarchy/edit-node/:id', element: <EditNode /> },                    
           { path: 'assign-node', element: <AssignNode /> },
           { path: 'create/assign-node', element: <CreateAssignNode /> },
-          // { path: 'edit/assign-node/:id', element: <EditAssignNode /> },
+          { path: 'edit/assign-node/:id', element: <EditAssignNode /> },
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },
