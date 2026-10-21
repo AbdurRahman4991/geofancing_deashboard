@@ -1,7 +1,13 @@
 import type { Breakpoint } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 import { merge } from 'es-toolkit';
 import { useBoolean } from 'minimal-shared/hooks';
+import { GITHUB_TAGS_URL } from '../../../redux/api/baseApi';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -50,6 +56,38 @@ export function DashboardLayout({
   const theme = useTheme();
 
   const { value: open, onFalse: onClose, onTrue: onOpen } = useBoolean();
+  const [gitTags, setGitTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState('');
+  const [tagLoading, setTagLoading] = useState(true);
+  const [tagLoadFailed, setTagLoadFailed] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetch(GITHUB_TAGS_URL, {
+      signal: controller.signal,
+      headers: { Accept: 'application/vnd.github+json' },
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Could not load Git tags');
+        return response.json();
+      })
+      .then((tags: { name: string }[]) => {
+        const names = tags.map((tag) => tag.name);
+        setGitTags(names);
+        setSelectedTag((current) => current || names[0] || '');
+        setTagLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Failed to load GitHub tags:', error);
+          setTagLoadFailed(true);
+          setTagLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
 
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = {
@@ -78,6 +116,29 @@ export function DashboardLayout({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           {/** @slot Searchbar */}
           <Searchbar />
+
+          <FormControl size="small" sx={{ minWidth: 130 }}>
+            <InputLabel id="git-version-label">Version</InputLabel>
+            <Select<string>
+              labelId="git-version-label"
+              value={selectedTag}
+              label="Version"
+              onChange={(event) => setSelectedTag(event.target.value)}
+              displayEmpty
+            >
+              {gitTags.length === 0 ? (
+                <MenuItem value="" disabled>
+                  {tagLoading
+                    ? 'Loading versions...'
+                    : tagLoadFailed
+                      ? 'Could not load versions'
+                      : 'No GitHub tags found'}
+                </MenuItem>
+              ) : (
+                gitTags.map((tag) => <MenuItem key={tag} value={tag}>{tag}</MenuItem>)
+              )}
+            </Select>
+          </FormControl>
 
           {/** @slot Language popover */}
           <LanguagePopover data={_langs} />

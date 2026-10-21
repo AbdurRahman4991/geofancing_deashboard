@@ -2,8 +2,14 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || "http://192.168.20.203:8000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `${API_ORIGIN}/api`;
+const GITHUB_API_BASE_URL = "https://api.github.com";
+const GITHUB_REPOSITORY = "AbdurRahman4991/geofancing_deashboard";
+export const GITHUB_TAGS_URL = `${GITHUB_API_BASE_URL}/repos/${GITHUB_REPOSITORY}/tags`;
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://192.168.20.203:8000/api",
+  baseUrl: API_BASE_URL,
 
   prepareHeaders: (headers) => {
     const token = localStorage.getItem("token");
@@ -28,5 +34,5 @@ export const api = createApi({
   ],
 });
 
-export const imageUrl = "http://192.168.20.203:8000/image/";
+export const imageUrl = `${API_ORIGIN}/image/`;
 
