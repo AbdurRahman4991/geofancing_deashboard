@@ -64,16 +64,18 @@ export const geofenceSlice = api.injectEndpoints({
         area_id?: number | string;
         search?: string;
         company_id?: number | string;
+        user_id?: number | string;
       }
     >({
-      query: ({ page = 1, per_page = 10, area_id = "", search= "", company_id="", }) => ({
+      query: ({ page = 1, per_page = 10, area_id = "", search= "", company_id="", user_id="", }) => ({
         url: "geofences",
         params: {
           page,
           per_page,
           area_id,
           search,
-          company_id
+          company_id,
+          ...(user_id ? { user_id } : {}),
           
         },
       }),

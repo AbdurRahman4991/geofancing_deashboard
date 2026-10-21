@@ -35,6 +35,7 @@ export type UserProps = {
   dob?: string;
   section_info?: string;
   status: string;
+  registration_status?: string;
 };
 
 
@@ -96,6 +97,15 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   <Label color={row.status === "active" ? "success" : "error"}>
     {row.status}
   </Label>
+</TableCell>
+<TableCell>
+  {row.registration_status ? (
+    <Label color={row.registration_status === 'registered' ? 'success' : 'warning'}>
+      {row.registration_status.replaceAll('_', ' ')}
+    </Label>
+  ) : (
+    '—'
+  )}
 </TableCell>
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

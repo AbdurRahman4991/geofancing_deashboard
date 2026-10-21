@@ -8,6 +8,10 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -24,6 +28,7 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
 import { useGetGeofencesQuery } from '../../../../redux/service/geofenchSlice';
+import { useGetUsersQuery } from '../../../../redux/service/userSlice';
 import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
@@ -31,6 +36,8 @@ import { useRouter } from 'src/routes/hooks';
 export function GeofenchView() {
   const table = useTable();
   const [filterName, setFilterName] = useState('');
+  const [userId, setUserId] = useState('');
+  const { data: usersData } = useGetUsersQuery({ page: 1, per_page: 1000 });
 
   // API call
 // API call
@@ -38,6 +45,7 @@ const { data, isLoading } = useGetGeofencesQuery({
   page: table.page + 1,
   limit: table.rowsPerPage,
   search: filterName,
+  user_id: userId,
    per_page: table.rowsPerPage,
 });
  const router = useRouter();
@@ -77,6 +85,25 @@ const total = data?.pagination?.total ?? 0;
           filterName={filterName}
           onFilterName={(e) => setFilterName(e.target.value)}
         />
+        <FormControl size="small" sx={{ minWidth: 220, mx: 3, mb: 2 }}>
+          <InputLabel id="geofence-user-filter-label">Filter by user</InputLabel>
+          <Select<string>
+            labelId="geofence-user-filter-label"
+            value={userId}
+            label="Filter by user"
+            onChange={(event) => {
+              setUserId(event.target.value);
+              table.onResetPage();
+            }}
+          >
+            <MenuItem value="">All users</MenuItem>
+            {(usersData?.data ?? []).map((user) => (
+              <MenuItem key={user.id} value={String(user.id)}>
+                {user.employee?.name || user.name || user.email}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <Scrollbar>
           <TableContainer sx={{ overflow: "unset" }}>
@@ -99,6 +126,7 @@ const total = data?.pagination?.total ?? 0;
                     // { id: "employee_id", label: "Code" },
                     { id: "address", label: "Address" },
                     { id: "radius", label: "Radius (M)" },
+                    { id: "visit_status", label: "Visit Status" },
                     { id: "", label: "Action" },
                   ]}
               />

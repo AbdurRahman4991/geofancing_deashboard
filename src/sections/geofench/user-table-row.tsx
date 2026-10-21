@@ -6,6 +6,7 @@ import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import { Label } from 'src/components/label';
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { useDeleteGeofenceMutation } from '../../../redux/service/geofenchSlice';
@@ -19,6 +20,7 @@ export type UserProps = {
   latitude: number | string;
   longitude: number | string;
   radius: number;
+  visit_status?: string | null;
   user?: { id: number; name: string; employee_id: number; employee?: { id: number; name: string; employee_id: string } };
 };
 
@@ -63,6 +65,15 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
       <TableCell>{row.firm_name}</TableCell>
       <TableCell sx={{ minWidth: 280, maxWidth: 520, whiteSpace: 'normal' }}>{address}</TableCell>
       <TableCell>{row.radius}</TableCell>
+      <TableCell>
+        {row.visit_status ? (
+          <Label color={row.visit_status === 'visited' ? 'success' : 'warning'}>
+            {row.visit_status.replaceAll('_', ' ')}
+          </Label>
+        ) : (
+          '—'
+        )}
+      </TableCell>
       <TableCell align="right"><IconButton onClick={(event) => setOpenPopover(event.currentTarget)}><Iconify icon="eva:more-vertical-fill" /></IconButton></TableCell>
     </TableRow>
     <Popover open={Boolean(openPopover)} anchorEl={openPopover} onClose={handleClosePopover} anchorOrigin={{ vertical: 'top', horizontal: 'left' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>

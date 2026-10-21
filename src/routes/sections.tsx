@@ -101,12 +101,10 @@ export const routesSection: RouteObject[] = [
           { path: 'roles/edit-role/:id', element: <EditRole /> },
           { path: 'roles/assign-role', element: <AssignRole /> },
           { path: 'roles/assign-role-list', element: <AssignRoleList /> },
-
           { path: 'permissions', element: <Permissions /> },
           { path: 'permissions/create-permission', element: <CreatePermission /> },
           { path: 'permissions/edit-permission/:id', element: <EditPermission /> },
           { path: 'permissions/assign-permission', element: <AssignPermission /> },
-
           { path: 'dashboard', element: <DashboardPage /> },
 
           { path: 'employee', element: <Employee /> },

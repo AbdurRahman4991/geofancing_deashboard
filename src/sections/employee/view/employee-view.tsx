@@ -117,6 +117,7 @@ const total = data?.pagination?.total ?? 0;
                   { id: "designation", label: "Designation" },
                   { id: "email", label: "Email" },
                   { id: "status", label: "Status" },
+                  { id: "registration_status", label: "Registration Status" },
                   { id: "", label: "Action" },
                 ]}
               />
