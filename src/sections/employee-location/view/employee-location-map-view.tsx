@@ -70,10 +70,11 @@ import { useSearchParams } from "react-router-dom";
 import {
   MapContainer,
   TileLayer,
-  Marker,
-  Popup,
   Polyline,
+  useMap,
 } from "react-leaflet";
+import { useEffect } from "react";
+import { latLngBounds } from "leaflet";
 
 import {
   useGetEmployeeLocationHistoryQuery,
@@ -83,6 +84,24 @@ import {
 // ----------------------------------------------------------------------
 // Employee Location Map
 // ----------------------------------------------------------------------
+
+function FitMapToLocations({ positions }: { positions: [number, number][] }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (positions.length === 1) {
+      map.setView(positions[0], 18);
+      return;
+    }
+
+    map.fitBounds(latLngBounds(positions), {
+      padding: [32, 32],
+      maxZoom: 18,
+    });
+  }, [map, positions]);
+
+  return null;
+}
 
 export function EmployeeLocationMapView() {
   const [searchParams] = useSearchParams();
@@ -188,17 +207,22 @@ export function EmployeeLocationMapView() {
   return (
     <MapContainer
       center={center}
-      zoom={17}
+      zoom={13}
+      maxZoom={24}
       style={{
         width: "100%",
-        height: "650px",
+        height: "calc(100vh - 120px)",
+        minHeight: "500px",
       }}
     >
+      <FitMapToLocations positions={positions} />
 
       {/* OpenStreetMap */}
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
+        maxNativeZoom={19}
+        maxZoom={24}
       />
 
 
@@ -215,53 +239,6 @@ export function EmployeeLocationMapView() {
         }}
       />
 
-
-      {/* ------------------------------------------------------------ */}
-      {/* Location Markers */}
-      {/* ------------------------------------------------------------ */}
-
-      {locations.map((location: any) => {
-
-        const position: [number, number] = [
-          Number(location.latitude),
-          Number(location.longitude),
-        ];
-
-
-        return (
-          <Marker
-            key={location.id}
-            position={position}
-          >
-            <Popup>
-
-              <strong>
-                Employee Location
-              </strong>
-
-              <br />
-
-              User ID: {location.employee_id}
-
-              <br />
-
-              Latitude: {location.latitude}
-
-              <br />
-
-              Longitude: {location.longitude}
-
-              <br />
-
-              Time:{" "}
-              {new Date(
-                location.created_at
-              ).toLocaleString()}
-
-            </Popup>
-          </Marker>
-        );
-      })}
 
     </MapContainer>
   );
