@@ -48,6 +48,31 @@ export interface EmployeeLocationParams {
   from_date?: string;
   to_date?: string;
 }
+
+export interface EmployeeLocationTrackPoint {
+  latitude: number | string;
+  longitude: number | string;
+  accuracy: number | null;
+  speed: number | string | null;
+  recorded_at: string;
+}
+
+export interface EmployeeLocationSegment {
+  points: EmployeeLocationTrackPoint[];
+}
+
+export interface EmployeeLocationSegmentsResponse {
+  status: boolean;
+  date: string;
+  user: {
+    id: number;
+    name: string;
+    employee_id: number | string;
+    company_id: number | string;
+  };
+  segments: EmployeeLocationSegment[];
+}
+
 export const employeeLocationSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // ===========================
@@ -135,11 +160,14 @@ export const employeeLocationSlice = api.injectEndpoints({
       transformResponse: (response: any) => response.data,
     }),
 
-    getEmployeeLocationHistory: builder.query({
+    getEmployeeLocationHistory: builder.query<
+      EmployeeLocationSegmentsResponse,
+      { user_id: string | number; date?: string }
+    >({
       query: ({ user_id, date }) => ({
-        url: "/locations/history",
-        method: "POST",
-        body: { user_id, date },
+        url: "/employee-locations/segments",
+        method: "GET",
+        params: { user_id, ...(date ? { date } : {}) },
       }),
     }),
 
