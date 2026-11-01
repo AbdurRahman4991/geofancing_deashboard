@@ -30,7 +30,7 @@ export const api = createApi({
   endpoints: () => ({}),
   tagTypes: [
     "company", "employees", "geofences", "attendance", "employeeLocations","role", "permission", "user", "users",
-    "employeeHierarchyAssignments","AttendanceRole", "departments", "hierarchyNodes", "categories", "subcategories", "brands"
+    "employeeHierarchyAssignments","AttendanceRole", "departments", "hierarchyNodes", "categories", "subcategories", "brands", "units"
   ],
 });
 

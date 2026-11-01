@@ -45,6 +45,22 @@ export interface GetBrandsParams {
   per_page?: number;
 }
 
+export interface BrandRequest {
+  company_id: number;
+  name: string;
+  description: string | null;
+  status: 'active' | 'inactive';
+}
+
+export interface SingleBrandParams {
+  id: number;
+  company_id: number;
+}
+
+function unwrapBrand(response: { data?: Brand } | Brand): Brand {
+  return 'data' in response && response.data ? response.data : (response as Brand);
+}
+
 export const brandSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     getBrands: builder.query<BrandListResponse, GetBrandsParams>({
@@ -54,7 +70,40 @@ export const brandSlice = api.injectEndpoints({
       }),
       providesTags: ['brands'],
     }),
+    getSingleBrand: builder.query<Brand, SingleBrandParams>({
+      query: ({ id, company_id }) => ({
+        url: `brands/${id}`,
+        params: { company_id },
+      }),
+      transformResponse: unwrapBrand,
+      providesTags: (_result, _error, { id }) => [{ type: 'brands', id }],
+    }),
+    createBrand: builder.mutation<Brand, BrandRequest>({
+      query: (body) => ({
+        url: 'brands',
+        method: 'POST',
+        params: { company_id: body.company_id },
+        body,
+      }),
+      transformResponse: unwrapBrand,
+      invalidatesTags: ['brands'],
+    }),
+    updateBrand: builder.mutation<Brand, { id: number; data: BrandRequest }>({
+      query: ({ id, data }) => ({
+        url: `brands/${id}`,
+        method: 'PUT',
+        params: { company_id: data.company_id },
+        body: data,
+      }),
+      transformResponse: unwrapBrand,
+      invalidatesTags: (_result, _error, { id }) => ['brands', { type: 'brands', id }],
+    }),
   }),
 });
 
-export const { useGetBrandsQuery } = brandSlice;
+export const {
+  useGetBrandsQuery,
+  useGetSingleBrandQuery,
+  useCreateBrandMutation,
+  useUpdateBrandMutation,
+} = brandSlice;

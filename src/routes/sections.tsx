@@ -1,4 +1,4 @@
-import type { RouteObject } from 'react-router';
+﻿import type { RouteObject } from 'react-router';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate  } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
@@ -58,10 +58,23 @@ export const EditAssignNode = lazy(() => import('src/sections/hierarchy/node-ass
 export const Category = lazy(()=> import('src/sections/product/category/view/category-view'));
 export const CreateCategory = lazy(() => import('src/sections/product/category/view/create-category'));
 export const EditCategory = lazy(() => import('src/sections/product/category/view/update-category'));
+export const Brand = lazy(() => import('src/sections/product/brand/view/view-brand'));
 
 export const SubCategory = lazy(()=> import('src/sections/product/sub-category/view/sub-category-view'));
 export const CreateSubCategory = lazy(() => import('src/sections/product/sub-category/view/create-sub-category'));
 export const EditSubCategory = lazy(() => import('src/sections/product/sub-category/view/update-sub-category'));
+
+export const brand = lazy(()=> import('src/sections/product/brand/view/view-brand'));
+export const CreateBrand = lazy(() => import('src/sections/product/brand/view/create-brand'));
+export const EditBrand = lazy(() => import('src/sections/product/brand/view/update-brand'));
+
+export const Units = lazy(()=> import('src/sections/product/units/view/view-units'));
+export const CreateUnit = lazy(() => import('src/sections/product/units/view/create-units'));
+export const EditUnit = lazy(() => import('src/sections/product/units/view/update-units'));
+
+export const Product = lazy(()=> import('src/sections/product/units/view/view-units'));
+export const CreatProduct = lazy(() => import('src/sections/product/units/view/create-units'));
+export const EdiProduct = lazy(() => import('src/sections/product/units/view/update-units'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -159,7 +172,16 @@ export const routesSection: RouteObject[] = [
           { path: 'edit/edit-category/:id', element: <EditCategory /> },
           { path: 'sub-category', element: <SubCategory /> },
           { path: 'create/sub-category', element: <CreateSubCategory /> },
-          { path: 'edit/edit-sub-category/:id', element: <EditSubCategory /> },          
+          { path: 'edit/edit-sub-category/:id', element: <EditSubCategory /> },      
+          { path: 'brand', element: <Brand /> },
+          { path: 'create/brand', element: <CreateBrand /> },
+          { path: 'edit/brand/:id', element: <EditBrand /> },   
+          { path: 'unit', element: <Units /> },
+          { path: 'create/unit', element: <CreateUnit /> },
+          { path: 'edit/unit/:id', element: <EditUnit /> },    
+          { path: 'product', element: <Units /> },
+          { path: 'create/product', element: <CreateUnit /> },
+          { path: 'edit/product/:id', element: <EditUnit /> },                                   
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },
