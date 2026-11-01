@@ -1,4 +1,4 @@
-﻿import type { RouteObject } from 'react-router';
+import type { RouteObject } from 'react-router';
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate  } from 'react-router-dom';
 import { varAlpha } from 'minimal-shared/utils';
@@ -54,6 +54,14 @@ export const EditNode = lazy(() => import('../sections/hierarchy/node/view/updat
 export const AssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/view-node-assign'));
 export const CreateAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/create-node-assign'));
 export const EditAssignNode = lazy(() => import('src/sections/hierarchy/node-assign/view/update-node-assign'));
+
+export const Category = lazy(()=> import('src/sections/product/category/view/category-view'));
+export const CreateCategory = lazy(() => import('src/sections/product/category/view/create-category'));
+export const EditCategory = lazy(() => import('src/sections/product/category/view/update-category'));
+
+export const SubCategory = lazy(()=> import('src/sections/product/sub-category/view/sub-category-view'));
+export const CreateSubCategory = lazy(() => import('src/sections/product/sub-category/view/create-sub-category'));
+export const EditSubCategory = lazy(() => import('src/sections/product/sub-category/view/update-sub-category'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -145,6 +153,13 @@ export const routesSection: RouteObject[] = [
           { path: 'assign-node', element: <AssignNode /> },
           { path: 'create/assign-node', element: <CreateAssignNode /> },
           { path: 'edit/assign-node/:id', element: <EditAssignNode /> },
+
+          { path: 'category', element: <Category /> },
+          { path: 'create/category', element: <CreateCategory /> },
+          { path: 'edit/edit-category/:id', element: <EditCategory /> },
+          { path: 'sub-category', element: <SubCategory /> },
+          { path: 'create/sub-category', element: <CreateSubCategory /> },
+          { path: 'edit/edit-sub-category/:id', element: <EditSubCategory /> },          
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },

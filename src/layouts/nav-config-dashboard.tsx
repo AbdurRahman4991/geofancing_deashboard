@@ -16,120 +16,163 @@ export type NavItem = {
 };
 
 export const navData = [
-  {
-    title: 'Dashboard',
-    path: '/',
-    icon: icon('ic-analytics'),
-  },
-  {
-    title: 'Access control',
-    path: '/access-control',
-    icon: icon('ic-analytics'),
+  // {
+  //   title: 'Dashboard',
+  //   path: '/',
+  //   icon: icon('ic-analytics'),
+  // },
+  // {
+  //   title: 'Access control',
+  //   path: '/access-control',
+  //   icon: icon('ic-analytics'),
 
-  children: [
-    {
-      title: 'Roles',
-      path: '/roles',
-      icon: icon('ic-analytics'),
-    },
-    {
-      title: 'Assign Roles',
-      path: '/roles/assign-role',
-      icon: icon('ic-analytics'),
-    },
-    {
-      title: 'Assigned Roles List',
-      path: '/roles/assign-role-list',
-      icon: icon('ic-analytics'),
-    },
-    {
-      title: 'Permissions',
-      path: '/permissions',
-      icon: icon('ic-analytics'),
-    },
-    {
-      title: 'Assign Permissions',
-      path: '/permissions/assign-permission',
-      icon: icon('ic-analytics'),
-    },
-    ],
-  },  
-  {
-    title: 'Employee',
-    path: '/employee',
-    icon: icon('ic-user'),
-  },
-  {
-    title: 'Live Location',
-    path: '/employee-live-location',
-    icon: icon('ic-analytics'),
-  },
-  {
-    title: 'User',
-    path: '/users',
-    icon: icon('ic-user'),
-  },
-  {
-    title: 'Company',
-    path: '/company',
-    icon: icon('ic-user'),
-  },
+  // children: [
+  //   {
+  //     title: 'Roles',
+  //     path: '/roles',
+  //     icon: icon('ic-analytics'),
+  //   },
+  //   {
+  //     title: 'Assign Roles',
+  //     path: '/roles/assign-role',
+  //     icon: icon('ic-analytics'),
+  //   },
+  //   {
+  //     title: 'Assigned Roles List',
+  //     path: '/roles/assign-role-list',
+  //     icon: icon('ic-analytics'),
+  //   },
+  //   {
+  //     title: 'Permissions',
+  //     path: '/permissions',
+  //     icon: icon('ic-analytics'),
+  //   },
+  //   {
+  //     title: 'Assign Permissions',
+  //     path: '/permissions/assign-permission',
+  //     icon: icon('ic-analytics'),
+  //   },
+  //   ],
+  // },  
+  // {
+  //   title: 'Employee',
+  //   path: '/employee',
+  //   icon: icon('ic-user'),
+  // },
+  // {
+  //   title: 'Live Location',
+  //   path: '/employee-live-location',
+  //   icon: icon('ic-analytics'),
+  // },
+  // {
+  //   title: 'User',
+  //   path: '/users',
+  //   icon: icon('ic-user'),
+  // },
+  // {
+  //   title: 'Company',
+  //   path: '/company',
+  //   icon: icon('ic-user'),
+  // },
 
-  {
-    title: 'Department',
-    path: '/department',
-    icon: icon('ic-user'),
-  },
+  // {
+  //   title: 'Department',
+  //   path: '/department',
+  //   icon: icon('ic-user'),
+  // },
 
   // ------------------------------------------------
   // HIERARCHY DROPDOWN
   // ------------------------------------------------
 
+  // {
+  //   title: 'Hierarchy',
+  //   path: '/hierarchy',
+  //   icon: icon('ic-analytics'),
+
+  //   children: [        
+  //     {
+  //       title: 'Hierarchy Level',
+  //       path: '/hierarchy/level',
+  //       icon: icon('ic-analytics'),
+  //     },
+  //     {
+  //       title: 'Hierarchy Node',
+  //       path: '/hierarchy/node',
+  //       icon: icon('ic-analytics'),
+  //     },
+  //     {
+  //       title: 'Assign Node',
+  //       path: '/assign-node',
+  //       icon: icon('ic-analytics'),
+  //     },        
+  //    ],
+  //  },
+
+  // {
+  //   title: 'Geofench',
+  //   path: '/geofench',
+  //   icon: icon('ic-cart'),
+
+  // },
+  // {
+  //   title: 'Attendance',
+  //   path: '/attendance',
+  //   icon: icon('ic-cart'),
+  // },
+  // {
+  //   title: 'Attendance Role',
+  //   path: '/attendance-role',
+  //   icon: icon('ic-cart'),
+  // },
+  //  {
+  //   title: 'Tracking',
+  //   path: '/employee-location',
+  //   icon: icon('ic-cart'),
+  // },
   {
-    title: 'Hierarchy',
-    path: '/hierarchy',
+    title: 'Item',
+    path: '/product',
     icon: icon('ic-analytics'),
 
-    children: [        
-      {
-        title: 'Hierarchy Level',
-        path: '/hierarchy/level',
-        icon: icon('ic-analytics'),
-      },
-      {
-        title: 'Hierarchy Node',
-        path: '/hierarchy/node',
-        icon: icon('ic-analytics'),
-      },
-      {
-        title: 'Assign Node',
-        path: '/assign-node',
-        icon: icon('ic-analytics'),
-      },        
-     ],
-   },
-
-  {
-    title: 'Geofench',
-    path: '/geofench',
-    icon: icon('ic-cart'),
-
-  },
-  {
-    title: 'Attendance',
-    path: '/attendance',
-    icon: icon('ic-cart'),
-  },
-  {
-    title: 'Attendance Role',
-    path: '/attendance-role',
-    icon: icon('ic-cart'),
-  },
-   {
-    title: 'Tracking',
-    path: '/employee-location',
-    icon: icon('ic-cart'),
-  },
+  children: [
+    {
+      title: 'Category',
+      path: '/category',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Sub-category',
+      path: '/sub-category',
+      icon: icon('ic-analytics'),
+    },    
+    {
+      title: 'Brand',
+      path: '/brand',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Unit',
+      path: '/unit',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Product',
+      path: '/product',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Product Stock',
+      path: '/permissions/assign-permission',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Product Pricing',
+      path: '/product-pricing',
+      icon: icon('ic-analytics'),
+    },
+    ],
+  }, 
   // {
   //   title: 'Product',
   //   path: '/products',

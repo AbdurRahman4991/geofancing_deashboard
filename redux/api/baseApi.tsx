@@ -1,4 +1,4 @@
-﻿
+
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -30,9 +30,10 @@ export const api = createApi({
   endpoints: () => ({}),
   tagTypes: [
     "company", "employees", "geofences", "attendance", "employeeLocations","role", "permission", "user", "users",
-    "employeeHierarchyAssignments","AttendanceRole", "departments", "hierarchyNodes"
+    "employeeHierarchyAssignments","AttendanceRole", "departments", "hierarchyNodes", "categories", "subcategories", "brands"
   ],
 });
 
 export const imageUrl = `${API_ORIGIN}/image/`;
+
 
