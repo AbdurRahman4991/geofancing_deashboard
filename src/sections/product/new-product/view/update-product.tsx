@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Alert, Card, Stack, TextField, Button, Typography, MenuItem } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
@@ -6,124 +6,170 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { getCurrentCompanyId } from 'src/utils/auth';
-import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
-import { useGetSingleUnitQuery, useUpdateUnitMutation } from '../../../../../redux/service/unitSlice';
+import { useGetCategoriesQuery } from '../../../../../redux/service/categorySlice';
+import { useGetBrandsQuery } from '../../../../../redux/service/brandSlice';
+import { useGetUnitsQuery } from '../../../../../redux/service/unitSlice';
+import {
+  useGetSingleProductQuery,
+  useUpdateProductMutation,
+} from '../../../../../redux/service/productSlice';
 
-type UnitForm = {
-  company_id: string;
-  unit_name: string;
-  short_name: string;
-  status: 'active' | 'inactive';
+type ProductForm = {
+  product_name: string;
+  category_id: string;
+  brand_id: string;
+  unit_id: string;
 };
 
-export default function UpdateUnitView() {
+export default function UpdateProductView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const unitId = Number(id);
+  const productId = Number(id);
   const companyId = getCurrentCompanyId();
-  const validId = Number.isInteger(unitId) && unitId > 0;
-  const { data: unit, isLoading: isFetching, isError } = useGetSingleUnitQuery(
-    { id: unitId, company_id: companyId },
+  const validId = Number.isInteger(productId) && productId > 0;
+  const {
+    data: product,
+    isLoading: isFetching,
+    isError,
+  } = useGetSingleProductQuery(
+    { id: productId, company_id: companyId },
     { skip: !validId || !companyId }
   );
-  const { data: companyResponse, isLoading: isCompaniesLoading } = useGetCompanyQuery({ page: 1, limit: 100 });
-  const companies = companyResponse?.data ?? [];
-  const [updateUnit, { isLoading: isUpdating }] = useUpdateUnitMutation();
-  const [form, setForm] = useState<UnitForm>({
-    company_id: companyId ? String(companyId) : '',
-    unit_name: '',
-    short_name: '',
-    status: 'active',
+  const { data: categoryResponse, isLoading: isCategoriesLoading } = useGetCategoriesQuery(
+    { company_id: companyId, page: 1, per_page: 100 },
+    { skip: !companyId }
+  );
+  const { data: brandResponse, isLoading: isBrandsLoading } = useGetBrandsQuery(
+    { company_id: companyId, page: 1, per_page: 100 },
+    { skip: !companyId }
+  );
+  const { data: unitResponse, isLoading: isUnitsLoading } = useGetUnitsQuery(
+    { company_id: companyId, page: 1, per_page: 100 },
+    { skip: !companyId }
+  );
+  const categories = categoryResponse?.data.data ?? [];
+  const brands = brandResponse?.data.data ?? [];
+  const units = unitResponse?.data.data ?? [];
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
+  const [form, setForm] = useState<ProductForm>({
+    product_name: '',
+    category_id: '',
+    brand_id: '',
+    unit_id: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (!unit) return;
+    if (!product) return;
     setForm({
-      company_id: String(unit.company_id),
-      unit_name: unit.unit_name ?? '',
-      short_name: unit.short_name ?? '',
-      status: unit.status?.toLowerCase() === 'inactive' ? 'inactive' : 'active',
+      product_name: product.product_name ?? '',
+      category_id: String(product.category_id ?? ''),
+      brand_id: String(product.brand_id ?? ''),
+      unit_id: String(product.unit_id ?? ''),
     });
-  }, [unit]);
+  }, [product]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors: Record<string, string> = {};
-    if (!form.company_id) nextErrors.company_id = 'Company is required';
-    if (!form.unit_name.trim()) nextErrors.unit_name = 'Unit name is required';
-    if (!form.short_name.trim()) nextErrors.short_name = 'Short name is required';
+    if (!form.product_name.trim()) nextErrors.product_name = 'Product name is required';
+    if (!form.category_id) nextErrors.category_id = 'Category is required';
+    if (!form.brand_id) nextErrors.brand_id = 'Brand is required';
+    if (!form.unit_id) nextErrors.unit_id = 'Unit is required';
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
 
     try {
-      await updateUnit({
-        id: unitId,
+      const response = await updateProduct({
+        id: productId,
         data: {
-          company_id: Number(form.company_id),
-          unit_name: form.unit_name.trim(),
-          short_name: form.short_name.trim(),
-          status: form.status,
+          company_id: companyId,
+          product_name: form.product_name.trim(),
+          category_id: Number(form.category_id),
+          brand_id: Number(form.brand_id),
+          unit_id: Number(form.unit_id),
         },
       }).unwrap();
-      toast.success('Unit updated successfully');
-      navigate('/unit');
+      toast.success(response.message || 'Product updated successfully');
+      navigate('/product');
     } catch (error: any) {
-      setErrors(error?.data?.errors ?? {});
-      toast.error(error?.data?.message || 'Failed to update unit');
+      const validationErrors = error?.data?.errors;
+      if (validationErrors && typeof validationErrors === 'object') {
+        setErrors(
+          Object.fromEntries(
+            Object.entries(validationErrors).map(([key, value]) => [
+              key,
+              Array.isArray(value) ? String(value[0] ?? '') : String(value),
+            ])
+          )
+        );
+      }
+      toast.error(error?.data?.message || 'Failed to update product');
     }
   };
 
-  if (!validId) return <DashboardContent><Alert severity="error">Invalid unit ID.</Alert></DashboardContent>;
+  if (!validId) return <DashboardContent><Alert severity="error">Invalid product ID.</Alert></DashboardContent>;
   if (!companyId) return <DashboardContent><Alert severity="error">A company ID is required.</Alert></DashboardContent>;
-  if (isFetching || isCompaniesLoading) return <DashboardContent><Typography>Loading unit...</Typography></DashboardContent>;
-  if (isError || !unit) {
-    return <DashboardContent><Alert severity="error">Unable to load this unit.</Alert><Button sx={{ mt: 2 }} onClick={() => navigate('/unit')}>Back to units</Button></DashboardContent>;
+  if (isFetching || isCategoriesLoading || isBrandsLoading || isUnitsLoading) {
+    return <DashboardContent><Typography>Loading product...</Typography></DashboardContent>;
+  }
+  if (isError || !product) {
+    return (
+      <DashboardContent>
+        <Alert severity="error">Unable to load this product.</Alert>
+        <Button sx={{ mt: 2 }} onClick={() => navigate('/product')}>Back to products</Button>
+      </DashboardContent>
+    );
   }
 
   return (
     <DashboardContent>
-      <Typography variant="h4" sx={{ mb: 3 }}>Update Unit</Typography>
+      <Typography variant="h4" sx={{ mb: 3 }}>Update Product</Typography>
       <Card sx={{ p: 3, maxWidth: 600 }}>
         <Stack component="form" spacing={2} onSubmit={handleSubmit}>
           <TextField
-            select required name="company_id" label="Company" value={form.company_id}
-            error={!!errors.company_id} helperText={errors.company_id} disabled={isCompaniesLoading}
+            required name="product_name" label="Product name" value={form.product_name}
+            error={!!errors.product_name} helperText={errors.product_name}
             onChange={(event) => {
-              setForm((previous) => ({ ...previous, company_id: event.target.value }));
-              setErrors((previous) => ({ ...previous, company_id: '' }));
+              setForm((previous) => ({ ...previous, product_name: event.target.value }));
+              setErrors((previous) => ({ ...previous, product_name: '' }));
+            }}
+          />
+          <TextField
+            select required name="category_id" label="Category" value={form.category_id}
+            error={!!errors.category_id} helperText={errors.category_id} disabled={isCategoriesLoading}
+            onChange={(event) => {
+              setForm((previous) => ({ ...previous, category_id: event.target.value }));
+              setErrors((previous) => ({ ...previous, category_id: '' }));
             }}
           >
-            {companies.map((company) => <MenuItem key={company.id} value={company.id}>{company.company_name}</MenuItem>)}
+            {categories.map((category) => <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>)}
           </TextField>
           <TextField
-            required name="unit_name" label="Unit name" value={form.unit_name}
-            error={!!errors.unit_name} helperText={errors.unit_name}
+            select required name="brand_id" label="Brand" value={form.brand_id}
+            error={!!errors.brand_id} helperText={errors.brand_id} disabled={isBrandsLoading}
             onChange={(event) => {
-              setForm((previous) => ({ ...previous, unit_name: event.target.value }));
-              setErrors((previous) => ({ ...previous, unit_name: '' }));
+              setForm((previous) => ({ ...previous, brand_id: event.target.value }));
+              setErrors((previous) => ({ ...previous, brand_id: '' }));
             }}
-          />
-          <TextField
-            required name="short_name" label="Short name" value={form.short_name}
-            error={!!errors.short_name} helperText={errors.short_name}
-            onChange={(event) => {
-              setForm((previous) => ({ ...previous, short_name: event.target.value }));
-              setErrors((previous) => ({ ...previous, short_name: '' }));
-            }}
-          />
-          <TextField
-            select name="status" label="Status" value={form.status}
-            onChange={(event) => setForm((previous) => ({ ...previous, status: event.target.value as UnitForm['status'] }))}
           >
-            <MenuItem value="active">Active</MenuItem>
-            <MenuItem value="inactive">Inactive</MenuItem>
+            {brands.map((brand) => <MenuItem key={brand.id} value={brand.id}>{brand.name}</MenuItem>)}
+          </TextField>
+          <TextField
+            select required name="unit_id" label="Unit" value={form.unit_id}
+            error={!!errors.unit_id} helperText={errors.unit_id} disabled={isUnitsLoading}
+            onChange={(event) => {
+              setForm((previous) => ({ ...previous, unit_id: event.target.value }));
+              setErrors((previous) => ({ ...previous, unit_id: '' }));
+            }}
+          >
+            {units.map((unit) => <MenuItem key={unit.id} value={unit.id}>{unit.unit_name} ({unit.short_name})</MenuItem>)}
           </TextField>
           <Stack direction="row" spacing={1}>
             <Button type="submit" variant="contained" disabled={isUpdating}>
-              {isUpdating ? 'Updating...' : 'Update Unit'}
+              {isUpdating ? 'Updating...' : 'Update Product'}
             </Button>
-            <Button type="button" onClick={() => navigate('/unit')}>Cancel</Button>
+            <Button type="button" onClick={() => navigate('/product')}>Cancel</Button>
           </Stack>
         </Stack>
       </Card>

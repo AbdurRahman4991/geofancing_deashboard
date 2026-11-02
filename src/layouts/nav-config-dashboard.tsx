@@ -131,7 +131,7 @@ export const navData = [
   //   icon: icon('ic-cart'),
   // },
   {
-    title: 'Item',
+    title: 'Product',
     path: '/product',
     icon: icon('ic-analytics'),
 
@@ -163,12 +163,12 @@ export const navData = [
     },
     {
       title: 'Product Stock',
-      path: '/permissions/assign-permission',
+      path: '/product-stock',
       icon: icon('ic-analytics'),
     },
     {
       title: 'Product Pricing',
-      path: '/product-pricing',
+      path: '/product-price',
       icon: icon('ic-analytics'),
     },
     ],

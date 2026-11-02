@@ -72,9 +72,17 @@ export const Units = lazy(()=> import('src/sections/product/units/view/view-unit
 export const CreateUnit = lazy(() => import('src/sections/product/units/view/create-units'));
 export const EditUnit = lazy(() => import('src/sections/product/units/view/update-units'));
 
-export const Product = lazy(()=> import('src/sections/product/units/view/view-units'));
-export const CreatProduct = lazy(() => import('src/sections/product/units/view/create-units'));
-export const EdiProduct = lazy(() => import('src/sections/product/units/view/update-units'));
+export const Product = lazy(()=> import('src/sections/product/new-product/view/view-product'));
+export const CreatProduct = lazy(() => import('src/sections/product/new-product/view/create-product'));
+export const EdiProduct = lazy(() => import('src/sections/product/new-product/view/update-product'));
+
+export const ProductStock = lazy(()=> import('src/sections/product/product-stock/view/view-product-stock'));
+export const CreatProductStock = lazy(() => import('src/sections/product/product-stock/view/create-product-stock'));
+export const EdiProductStock = lazy(() => import('src/sections/product/product-stock/view/update-product-stock'));
+
+export const ProductPrice = lazy(()=> import('src/sections/product/product-price/view/view-product-price'));
+export const CreatProductPrice = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
+export const EdiProductPrice = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -179,9 +187,15 @@ export const routesSection: RouteObject[] = [
           { path: 'unit', element: <Units /> },
           { path: 'create/unit', element: <CreateUnit /> },
           { path: 'edit/unit/:id', element: <EditUnit /> },    
-          { path: 'product', element: <Units /> },
-          { path: 'create/product', element: <CreateUnit /> },
-          { path: 'edit/product/:id', element: <EditUnit /> },                                   
+          { path: 'product', element: <Product /> },
+          { path: 'create/product', element: <CreatProduct /> },
+          { path: 'edit/product/:id', element: <EdiProduct /> }, 
+          { path: 'product-stock', element: <ProductStock /> },
+          { path: 'create/product-stock', element: <CreatProductStock /> },
+          { path: 'edit/product-stock/:id', element: <EdiProductStock /> },
+          { path: 'product-price', element: <ProductPrice /> },
+          { path: 'create/product-price', element: <CreatProductPrice /> },
+          { path: 'edit/product-price/:id', element: <EdiProductPrice /> },
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },
@@ -212,3 +226,5 @@ export const routesSection: RouteObject[] = [
     element: <Page404 />,
   },
 ];
+
+

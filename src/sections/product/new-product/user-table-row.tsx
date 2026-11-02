@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react';
+﻿import { useCallback, useState } from 'react';
 
-import Chip from '@mui/material/Chip';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -12,10 +11,10 @@ import Typography from '@mui/material/Typography';
 
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
-import type { Category } from '../../../../redux/service/categorySlice';
+import type { Product } from '../../../../redux/service/productSlice';
 
 type UserTableRowProps = {
-  row: Category;
+  row: Product;
   selected: boolean;
   onSelectRow: () => void;
 };
@@ -23,7 +22,6 @@ type UserTableRowProps = {
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   const router = useRouter();
-  const isActive = row.status.toLowerCase() === 'active';
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -35,7 +33,7 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
   const handleEdit = () => {
     handleClosePopover();
-    router.push(`/edit/edit-category/${row.id}`);
+    router.push(`/edit/product/${row.id}`);
   };
 
   return (
@@ -45,24 +43,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Checkbox checked={selected} onChange={onSelectRow} />
         </TableCell>
         <TableCell>
-          <Typography variant="subtitle2">{row.name}</Typography>
+          <Typography variant="subtitle2">{row.product_name}</Typography>
         </TableCell>
-        <TableCell>{row.description || '—'}</TableCell>
-        <TableCell>
-          {row.subcategories.length ? (
-            <Typography variant="body2">
-              {row.subcategories.map((subcategory) => subcategory.name).join(', ')}
-            </Typography>
-          ) : (
-            '—'
-          )}
-        </TableCell>
-        <TableCell>
-          <Chip size="small" label={row.status} color={isActive ? 'success' : 'default'} />
-        </TableCell>
+        <TableCell>{row.category?.name ?? '—'}</TableCell>
+        <TableCell>{row.brand?.name ?? '—'}</TableCell>
+        <TableCell>{row.unit?.short_name ?? row.unit?.unit_name ?? '—'}</TableCell>
         <TableCell>{row.created_at ? new Date(row.created_at).toLocaleDateString() : '—'}</TableCell>
         <TableCell align="right">
-          <IconButton aria-label={`Actions for ${row.name}`} onClick={handleOpenPopover}>
+          <IconButton aria-label={`Actions for ${row.product_name}`} onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
