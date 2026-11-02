@@ -84,6 +84,10 @@ export const ProductPrice = lazy(()=> import('src/sections/product/product-price
 export const CreatProductPrice = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
 export const EdiProductPrice = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
 
+export const Order = lazy(()=> import('src/sections/product/order/view/order-view'));
+export const CreatOrder = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
+export const EdiOrder = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
+
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -196,6 +200,9 @@ export const routesSection: RouteObject[] = [
           { path: 'product-price', element: <ProductPrice /> },
           { path: 'create/product-price', element: <CreatProductPrice /> },
           { path: 'edit/product-price/:id', element: <EdiProductPrice /> },
+          { path: 'order', element: <Order /> },
+          { path: 'create/order', element: <CreatOrder /> },
+          { path: 'edit/order/:id', element: <EdiOrder /> },          
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },
@@ -226,5 +233,6 @@ export const routesSection: RouteObject[] = [
     element: <Page404 />,
   },
 ];
+
 
 
