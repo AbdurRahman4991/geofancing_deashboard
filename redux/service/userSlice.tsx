@@ -14,7 +14,7 @@ export interface UserRecord {
     name: string;
     employee_id: string;
     company_id: number | string | null;
-    designation: string | null;
+    designation_id: string | null;
   } | null;
 }
 
