@@ -87,7 +87,14 @@ export function EmployeeLocationMapView() {
   // API Data
   // ----------------------------------------------------------------------
 
-  const segments = data?.segments ?? [];
+  const segments = (data?.segments ?? [])
+    .map((segment) => ({
+      ...segment,
+      points: segment.points.filter((point) =>
+        point.recorded_at.slice(0, 10) === date
+      ),
+    }))
+    .filter((segment) => segment.points.length > 0);
   const locations = segments.flatMap((segment) => segment.points);
 
 
