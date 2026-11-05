@@ -83,6 +83,8 @@ export const EdiProductStock = lazy(() => import('src/sections/product/product-s
 export const ProductPrice = lazy(()=> import('src/sections/product/product-price/view/view-product-price'));
 export const CreatProductPrice = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
 export const EdiProductPrice = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
+export const Catalog = lazy(() => import('src/sections/product/new-product/view/catalog'));
+export const DailyOrderSummary = lazy(() => import('src/sections/report/daily-order-summary'));
 
 export const Order = lazy(()=> import('src/sections/product/order/view/order-view'));
 export const CreatOrder = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
@@ -200,6 +202,8 @@ export const routesSection: RouteObject[] = [
           { path: 'product-price', element: <ProductPrice /> },
           { path: 'create/product-price', element: <CreatProductPrice /> },
           { path: 'edit/product-price/:id', element: <EdiProductPrice /> },
+          {path: 'catalog', element: <Catalog />},
+          { path: 'report/daily-order-summary', element: <DailyOrderSummary /> },
           { path: 'order', element: <Order /> },
           { path: 'create/order', element: <CreatOrder /> },
           { path: 'edit/order/:id', element: <EdiOrder /> },          

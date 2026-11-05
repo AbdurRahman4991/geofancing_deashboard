@@ -177,8 +177,53 @@ export const navData = [
       path: '/product-price',
       icon: icon('ic-analytics'),
     },
+
+    {
+      title: 'Catalog',
+      path: '/catalog',
+      icon: icon('ic-analytics'),
+    },    
     ],
   }, 
+{
+    title: 'Report',
+    path: '/report',
+    icon: icon('ic-analytics'),
+
+  children: [
+    {
+      title: 'Daily Attendance Report',
+      path: '/category',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Employee Attendance Summary',
+      path: '/sub-category',
+      icon: icon('ic-analytics'),
+    },    
+    {
+      title: 'Employee Location History',
+      path: '/brand',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Employee Visit Report',
+      path: '/unit',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Daily Order Summary',
+      path: '/report/daily-order-summary',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Monthly Performance Report',
+      path: '/product-stock',
+      icon: icon('ic-analytics'),
+    },
+     
+    ],
+  },   
   // {
   //   title: 'Product',
   //   path: '/products',

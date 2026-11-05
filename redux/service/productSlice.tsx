@@ -64,6 +64,34 @@ export interface ProductListResponse {
   data: ProductPage;
 }
 
+export interface CatalogItem {
+  product_name: string;
+  price: string | number;
+  stock: string | number | null;
+}
+
+export interface CatalogPage {
+  current_page: number;
+  data: CatalogItem[];
+  per_page: number;
+  total: number;
+  last_page: number;
+  from: number | null;
+  to: number | null;
+}
+
+export interface CatalogResponse {
+  message: string;
+  data: CatalogPage;
+}
+
+export interface GetCatalogParams {
+  company_id: number | string;
+  product_name?: string;
+  page?: number;
+  per_page?: number;
+}
+
 export interface GetProductsParams {
   company_id: number | string;
   product_name?: string;
@@ -95,6 +123,18 @@ function unwrapProduct(response: { data?: Product } | Product): Product {
 
 export const productSlice = api.injectEndpoints({
   endpoints: (builder) => ({
+    getCatalog: builder.query<CatalogResponse, GetCatalogParams>({
+      query: ({ company_id, product_name, page = 1, per_page = 10 }) => ({
+        url: 'catalog',
+        params: {
+          company_id,
+          ...(product_name?.trim() ? { product_name: product_name.trim() } : {}),
+          page,
+          per_page,
+        },
+      }),
+      providesTags: ['products'],
+    }),
     getProducts: builder.query<ProductListResponse, GetProductsParams>({
       query: ({ company_id, product_name, page = 1, per_page = 10 }) => ({
         url: 'products',
@@ -134,6 +174,7 @@ export const productSlice = api.injectEndpoints({
 });
 
 export const {
+  useGetCatalogQuery,
   useGetProductsQuery,
   useGetSingleProductQuery,
   useCreateProductMutation,
