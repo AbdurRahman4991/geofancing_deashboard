@@ -29,6 +29,7 @@ export interface UpdateUserRequest {
   email: string;
   password?: string;
   password_confirmation?: string;
+  status?: 'active' | 'inactive';
 }
 export interface CreateUserResponse {
   message: string;

@@ -18,27 +18,41 @@ export interface User {
 export interface Geofence {
   id: number;
   company_id: number;
-  area_id: number;
-  latitude: string;
-  longitude: string;
+  hierarchy_node_id: number | null;
+  firm_name: string;
+  address: string | null;
+  latitude: number | string;
+  longitude: number | string;
   radius: number;
   created_at?: string;
   updated_at?: string;
 
+  // Additional fields may be included by API resources and older clients.
+  area_id?: number | null;
+  user_id?: number | null;
+  visit_status?: string | null;
   company?: Company | null;
   user?: User | null;
 }
 
 export interface GeofenceRequest {
   company_id: number;
-  area_id: number;
-  latitude: string;
-  longitude: string;
+  hierarchy_node_id?: number | null;
+  firm_name?: string;
+  address?: string | null;
+  latitude: number | string;
+  longitude: number | string;
   radius: number;
+
+  // Kept optional for existing screens that still send these fields.
+  area_id?: number;
+  user_id?: number;
 }
 
 export interface GeofenceResponse {
   data: Geofence[];
+  status?: number;
+  message?: string;
   pagination: {
     current_page: number;
     total: number;
@@ -61,17 +75,20 @@ export const geofenceSlice = api.injectEndpoints({
       {
         page?: number;
         per_page?: number;
+        limit?: number;
+        hierarchy_node_id?: number | string;
         area_id?: number | string;
         search?: string;
         company_id?: number | string;
         user_id?: number | string;
       }
     >({
-      query: ({ page = 1, per_page = 10, area_id = "", search= "", company_id="", user_id="", }) => ({
+      query: ({ page = 1, per_page, limit, hierarchy_node_id, area_id = "", search= "", company_id="", user_id="", }) => ({
         url: "geofences",
         params: {
           page,
-          per_page,
+          per_page: per_page ?? limit ?? 10,
+          hierarchy_node_id,
           area_id,
           search,
           company_id,
@@ -82,6 +99,8 @@ export const geofenceSlice = api.injectEndpoints({
 
       transformResponse: (response: any) => ({
         data: response.data.data,
+        status: response.status,
+        message: response.message,
         pagination: {
           current_page: response.data.current_page,
           total: response.data.total,

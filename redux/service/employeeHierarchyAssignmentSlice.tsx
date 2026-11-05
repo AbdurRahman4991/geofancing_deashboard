@@ -11,6 +11,7 @@ import { api } from '../api/baseApi';
 export interface EmployeeHierarchyAssignment {
   id: number;
 
+  user_id?: number;
   user: string | null;
   company_id?: number | null;
   company?: string | null;
@@ -103,8 +104,15 @@ export interface AssignUserRequest {
   area_id?: number | null;
 
   effective_from?: string | null;
+  is_current?: boolean;
 
   reason?: string;
+}
+
+export interface UpdateAssignmentStatusArgs {
+  id: number;
+  user_id: number;
+  is_current: '0' | '1';
 }
 
 // ======================================================================
@@ -267,6 +275,21 @@ export const employeeHierarchyAssignmentSlice =
           ],
         }),
 
+      updateEmployeeHierarchyAssignmentStatus: builder.mutation<
+        EmployeeHierarchyAssignment,
+        UpdateAssignmentStatusArgs
+      >({
+        query: ({ id, user_id, is_current }) => ({
+          url: `employee-hierarchy-assignments/${id}`,
+          method: 'POST',
+          params: { user_id },
+          body: { is_current, _method: 'PUT' },
+        }),
+        transformResponse: (response: any): EmployeeHierarchyAssignment =>
+          response.data ?? response,
+        invalidatesTags: ['employeeHierarchyAssignments'],
+      }),
+
       // ================================================================
       // Delete Assignment
       // ================================================================
@@ -298,6 +321,8 @@ export const {
   useAssignUserMutation,
 
   useUpdateEmployeeHierarchyAssignmentMutation,
+
+  useUpdateEmployeeHierarchyAssignmentStatusMutation,
 
   useDeleteEmployeeHierarchyAssignmentMutation,
 } = employeeHierarchyAssignmentSlice;

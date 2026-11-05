@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -8,12 +8,6 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-
-import { _users } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -22,13 +16,9 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
-import { TableEmptyRows } from '../table-empty-rows';
 import { UserTableToolbar } from '../user-table-toolbar';
-import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
 import { useGetGeofencesQuery } from '../../../../redux/service/geofenchSlice';
-import { useGetUsersQuery } from '../../../../redux/service/userSlice';
 import { useRouter } from 'src/routes/hooks';
 // ----------------------------------------------------------------------
 
@@ -36,24 +26,14 @@ import { useRouter } from 'src/routes/hooks';
 export function GeofenchView() {
   const table = useTable();
   const [filterName, setFilterName] = useState('');
-  const [userId, setUserId] = useState('');
-  const { data: usersData } = useGetUsersQuery({ page: 1, per_page: 1000 });
-
-  // API call
-// API call
-const { data, isLoading } = useGetGeofencesQuery({
-  page: table.page + 1,
-  limit: table.rowsPerPage,
-  search: filterName,
-  user_id: userId,
-   per_page: table.rowsPerPage,
-});
- const router = useRouter();
-// employees list
-const employees = data?.data ?? [];
-
-// FIX: pagination total
-const total = data?.pagination?.total ?? 0;
+  const { data, isLoading } = useGetGeofencesQuery({
+    page: table.page + 1,
+    per_page: table.rowsPerPage,
+    search: filterName,
+  });
+  const router = useRouter();
+  const geofences = data?.data ?? [];
+  const total = data?.pagination?.total ?? 0;
 
 
   return (
@@ -83,56 +63,39 @@ const total = data?.pagination?.total ?? 0;
         <UserTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
-          onFilterName={(e) => setFilterName(e.target.value)}
+          onFilterName={(e) => {
+            setFilterName(e.target.value);
+            table.onResetPage();
+          }}
         />
-        <FormControl size="small" sx={{ minWidth: 220, mx: 3, mb: 2 }}>
-          <InputLabel id="geofence-user-filter-label">Filter by user</InputLabel>
-          <Select<string>
-            labelId="geofence-user-filter-label"
-            value={userId}
-            label="Filter by user"
-            onChange={(event) => {
-              setUserId(event.target.value);
-              table.onResetPage();
-            }}
-          >
-            <MenuItem value="">All users</MenuItem>
-            {(usersData?.data ?? []).map((user) => (
-              <MenuItem key={user.id} value={String(user.id)}>
-                {user.employee?.name || user.name || user.email}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
         <Scrollbar>
           <TableContainer sx={{ overflow: "unset" }}>
-            <Table sx={{ minWidth: 800 }}>
+            <Table sx={{ minWidth: 1100 }}>
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={employees.length}
+                rowCount={geofences.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    employees.map((emp) => String(emp.id))
+                    geofences.map((geofence) => String(geofence.id))
                   )
                 }
 
                 headLabel={[
-                    { id: "name", label: "Area name" },
-                    // { id: "employee_id", label: "Code" },
-                    { id: "address", label: "Address" },
-                    { id: "radius", label: "Radius (M)" },
-                    { id: "visit_status", label: "Visit Status" },
-                    { id: "", label: "Action" },
-                  ]}
+                  { id: "firm_name", label: "Firm Name" },
+                  { id: "address", label: "Address" },
+                  { id: "hierarchy_node_id", label: "Hierarchy Node" },
+                  { id: "radius", label: "Radius (M)" },
+                  { id: "visit_status", label: "Visit Status" },
+                  { id: "", label: "Action" },
+                ]}
               />
 
               <TableBody>
-                {employees.map((row) => (
+                {geofences.map((row) => (
                   <UserTableRow
                     key={row.id}
                     row={row}
@@ -142,7 +105,7 @@ const total = data?.pagination?.total ?? 0;
                   />
                 ))}
 
-                {!employees.length && !isLoading && (
+                {!geofences.length && !isLoading && (
                   <TableNoData searchQuery={filterName} />
                 )}
               </TableBody>
@@ -169,7 +132,7 @@ const total = data?.pagination?.total ?? 0;
 
 export function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('firm_name');
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
@@ -232,10 +195,3 @@ export function useTable() {
     onChangeRowsPerPage,
   };
 }
-
-
-
-
-
-
-

@@ -135,7 +135,7 @@ export function ViewNodeAssign() {
                   { id: 'hierarchy_node', label: 'Hierarchy Node' },
                   { id: 'hierarchy_level', label: 'Hierarchy Level' },
                   { id: 'hierarchy_level_code', label: 'Level Code' },
-                  { id: 'is_current', label: 'Current' },
+                  { id: 'is_current', label: 'Status' },
                   { id: 'assigned_by', label: 'Assigned By' },
                   { id: '', label: 'Action' },
                 ]}
