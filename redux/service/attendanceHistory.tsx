@@ -98,7 +98,21 @@ export const attendanceSlice = api.injectEndpoints({
       }),
       providesTags: ["attendance"],
     }),
+    updateAttendance: builder.mutation<
+      Attendance,
+      {
+        id: number | string;
+        data: Pick<Attendance, 'user_id' | 'geofence_id' | 'check_in_time' | 'check_out_time' | 'status' | 'distance_from_office' | 'remarks'>;
+      }
+    >({
+      query: ({ id, data }) => ({
+        url: `attendance/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['attendance'],
+    }),
   }),
 });
 
-export const { useGetAttendanceHistoryQuery } = attendanceSlice;
+export const { useGetAttendanceHistoryQuery, useUpdateAttendanceMutation } = attendanceSlice;

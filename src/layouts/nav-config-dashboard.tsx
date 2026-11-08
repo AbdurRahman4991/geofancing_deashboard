@@ -22,6 +22,44 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
+    title: 'HRIS',
+    path: '/hris',
+    icon: icon('ic-analytics'),
+
+    children: [
+        {
+          title: 'Company',
+          path: '/company',
+          icon: icon('ic-user'),
+        },
+        {
+          title: 'Department',
+          path: '/department',
+          icon: icon('ic-user'),
+        },                      
+        {
+          title: 'Employee',
+          path: '/employee',
+          icon: icon('ic-user'),
+        },
+        {
+          title: 'User',
+          path: '/users',
+          icon: icon('ic-user'),
+        },
+        {
+          title: 'Attendance Role',
+          path: '/attendance-role',
+          icon: icon('ic-cart'),
+        },         
+        {
+          title: 'Attendance',
+          path: '/attendance',
+          icon: icon('ic-cart'),
+        },             
+     ],
+   },  
+  {
     title: 'Access control',
     path: '/access-control',
     icon: icon('ic-analytics'),
@@ -54,32 +92,7 @@ export const navData = [
     },
     ],
   },  
-  {
-    title: 'Employee',
-    path: '/employee',
-    icon: icon('ic-user'),
-  },
-  {
-    title: 'Live Location',
-    path: '/employee-live-location',
-    icon: icon('ic-analytics'),
-  },
-  {
-    title: 'User',
-    path: '/users',
-    icon: icon('ic-user'),
-  },
-  {
-    title: 'Company',
-    path: '/company',
-    icon: icon('ic-user'),
-  },
-
-  {
-    title: 'Department',
-    path: '/department',
-    icon: icon('ic-user'),
-  },
+ 
 
   // ------------------------------------------------
   // HIERARCHY DROPDOWN
@@ -110,7 +123,7 @@ export const navData = [
    },
 
   {
-    title: 'Geofench',
+    title: 'Market',
     path: '/geofench',
     icon: icon('ic-cart'),
 
@@ -121,21 +134,7 @@ export const navData = [
     icon: icon('ic-cart'),
 
   },  
-  {
-    title: 'Attendance',
-    path: '/attendance',
-    icon: icon('ic-cart'),
-  },
-  {
-    title: 'Attendance Role',
-    path: '/attendance-role',
-    icon: icon('ic-cart'),
-  },
-   {
-    title: 'Tracking',
-    path: '/employee-location',
-    icon: icon('ic-cart'),
-  },
+
   {
     title: 'Product',
     path: '/product',
@@ -193,22 +192,17 @@ export const navData = [
   children: [
     {
       title: 'Daily Attendance Report',
-      path: '/category',
+      path: '/report/daily-attendance-report',
       icon: icon('ic-analytics'),
     },
     {
       title: 'Employee Attendance Summary',
-      path: '/sub-category',
+      path: '/report/employee-attendance-summary',
       icon: icon('ic-analytics'),
     },    
     {
-      title: 'Employee Location History',
-      path: '/brand',
-      icon: icon('ic-analytics'),
-    },
-    {
       title: 'Employee Visit Report',
-      path: '/unit',
+      path: '/report/employee-visit-report',
       icon: icon('ic-analytics'),
     },
     {
@@ -218,7 +212,22 @@ export const navData = [
     },
     {
       title: 'Monthly Performance Report',
-      path: '/product-stock',
+      path: '/report/monthly-performance-report',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Market Map',
+      path: '/report/geofence-map',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Live Location',
+      path: '/employee-live-location',
+      icon: icon('ic-analytics'),
+    },    
+    {
+      title: 'Employee Location History',
+      path: '/employee-location',
       icon: icon('ic-analytics'),
     },
      

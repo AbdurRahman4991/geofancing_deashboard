@@ -120,7 +120,7 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
         </TableCell>
       </TableRow>
 
-      {/* <Popover
+      <Popover
         open={Boolean(openPopover)}
         anchorEl={openPopover}
         onClose={handleClosePopover}
@@ -128,17 +128,17 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <MenuList sx={{ p: 0.5, width: 140 }}>
-          <MenuItem onClick={() => router.push(`edit-user/${row.id}`)}>   
+          <MenuItem onClick={() => router.push(`/attendance/edit/${row.id}`)}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
-
+{/* 
           <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
-      </Popover> */}
+      </Popover>
     </>
   );
 }

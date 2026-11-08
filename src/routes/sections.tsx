@@ -38,6 +38,7 @@ export const AssignPermission = lazy(() => import('src/sections/permissions/view
 export const GeofenchCreate = lazy(() => import('src/sections/geofench/view/create_gefench'));
 export const GeofenchEdit = lazy(() => import('src/sections/geofench/view/update_geofench'));
 export const AttendancePage = lazy(()=>import('src/pages/attendance'))
+export const AttendanceEdit = lazy(() => import('src/sections/attendance/view/update_user'));
 export const AttendanceRolePage = lazy(()=>import('src/pages/attendance-roles'))
 export const AttendanceRoleCreate = lazy(()=>import('src/sections/attendance-roles/view/create-attendance-role'))
 export const AttendanceRoleEdit = lazy(()=>import('src/sections/attendance-roles/view/update-attendance-role'))
@@ -85,6 +86,11 @@ export const CreatProductPrice = lazy(() => import('src/sections/product/product
 export const EdiProductPrice = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
 export const Catalog = lazy(() => import('src/sections/product/new-product/view/catalog'));
 export const DailyOrderSummary = lazy(() => import('src/sections/report/daily-order-summary'));
+export const DailyAttendanceReport = lazy(() => import('src/sections/report/daily-attendance-report'));
+export const EmployeeAttendanceSummary = lazy(() => import('src/sections/report/employee-attendance-summary'));
+export const EmployeeVisitReport = lazy(() => import('src/sections/report/employee-visit-report'));
+export const MonthlyPerformanceReport = lazy(() => import('src/sections/report/monthly-performance-report'));
+export const GeofenceMapReport = lazy(() => import('src/sections/report/geofence-map-report'));
 
 export const Order = lazy(()=> import('src/sections/product/order/view/order-view'));
 export const CreatOrder = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
@@ -163,6 +169,7 @@ export const routesSection: RouteObject[] = [
           { path: 'geofench/edit-geofench/:id', element: <GeofenchEdit /> },
 
           { path: 'attendance', element: <AttendancePage /> },
+          { path: 'attendance/edit/:id', element: <AttendanceEdit /> },
           { path: 'attendance-role', element: <AttendanceRolePage /> },
           { path: 'create/attendance-role', element: <AttendanceRoleCreate /> },
           { path: 'edit/attendance-role/:id', element: <AttendanceRoleEdit /> },
@@ -204,6 +211,11 @@ export const routesSection: RouteObject[] = [
           { path: 'edit/product-price/:id', element: <EdiProductPrice /> },
           {path: 'catalog', element: <Catalog />},
           { path: 'report/daily-order-summary', element: <DailyOrderSummary /> },
+          { path: 'report/daily-attendance-report', element: <DailyAttendanceReport /> },
+          { path: 'report/employee-attendance-summary', element: <EmployeeAttendanceSummary /> },
+          { path: 'report/employee-visit-report', element: <EmployeeVisitReport /> },
+          { path: 'report/monthly-performance-report', element: <MonthlyPerformanceReport /> },
+          { path: 'report/geofence-map', element: <GeofenceMapReport /> },
           { path: 'order', element: <Order /> },
           { path: 'create/order', element: <CreatOrder /> },
           { path: 'edit/order/:id', element: <EdiOrder /> },          

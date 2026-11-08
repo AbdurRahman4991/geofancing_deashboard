@@ -1,207 +1,122 @@
-import { useState, useEffect } from 'react';
-import { Box, Card, Stack, TextField, Button, Typography } from '@mui/material';
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from 'react';
+
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { DashboardContent } from 'src/layouts/dashboard';
-import { 
-  useUpdateEmployeeMutation,
-  useGetSingleEmployeeQuery 
-} from '../../../../redux/service/employeeSlice';
+import { useGetAttendanceHistoryQuery, useUpdateAttendanceMutation } from '../../../../redux/service/attendanceHistory';
+import type { Attendance } from '../../../../redux/service/attendanceHistory';
+import { toast } from 'react-toastify';
 
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+type AttendanceForm = {
+  user_id: string;
+  geofence_id: string;
+  check_in_time: string;
+  check_out_time: string;
+  status: string;
+  distance_from_office: string;
+  remarks: string;
+};
 
+const toDateTimeInput = (value: string | null) => {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const pad = (part: number) => String(part).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
 
-export default function EmployeeUpdateView() {
+const toApiDateTime = (value: string) => value ? `${value.replace('T', ' ')}:00` : null;
 
-  // 1️⃣ Get ID first (fixes your error)
-  const { id } = useParams();
+const toForm = (attendance: Attendance): AttendanceForm => ({
+  user_id: String(attendance.user_id ?? ''),
+  geofence_id: String(attendance.geofence_id ?? ''),
+  check_in_time: toDateTimeInput(attendance.check_in_time),
+  check_out_time: toDateTimeInput(attendance.check_out_time),
+  status: attendance.status ?? '',
+  distance_from_office: attendance.distance_from_office == null ? '' : String(attendance.distance_from_office),
+  remarks: attendance.remarks ?? '',
+});
 
-  // 2️⃣ Fetch employee data
-  const { data, isLoading: isFetching } = useGetSingleEmployeeQuery(id || "");
-
-  // 3️⃣ Update mutation
-  const [updateEmployee, { isLoading }] = useUpdateEmployeeMutation();
-
-  // 4️⃣ Form State
-  const [form, setForm] = useState({
-    name: '',
-    employee_id: '',
-    phone: '',
-    company_id: '',
-    nature_of_employment: '',
-    department: '',
-    unit: '',
-    date_of_joining: '',
-    division: '',
-    designation: '',
-    reporting_person: '',
-    email: '',
-    dob: '',
-    section_info: '',
-    status: 'active',
+export default function AttendanceUpdateView() {
+  const { id = '' } = useParams();
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useGetAttendanceHistoryQuery({ page: 1, per_page: 1000 });
+  const [updateAttendance, { isLoading: isSaving }] = useUpdateAttendanceMutation();
+  const attendance = useMemo(() => data?.data.find((item) => String(item.id) === id), [data, id]);
+  const [form, setForm] = useState<AttendanceForm>({
+    user_id: '', geofence_id: '', check_in_time: '', check_out_time: '', status: '', distance_from_office: '', remarks: '',
   });
 
-  const [errors, setErrors] = useState<any>({});
-
-  // 5️⃣ Prefill form when API returns data
   useEffect(() => {
-    if (data) {
-      setForm({ ...data });
+    if (attendance) setForm(toForm(attendance));
+  }, [attendance]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!attendance) return;
+    if (!form.user_id || !form.status) {
+      toast.error('User ID and status are required.');
+      return;
     }
-  }, [data]);
-
-
-  // -------------------------
-  // HANDLE INPUT CHANGE
-  // -------------------------
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: '' });
-  };
-
-
-  // -------------------------
-  // VALIDATION
-  // -------------------------
-  const validate = () => {
-    const newErrors: any = {};
-
-    if (!form.name.trim()) newErrors.name = "Name is required";
-    if (!form.employee_id.trim()) newErrors.employee_id = "Employee ID is required";
-    if (!form.phone.trim()) newErrors.phone = "Phone number is required";
-    if (!form.nature_of_employment.trim()) newErrors.nature_of_employment = "This field is required";
-    if (!form.date_of_joining) newErrors.date_of_joining = "Joining date required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-
-  // -------------------------
-  // SUBMIT FORM
-  // -------------------------
-  const handleSubmit = async () => {
-    if (!validate()) return;
-
-    const formData = new FormData();
-
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
     try {
-      await updateEmployee({ id, data: formData }).unwrap();
-      toast.success("Employee updated successfully!");
-    } catch (err: any) {
-      if (err?.data) {
-        setErrors(err.data);
-      } else {
-        toast.error("Failed to update employee");
-      }
+      await updateAttendance({
+        id: attendance.id,
+        data: {
+          user_id: Number(form.user_id),
+          geofence_id: form.geofence_id ? Number(form.geofence_id) : null,
+          check_in_time: toApiDateTime(form.check_in_time),
+          check_out_time: toApiDateTime(form.check_out_time),
+          status: form.status,
+          distance_from_office: form.distance_from_office === '' ? null : form.distance_from_office,
+          remarks: form.remarks || null,
+        },
+      }).unwrap();
+      toast.success('Attendance updated successfully.');
+      navigate('/attendance');
+    } catch {
+      toast.error('Could not update attendance.');
     }
   };
 
+  if (isLoading) return <DashboardContent><Typography>Loading attendance record...</Typography></DashboardContent>;
+  if (isError) return <DashboardContent><Alert severity="error">Could not load attendance history.</Alert></DashboardContent>;
+  if (!attendance) return <DashboardContent><Alert severity="warning">Attendance record not found in the loaded records.</Alert></DashboardContent>;
 
-  if (isFetching) return <p>Loading...</p>;
-
-
-  return (
-    <DashboardContent>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Update Employee
-      </Typography>
-
-      <Card sx={{ p: 3, maxWidth: 700 }}>
+  return <DashboardContent>
+    <Box sx={{ mb: 3 }}><Typography variant="h4">Update Attendance</Typography></Box>
+    <Card sx={{ p: 3, maxWidth: 800 }}>
+      <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={2}>
-
-          <TextField
-            name="name"
-            label="Employee Name"
-            value={form.name}
-            onChange={handleChange}
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-
-          <TextField
-            name="employee_id"
-            label="Employee ID"
-            value={form.employee_id}
-            onChange={handleChange}
-            error={!!errors.employee_id}
-            helperText={errors.employee_id}
-          />
-
-          <TextField
-            name="phone"
-            label="Phone"
-            value={form.phone}
-            onChange={handleChange}
-            error={!!errors.phone}
-            helperText={errors.phone}
-          />
-
-          <TextField
-            name="company_id"
-            label="Company ID"
-            value={form.company_id}
-            onChange={handleChange}
-          />
-
-          <TextField
-            name="nature_of_employment"
-            label="Nature of Employment"
-            value={form.nature_of_employment}
-            onChange={handleChange}
-            error={!!errors.nature_of_employment}
-            helperText={errors.nature_of_employment}
-          />
-
-          <TextField name="department" label="Department" value={form.department} onChange={handleChange} />
-          <TextField name="unit" label="Unit" value={form.unit} onChange={handleChange} />
-
-          <TextField
-            name="date_of_joining"
-            label="Date of Joining"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={form.date_of_joining}
-            onChange={handleChange}
-            error={!!errors.date_of_joining}
-            helperText={errors.date_of_joining}
-          />
-
-          <TextField name="division" label="Division" value={form.division} onChange={handleChange} />
-          <TextField name="designation" label="Designation" value={form.designation} onChange={handleChange} />
-          <TextField name="reporting_person" label="Reporting Person" value={form.reporting_person} onChange={handleChange} />
-          <TextField name="email" label="Email" value={form.email} onChange={handleChange} />
-
-          <TextField
-            name="dob"
-            label="Date of Birth"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={form.dob}
-            onChange={handleChange}
-          />
-
-          <TextField name="section_info" label="Section Info" value={form.section_info} onChange={handleChange} />
-
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            color="inherit"
-            onClick={handleSubmit}
-            disabled={isLoading}
-          >
-            {isLoading ? "Updating..." : "Update Employee"}
-          </Button>
-
+          <TextField label="User Name" value={attendance.user?.name ?? '—'} InputProps={{ readOnly: true }} />
+          <TextField name="user_id" label="User ID" type="number" value={form.user_id} InputProps={{ readOnly: true }} />
+          <TextField label="Firm Name" value={attendance.geofence?.firm_name ?? '—'} InputProps={{ readOnly: true }} />
+          <TextField name="geofence_id" label="Geofence ID" type="number" value={form.geofence_id} InputProps={{ readOnly: true }} />
+          <TextField name="check_in_time" label="Check In" type="datetime-local" value={form.check_in_time} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+          <TextField name="check_out_time" label="Check Out" type="datetime-local" value={form.check_out_time} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
+          <TextField name="status" label="Status" select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} required>
+            {[...new Set([form.status, 'Checked In', 'Checked Out', 'Absent'].filter(Boolean))].map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)}
+          </TextField>
+          <TextField name="distance_from_office" label="Distance (m)" type="number" value={form.distance_from_office} InputProps={{ readOnly: true }} />
+          <TextField name="remarks" label="Remarks" value={form.remarks} onChange={handleChange} multiline minRows={2} />
+          <Stack direction="row" spacing={1} justifyContent="flex-end">
+            <Button variant="outlined" onClick={() => navigate('/attendance')}>Cancel</Button>
+            <Button type="submit" variant="contained" disabled={isSaving}>{isSaving ? 'Updating...' : 'Update Attendance'}</Button>
+          </Stack>
         </Stack>
-      </Card>
-
-      <ToastContainer position="top-right" autoClose={3000} />
-    </DashboardContent>
-  );
+      </Box>
+    </Card>
+  </DashboardContent>;
 }

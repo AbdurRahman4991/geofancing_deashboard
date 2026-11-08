@@ -28,7 +28,6 @@ export interface Geofence {
   updated_at?: string;
 
   // Additional fields may be included by API resources and older clients.
-  area_id?: number | null;
   user_id?: number | null;
   visit_status?: string | null;
   company?: Company | null;
@@ -45,7 +44,6 @@ export interface GeofenceRequest {
   radius: number;
 
   // Kept optional for existing screens that still send these fields.
-  area_id?: number;
   user_id?: number;
 }
 
@@ -77,19 +75,17 @@ export const geofenceSlice = api.injectEndpoints({
         per_page?: number;
         limit?: number;
         hierarchy_node_id?: number | string;
-        area_id?: number | string;
         search?: string;
         company_id?: number | string;
         user_id?: number | string;
       }
     >({
-      query: ({ page = 1, per_page, limit, hierarchy_node_id, area_id = "", search= "", company_id="", user_id="", }) => ({
+      query: ({ page = 1, per_page, limit, hierarchy_node_id, search= "", company_id="", user_id="", }) => ({
         url: "geofences",
         params: {
           page,
           per_page: per_page ?? limit ?? 10,
-          hierarchy_node_id,
-          area_id,
+          hierarchy_node_id,         
           search,
           company_id,
           ...(user_id ? { user_id } : {}),

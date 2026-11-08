@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { ReportExportButtons } from './report-export-buttons';
 import { getCurrentCompanyId } from 'src/utils/auth';
 import { useGetOrdersQuery, type Order } from '../../../redux/service/orderSlice';
 
@@ -83,6 +84,7 @@ export default function DailyOrderSummary() {
     <DashboardContent>
       <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ xs: 'stretch', sm: 'center' }} spacing={2} sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>Daily Order Summary</Typography>
+        <ReportExportButtons />
         <TextField
           label="Report date"
           type="date"
