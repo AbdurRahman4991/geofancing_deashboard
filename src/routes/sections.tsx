@@ -14,6 +14,7 @@ import { ProtectedRoute } from '../../src/routes/components/protected-route';
 export const DashboardPage = lazy(() => import('src/pages/dashboard'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const Employee = lazy(() => import('src/pages/employee'));
+export const Notification = lazy(() => import('src/sections/notification/view/view-notification'));
 export const CreateEmployee = lazy(() => import('src/sections/employee/view/create_employee'));
 export const EditEmployee = lazy(() => import('src/sections/employee/view/update_employee'));
 export const User = lazy(() => import('src/pages/users'));
@@ -136,7 +137,7 @@ export const routesSection: RouteObject[] = [
         ),
         children: [
           { index: true, element: <Navigate to="/dashboard" replace /> },
-
+          { path: 'notification', element: <Notification /> },
           { path: 'roles', element: <RolePage /> },
           { path: 'roles/create-role', element: <CreateRole /> },
           { path: 'roles/edit-role/:id', element: <EditRole /> },

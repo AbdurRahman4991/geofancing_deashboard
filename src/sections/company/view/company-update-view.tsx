@@ -114,51 +114,51 @@ export default function CompanyUpdateView() {
   // ================================
   // VALIDATION
   // ================================
-  const validate = () => {
-    const newErrors: any = {};
+  // const validate = () => {
+  //   const newErrors: any = {};
 
-    if (!form.company_name.trim()) {
-      newErrors.company_name = 'Company name is required';
-    }
+  //   if (!form.company_name.trim()) {
+  //     newErrors.company_name = 'Company name is required';
+  //   }
 
-    if (!form.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = 'Invalid email';
-    }
+  //   if (!form.email.trim()) {
+  //     newErrors.email = 'Email is required';
+  //   } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+  //     newErrors.email = 'Invalid email';
+  //   }
 
-    if (!form.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\d{10,15}$/.test(form.phone)) {
-      newErrors.phone = 'Phone must be 10–15 digits';
-    }
+  //   if (!form.phone.trim()) {
+  //     newErrors.phone = 'Phone number is required';
+  //   } else if (!/^\d{10,15}$/.test(form.phone)) {
+  //     newErrors.phone = 'Phone must be 10–15 digits';
+  //   }
 
-    if (!form.address.trim()) {
-      newErrors.address = 'Address is required';
-    }
+  //   if (!form.address.trim()) {
+  //     newErrors.address = 'Address is required';
+  //   }
 
-    if (!form.package) {
-      newErrors.package = 'Package is required';
-    }
+  //   if (!form.package) {
+  //     newErrors.package = 'Package is required';
+  //   }
 
-    if (!form.details.trim()) {
-      newErrors.details = 'Details are required';
-    }
+  //   if (!form.details.trim()) {
+  //     newErrors.details = 'Details are required';
+  //   }
 
-    if (!form.billing_cycle) {
-      newErrors.billing_cycle = 'Billing cycle is required';
-    }
+  //   if (!form.billing_cycle) {
+  //     newErrors.billing_cycle = 'Billing cycle is required';
+  //   }
 
-    setErrors(newErrors);
+  //   setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
-  };
+  //   return Object.keys(newErrors).length === 0;
+  // };
 
   // ================================
   // SUBMIT
   // ================================
   const handleSubmit = async () => {
-    if (!validate()) return;
+    //if (!validate()) return;
 
     const formData = new FormData();
 

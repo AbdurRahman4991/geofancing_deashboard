@@ -107,7 +107,7 @@ export default function AttendanceUpdateView() {
           <TextField name="check_in_time" label="Check In" type="datetime-local" value={form.check_in_time} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
           <TextField name="check_out_time" label="Check Out" type="datetime-local" value={form.check_out_time} InputProps={{ readOnly: true }} InputLabelProps={{ shrink: true }} />
           <TextField name="status" label="Status" select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} required>
-            {[...new Set([form.status, 'Checked In', 'Checked Out', 'Absent'].filter(Boolean))].map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)}
+            {[...new Set([form.status, 'Checked In', 'Checked Out', 'Absent', 'Leave'].filter(Boolean))].map((status) => <MenuItem key={status} value={status}>{status}</MenuItem>)}
           </TextField>
           <TextField name="distance_from_office" label="Distance (m)" type="number" value={form.distance_from_office} InputProps={{ readOnly: true }} />
           <TextField name="remarks" label="Remarks" value={form.remarks} onChange={handleChange} multiline minRows={2} />

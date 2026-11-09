@@ -107,7 +107,7 @@ export const attendanceSlice = api.injectEndpoints({
     >({
       query: ({ id, data }) => ({
         url: `attendance/${id}`,
-        method: 'PUT',
+        method: 'PATCH',
         body: data,
       }),
       invalidatesTags: ['attendance'],
