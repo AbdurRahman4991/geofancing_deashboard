@@ -141,11 +141,11 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <Iconify icon="solar:pen-bold" />
           Edit
         </MenuItem>
-
+{/* 
           <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
+          </MenuItem> */}
 
         </MenuList>
       </Popover>

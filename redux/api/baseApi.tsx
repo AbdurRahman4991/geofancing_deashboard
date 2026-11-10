@@ -31,7 +31,7 @@ export const api = createApi({
   tagTypes: [
     "company", "employees", "geofences", "attendance", "employeeLocations","role", "permission", "user", "users",
     "employeeHierarchyAssignments","AttendanceRole", "departments", "hierarchyNodes", "categories", "subcategories",
-     "brands", "units", "products", "productStocks", "productPrices", "orders","Notification"
+    "brands", "units", "products", "productStocks", "productPrices", "orders","Notification"
   ],
 });
 
