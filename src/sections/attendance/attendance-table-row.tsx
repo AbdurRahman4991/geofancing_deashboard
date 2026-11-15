@@ -74,7 +74,7 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
         </TableCell>
 
         <TableCell>{row.user?.name || "-"}</TableCell>
-        <TableCell>{row.geofence?.firm_name || "-"}</TableCell>
+        
 
         <TableCell>
             {row.check_in_time
@@ -108,8 +108,9 @@ export function AttendanceTableRow({ row, selected, onSelectRow }: UserTableRowP
         </TableCell>
 
         <TableCell>
-          {row.distance_from_office != null ? `${row.distance_from_office} m` : "-"}
+          {row.work_hour != null ? `${row.work_hour} m` : "-"}
         </TableCell>
+        <TableCell>{row.late || "-"}</TableCell>
 
         <TableCell>{row.remarks ?? "-"}</TableCell>
 

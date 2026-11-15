@@ -242,10 +242,10 @@ export function RoleTableRow({
             Edit
           </MenuItem>
 
-          <MenuItem sx={{ color: "error.main" }}>
+          {/* <MenuItem sx={{ color: "error.main" }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
+          </MenuItem> */}
         </MenuList>
       </Popover>
     </>

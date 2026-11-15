@@ -104,14 +104,15 @@ const total = data?.pagination?.total ?? 0;
                 }
 
                 headLabel={[
-                  { id: "user", label: "User Name" },
-                  { id: "geofence", label: "Firm Name" },
+                  { id: "user", label: "User Name" },                  
                   { id: "check_in_time", label: "Check In" },
                   { id: "check_out_time", label: "Check Out" },
                   // { id: "work_hour", label: "Work Hour" },
                   // { id: "late", label: "Late" },
                   { id: "status", label: "Status" },
-                  { id: "distance_from_office", label: "Distance (m)" },
+                 
+                  { id: "distance_from_office", label: "Work hour" },
+                   { id: "late", label: "Late" },
                   { id: "remarks", label: "Remarks" },
                   { id: "", label: "Action" },
                 ]}
