@@ -87,7 +87,7 @@ export const CreatProductPrice = lazy(() => import('src/sections/product/product
 export const EdiProductPrice = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
 export const Catalog = lazy(() => import('src/sections/product/new-product/view/catalog'));
 export const DailyOrderSummary = lazy(() => import('src/sections/report/daily-order-summary'));
-export const DailyAttendanceReport = lazy(() => import('src/sections/report/daily-attendance-report'));
+export const DailyAttendanceReport = lazy(() => import('src/sections/report/employee-report'));
 export const EmployeeAttendanceSummary = lazy(() => import('src/sections/report/employee-attendance-summary'));
 export const EmployeeVisitReport = lazy(() => import('src/sections/report/employee-visit-report'));
 export const MonthlyPerformanceReport = lazy(() => import('src/sections/report/monthly-performance-report'));

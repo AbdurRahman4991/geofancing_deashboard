@@ -191,22 +191,22 @@ export const navData = [
 
   children: [
     {
-      title: 'Daily Attendance Report',
+      title: 'Employee Report',
       path: '/report/daily-attendance-report',
       icon: icon('ic-analytics'),
     },
     {
-      title: 'Employee Attendance Summary',
+      title: 'Attendance Summary',
       path: '/report/employee-attendance-summary',
       icon: icon('ic-analytics'),
     },    
     {
-      title: 'Employee Visit Report',
+      title: 'Market Visit Report',
       path: '/report/employee-visit-report',
       icon: icon('ic-analytics'),
     },
     {
-      title: 'Daily Order Summary',
+      title: 'Order Summary',
       path: '/report/daily-order-summary',
       icon: icon('ic-analytics'),
     },
