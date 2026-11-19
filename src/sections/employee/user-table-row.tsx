@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
+import Chip from '@mui/material/Chip';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
@@ -13,7 +14,7 @@ import { useRouter } from 'src/routes/hooks';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
-import { useDeleteEmployeeMutation } from '../../../redux/service/employeeSlice';
+import { useDeleteEmployeeMutation, useUpdateEmployeeMutation } from '../../../redux/service/employeeSlice';
 import { toast } from 'react-toastify';
 
 // ----------------------------------------------------------------------
@@ -51,6 +52,12 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
    const router = useRouter();
    const [deleteUser] = useDeleteEmployeeMutation();
+  const [currentStatus, setCurrentStatus] = useState(row.status.toLowerCase());
+  const [updateEmployee, { isLoading }] = useUpdateEmployeeMutation();
+
+  useEffect(() => {
+    setCurrentStatus(row.status.toLowerCase());
+  }, [row.status]);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -59,6 +66,22 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+
+  const handleStatusChange = async (status: 'active' | 'inactive') => {
+    const previousStatus = currentStatus;
+    setCurrentStatus(status);
+
+    try {
+      await updateEmployee({
+        id: row.id,
+        data: { status },
+      }).unwrap();
+      toast.success('Employee status updated');
+    } catch (error: any) {
+      setCurrentStatus(previousStatus);
+      toast.error(error?.data?.message || 'Failed to update employee status');
+    }
+  };
 
       const handleDelete = async () => {
       if (!confirm("Are you sure you want to delete this company?")) return;
@@ -94,9 +117,24 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 <TableCell>{row.email}</TableCell>
 
 <TableCell>
-  <Label color={row.status === "active" ? "success" : "error"}>
-    {row.status}
-  </Label>
+  <FormControl size="small" sx={{ minWidth: 125 }}>
+    <Select
+      value={currentStatus}
+      onChange={(event) => handleStatusChange(event.target.value as 'active' | 'inactive')}
+      disabled={isLoading}
+      renderValue={(value) => (
+        <Chip
+          size="small"
+          label={value === 'active' ? 'Active' : 'Inactive'}
+          color={value === 'active' ? 'success' : 'warning'}
+        />
+      )}
+      inputProps={{ 'aria-label': `Update status for ${row.name}` }}
+    >
+      <MenuItem value="active">Active</MenuItem>
+      <MenuItem value="inactive">Inactive</MenuItem>
+    </Select>
+  </FormControl>
 </TableCell>
 <TableCell>
   {row.registration_status ? (

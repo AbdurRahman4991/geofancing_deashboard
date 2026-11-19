@@ -106,10 +106,10 @@ export const employeeApi = api.injectEndpoints({
     // Update Employee
     // ===========================
     updateEmployee: builder.mutation({
-      query: ({ id, params }) => ({
+      query: ({ id, data, params }) => ({
         url: `/employees/${id}`,
         method: "PUT",
-        params,
+        body: data ?? params,
       }),
       invalidatesTags: ["employees"],
     }),
