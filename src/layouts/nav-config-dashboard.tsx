@@ -181,7 +181,13 @@ export const navData = [
       title: 'Catalog',
       path: '/catalog',
       icon: icon('ic-analytics'),
-    },    
+    },
+    
+    {
+      title: 'Tour plan',
+      path: '/catalog',
+      icon: icon('ic-analytics'),
+    },     
     ],
   }, 
 {
