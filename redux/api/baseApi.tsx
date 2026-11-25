@@ -54,6 +54,7 @@ export const api = createApi({
     'OrderReport',
     'MonthlyPerformanceReport',
     'EmployeeRegistrationReport',
+    'tourPlans',
   ],
 });
 

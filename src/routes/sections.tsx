@@ -97,9 +97,9 @@ export const Order = lazy(()=> import('src/sections/product/order/view/order-vie
 export const CreatOrder = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
 export const EdiOrder = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
 
-export const tourPlan = lazy(()=> import('src/sections/product/order/view/order-view'));
-export const CreatTourPlan = lazy(() => import('src/sections/product/product-price/view/create-product-price'));
-export const EdiTourPlan = lazy(() => import('src/sections/product/product-price/view/update-product-price'));
+export const TourPlan = lazy(() => import('src/sections/toure-plan/view/view-toure-plan'));
+export const CreatTourPlan = lazy(() => import('src/sections/toure-plan/view/create-toure-plan'));
+export const EdiTourPlan = lazy(() => import('src/sections/toure-plan/view/update-toure-plan'));
 
 
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
@@ -225,7 +225,7 @@ export const routesSection: RouteObject[] = [
           { path: 'create/order', element: <CreatOrder /> },
           { path: 'edit/order/:id', element: <EdiOrder /> },
           
-          { path: 'tour-plan', element: <tourPlan /> },
+          { path: 'tour-plan', element: <TourPlan /> },
           { path: 'create/tour-plan', element: <CreatTourPlan /> },
           { path: 'edit/tour-plan/:id', element: <EdiTourPlan /> },    
 
