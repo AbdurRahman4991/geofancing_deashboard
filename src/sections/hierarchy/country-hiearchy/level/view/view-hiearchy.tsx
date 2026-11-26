@@ -1,66 +1,70 @@
-import { useState, useCallback } from 'react';
-
+import { useState } from 'react';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import MenuItem from '@mui/material/MenuItem';
+import LinearProgress from '@mui/material/LinearProgress';
+import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TablePagination from '@mui/material/TablePagination';
-import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
+import TablePagination from '@mui/material/TablePagination';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-
+import { getCurrentCompanyId } from 'src/utils/auth';
+import { useRouter } from 'src/routes/hooks';
+import { useGetCompanyQuery } from '../../../../../../redux/service/companySlice';
+import { useGetCountryHiearchyLevelsQuery } from '../../../../../../redux/service/countryHiearchyLevelService';
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
 import { UserTableToolbar } from '../user-table-toolbar';
 
-import { useGetLevelsQuery } from '../../../../../redux/service/levelSlice';
-import { useRouter } from 'src/routes/hooks';
-
-// The API response provided for this screen belongs to company 1.
-const COMPANY_ID = 1;
 const DEFAULT_ROWS_PER_PAGE = 15;
 
 export function LevelView() {
+  const currentCompanyId = getCurrentCompanyId();
+  const [companySelection, setCompanySelection] = useState('');
+  const companyId = currentCompanyId || Number(companySelection);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const [filterName, setFilterName] = useState('');
+  const [activeFilter, setActiveFilter] = useState('all');
   const [orderBy, setOrderBy] = useState('level_order');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<string[]>([]);
   const router = useRouter();
-
-  const { data, isLoading, isError } = useGetLevelsQuery({
-    company_id: COMPANY_ID,
-    page: page + 1,
-    per_page: rowsPerPage,
-  });
-
-  const levels = data?.data?.data ?? [];
-  const search = filterName.trim().toLowerCase();
-  const filteredLevels = levels.filter((level) =>
-    [level.name, level.code ?? '', String(level.level_order), String(level.id)]
-      .some((value) => value.toLowerCase().includes(search))
+  const { data: companyData, isLoading: isCompaniesLoading } = useGetCompanyQuery(
+    { page: 1, limit: 100 },
+    { skip: Boolean(currentCompanyId) }
+  );
+  const companies = companyData?.data ?? [];
+  const { data, isLoading, isError } = useGetCountryHiearchyLevelsQuery(
+    {
+      company_id: companyId,
+      page: page + 1,
+      per_page: rowsPerPage,
+      search: filterName.trim() || undefined,
+      is_active: activeFilter === 'all' ? undefined : activeFilter === 'active',
+    },
+    { skip: !companyId }
   );
 
-  const sortedLevels = [...filteredLevels].sort((a, b) => {
+  const levels = data?.data ?? [];
+  const sortedLevels = [...levels].sort((a, b) => {
     const left = a[orderBy as keyof typeof a];
     const right = b[orderBy as keyof typeof b];
-    const comparison =
-      typeof left === 'number' && typeof right === 'number'
-        ? left - right
-        : String(left ?? '').localeCompare(String(right ?? ''), undefined, {
-            numeric: true,
-            sensitivity: 'base',
-          });
+    const comparison = typeof left === 'number' && typeof right === 'number'
+      ? left - right
+      : String(left ?? '').localeCompare(String(right ?? ''), undefined, { numeric: true, sensitivity: 'base' });
     return order === 'asc' ? comparison : -comparison;
   });
-
   const visibleSelectedCount = sortedLevels.filter((level) => selected.includes(String(level.id))).length;
+
   const handleSelectRow = (id: string) => {
     setSelected((current) => current.includes(id) ? current.filter((selectedId) => selectedId !== id) : [...current, id]);
   };
@@ -71,32 +75,55 @@ export function LevelView() {
       : current.filter((id) => !visibleIds.includes(id)));
   };
 
-  const handleSort = useCallback((id: string) => {
-    setOrder((current) => (orderBy === id && current === 'asc' ? 'desc' : 'asc'));
-    setOrderBy(id);
-  }, [orderBy]);
-
-  if (isLoading) {
-    return <DashboardContent><Typography>Loading country levels...</Typography></DashboardContent>;
-  }
-
-  if (isError) {
-    return <DashboardContent><Typography color="error">Failed to load levels.</Typography></DashboardContent>;
-  }
-
   return (
     <DashboardContent>
-      <Box sx={{ mb: 5, display: 'flex', alignItems: 'center' }}>
-        <Typography variant="h4" sx={{ flexGrow: 1 }}> Countyr Levels</Typography>
+      <Box sx={{ mb: 5, display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography variant="h4" sx={{ flexGrow: 1 }}>Country Levels</Typography>
+        {!currentCompanyId && (
+          <TextField
+            select
+            size="small"
+            label="Company"
+            value={companySelection}
+            onChange={(event) => {
+              setCompanySelection(event.target.value);
+              setPage(0);
+              setSelected([]);
+            }}
+            disabled={isCompaniesLoading}
+            sx={{ minWidth: 220 }}
+          >
+            {companies.map((company) => <MenuItem key={company.id} value={String(company.id)}>{company.company_name}</MenuItem>)}
+          </TextField>
+        )}
+        <TextField
+          select
+          size="small"
+          label="Status"
+          value={activeFilter}
+          onChange={(event) => {
+            setActiveFilter(event.target.value);
+            setPage(0);
+          }}
+          sx={{ minWidth: 130 }}
+        >
+          <MenuItem value="all">All</MenuItem>
+          <MenuItem value="active">Active</MenuItem>
+          <MenuItem value="inactive">Inactive</MenuItem>
+        </TextField>
         <Button
-          onClick={() => router.push('/hierarchy/create-level')}
+          onClick={() => router.push('/create/country-hiearchy-lavel')}
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
+          disabled={!companyId}
         >
-          New Contry Level
+          New Country Level
         </Button>
       </Box>
+
+      {!companyId && <Alert severity="info" sx={{ mb: 2 }}>Select a company to view its country levels.</Alert>}
+      {isError && <Alert severity="error" sx={{ mb: 2 }}>Failed to load country levels.</Alert>}
 
       <Card>
         <UserTableToolbar
@@ -105,9 +132,10 @@ export function LevelView() {
           onFilterName={(event) => {
             setFilterName(event.target.value);
             setPage(0);
+            setSelected([]);
           }}
         />
-
+        {isLoading && <LinearProgress />}
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 900 }}>
@@ -116,7 +144,10 @@ export function LevelView() {
                 orderBy={orderBy}
                 rowCount={sortedLevels.length}
                 numSelected={visibleSelectedCount}
-                onSort={handleSort}
+                onSort={(id) => {
+                  setOrder((current) => (orderBy === id && current === 'asc' ? 'desc' : 'asc'));
+                  setOrderBy(id);
+                }}
                 onSelectAllRows={handleSelectAllRows}
                 headLabel={[
                   { id: 'name', label: 'Level Name' },
@@ -124,10 +155,9 @@ export function LevelView() {
                   { id: 'level_order', label: 'Order' },
                   { id: 'nodes_count', label: 'Nodes' },
                   { id: 'is_active', label: 'Status' },
-                  { id: '', label: 'Action' },
+                  { id: 'actions', label: 'Action' },
                 ]}
               />
-
               <TableBody>
                 {sortedLevels.map((level) => (
                   <UserTableRow
@@ -137,17 +167,14 @@ export function LevelView() {
                     onSelectRow={() => handleSelectRow(String(level.id))}
                   />
                 ))}
-                {!sortedLevels.length && (
-                  <TableNoData searchQuery={filterName} />
-                )}
+                {!sortedLevels.length && !isLoading && !isError && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
           </TableContainer>
         </Scrollbar>
-
         <TablePagination
           component="div"
-          count={data?.data?.total ?? 0}
+          count={data?.total ?? 0}
           page={page}
           onPageChange={(_, nextPage) => setPage(nextPage)}
           rowsPerPage={rowsPerPage}
@@ -163,5 +190,3 @@ export function LevelView() {
 }
 
 export default LevelView;
-
-

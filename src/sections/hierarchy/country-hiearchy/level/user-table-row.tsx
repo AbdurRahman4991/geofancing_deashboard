@@ -8,19 +8,23 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import MenuList from '@mui/material/MenuList';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
+import { toast } from 'react-toastify';
 
 import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
-import type { Level } from '../../../../redux/service/levelSlice';
+import { useDeleteCountryHiearchyLevelMutation, type CountryHiearchyLevel } from '../../../../../redux/service/countryHiearchyLevelService';
+
+export type UserProps = CountryHiearchyLevel;
 
 type UserTableRowProps = {
-  row: Level;
+  row: CountryHiearchyLevel;
   selected: boolean;
   onSelectRow: () => void;
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  const [deleteLevel, { isLoading: isDeleting }] = useDeleteCountryHiearchyLevelMutation();
   const router = useRouter();
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,7 +37,18 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
   const handleEdit = () => {
     handleClosePopover();
-    router.push(`/hierarchy/edit-level/${row.id}`);
+    router.push(`/edit/country-hiearchy-lavel/${row.id}?company_id=${row.company_id}`);
+  };
+
+  const handleDelete = async () => {
+    handleClosePopover();
+    if (!window.confirm(`Delete country level "${row.name}"?`)) return;
+    try {
+      await deleteLevel({ company_id: row.company_id, id: row.id }).unwrap();
+      toast.success('Country level deleted successfully');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to delete country level');
+    }
   };
 
   return (
@@ -82,6 +97,10 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
           <MenuItem onClick={handleEdit}>
             <Iconify icon="solar:pen-bold" />
             Edit
+          </MenuItem>
+          <MenuItem onClick={handleDelete} disabled={isDeleting || row.nodes_count > 0}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
           </MenuItem>
         </MenuList>
       </Popover>

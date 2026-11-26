@@ -1,1 +1,1 @@
-export * from './view-hiearchy';
+export * from './view-hiearchy-node';

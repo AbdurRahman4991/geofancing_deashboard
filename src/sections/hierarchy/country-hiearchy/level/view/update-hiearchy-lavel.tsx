@@ -10,16 +10,17 @@ import {
   FormControlLabel,
   Switch,
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
+import { getCurrentCompanyId } from 'src/utils/auth';
+import { useGetCompanyQuery } from '../../../../../../redux/service/companySlice';
 import {
-  useGetSingleLevelQuery,
-  useUpdateLevelMutation,
-} from '../../../../../redux/service/levelSlice';
+  useGetCountryHiearchyLevelQuery,
+  useUpdateCountryHiearchyLevelMutation,
+} from '../../../../../../redux/service/countryHiearchyLevelService';
 
 type LevelForm = {
   company_id: string;
@@ -31,21 +32,25 @@ type LevelForm = {
 
 export default function UpdateLevelView() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const levelId = Number(id);
+  const currentCompanyId = getCurrentCompanyId();
+  const routeCompanyId = Number(searchParams.get('company_id'));
+  const companyId = currentCompanyId || (Number.isInteger(routeCompanyId) && routeCompanyId > 0 ? routeCompanyId : 0);
   const {
     data: level,
     isLoading: isFetchingLevel,
     isError: isLevelError,
-  } = useGetSingleLevelQuery(
-    { id: levelId, company_id: 1 },
-    { skip: !id || !Number.isFinite(levelId) }
+  } = useGetCountryHiearchyLevelQuery(
+    { id: levelId, company_id: companyId },
+    { skip: !id || !Number.isFinite(levelId) || !companyId }
   );
   const { data: companyData, isLoading: isCompaniesLoading } = useGetCompanyQuery({
     page: 1,
     limit: 100,
   });
   const companies = companyData?.data ?? [];
-  const [updateLevel, { isLoading: isUpdating }] = useUpdateLevelMutation();
+  const [updateLevel, { isLoading: isUpdating }] = useUpdateCountryHiearchyLevelMutation();
 
   const [form, setForm] = useState<LevelForm>({
     company_id: '',
@@ -69,6 +74,7 @@ export default function UpdateLevelView() {
   }, [level]);
 
   const handleSubmit = async () => {
+    if (!level) return;
     const nextErrors: Partial<Record<keyof LevelForm, string>> = {};
     const levelOrder = Number(form.level_order);
 
@@ -87,9 +93,9 @@ export default function UpdateLevelView() {
 
     try {
       await updateLevel({
+        company_id: level.company_id,
         id: levelId,
         data: {
-          company_id: Number(form.company_id),
           name: form.name.trim(),
           code: form.code.trim() || null,
           level_order: levelOrder,
@@ -129,6 +135,7 @@ export default function UpdateLevelView() {
             }}
             error={!!errors.company_id}
             helperText={errors.company_id}
+            disabled
             fullWidth
           >
             {companies.map((company) => (

@@ -55,6 +55,8 @@ export const api = createApi({
     'MonthlyPerformanceReport',
     'EmployeeRegistrationReport',
     'tourPlans',
+    'countryHierarchyLevels',
+    'countryHierarchyNodes',
   ],
 });
 

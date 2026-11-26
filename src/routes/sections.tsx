@@ -220,7 +220,7 @@ export const routesSection: RouteObject[] = [
           { path: 'product-price', element: <ProductPrice /> },
           { path: 'create/product-price', element: <CreatProductPrice /> },
           { path: 'edit/product-price/:id', element: <EdiProductPrice /> },
-          {path: 'catalog', element: <Catalog />},
+          { path: 'catalog', element: <Catalog />},
           { path: 'report/daily-order-summary', element: <DailyOrderSummary /> },
           { path: 'report/daily-attendance-report', element: <DailyAttendanceReport /> },
           { path: 'report/employee-attendance-summary', element: <EmployeeAttendanceSummary /> },
@@ -241,7 +241,8 @@ export const routesSection: RouteObject[] = [
 
           { path: 'country-hiearchy-node', element: <CountryNode /> },
           { path: 'create/country-hiearchy-node', element: <CreatCountryNode /> },
-          { path: 'edit/country-hiearchy-node/:id', element: <EdiCountryNode /> },   
+          { path: 'edit/country-hiearchy-node/:id', element: <EdiCountryNode /> },
+
 
           { path: 'products', element: <ProductsPage /> },
           { path: 'blog', element: <BlogPage /> },

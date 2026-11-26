@@ -249,12 +249,12 @@ export const navData = [
     children: [        
       {
         title: 'Hierarchy Country Level',
-        path: '/hierarchy-country-level',
+        path: '/country-hiearchy-lavel',
         icon: icon('ic-analytics'),
       },
       {
         title: 'Hierarchy Country Node',
-        path: '/hierarchy-country-node',
+        path: '/country-hiearchy-node',
         icon: icon('ic-analytics'),
       },
       {

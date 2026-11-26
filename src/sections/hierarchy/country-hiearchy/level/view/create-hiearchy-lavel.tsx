@@ -14,8 +14,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetCompanyQuery } from '../../../../../redux/service/companySlice';
-import { useCreateLevelMutation } from '../../../../../redux/service/levelSlice';
+import { getCurrentCompanyId } from 'src/utils/auth';
+import { useGetCompanyQuery } from '../../../../../../redux/service/companySlice';
+import { useCreateCountryHiearchyLevelMutation } from '../../../../../../redux/service/countryHiearchyLevelService';
 
 type LevelForm = {
   company_id: string;
@@ -26,7 +27,8 @@ type LevelForm = {
 };
 
 export default function CreateLevelView() {
-  const [createLevel, { isLoading: isCreating }] = useCreateLevelMutation();
+  const currentCompanyId = getCurrentCompanyId();
+  const [createLevel, { isLoading: isCreating }] = useCreateCountryHiearchyLevelMutation();
   const { data: companyData, isLoading: isCompaniesLoading } = useGetCompanyQuery({
     page: 1,
     limit: 100,
@@ -34,7 +36,7 @@ export default function CreateLevelView() {
   const companies = companyData?.data ?? [];
 
   const [form, setForm] = useState<LevelForm>({
-    company_id: '1',
+    company_id: currentCompanyId ? String(currentCompanyId) : '',
     name: '',
     code: '',
     level_order: '',
@@ -57,10 +59,12 @@ export default function CreateLevelView() {
     try {
       await createLevel({
         company_id: Number(form.company_id),
-        name: form.name.trim(),
-        code: form.code.trim() || null,
-        level_order: levelOrder,
-        is_active: form.is_active,
+        data: {
+          name: form.name.trim(),
+          code: form.code.trim() || null,
+          level_order: levelOrder,
+          is_active: form.is_active,
+        },
       }).unwrap();
 
       toast.success('Country Level created successfully');
@@ -92,7 +96,7 @@ export default function CreateLevelView() {
             onChange={(event) => setForm((previous) => ({ ...previous, company_id: event.target.value }))}
             error={!!errors.company_id}
             helperText={errors.company_id}
-            disabled={isCompaniesLoading}
+            disabled={isCompaniesLoading || Boolean(currentCompanyId)}
             fullWidth
           >
             {companies.map((company) => (
@@ -157,7 +161,7 @@ export default function CreateLevelView() {
             size="large"
             color="inherit"
             onClick={handleSubmit}
-            disabled={isCreating || isCompaniesLoading}
+            disabled={isCreating || isCompaniesLoading || !form.company_id}
           >
             {isCreating ? 'Saving...' : 'Create Level'}
           </Button>
