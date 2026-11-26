@@ -99,7 +99,7 @@ export const navData = [
   // ------------------------------------------------
 
   {
-    title: 'Hierarchy',
+    title: 'Market Hierarchy',
     path: '/hierarchy',
     icon: icon('ic-analytics'),
 
@@ -120,7 +120,13 @@ export const navData = [
         icon: icon('ic-analytics'),
       },        
      ],
-   },
+   },   
+
+  {
+    title: 'Tour plan',
+    path: '/tour-plan',
+    icon: icon('ic-analytics'),
+  }, 
 
   {
     title: 'Market',
@@ -182,12 +188,7 @@ export const navData = [
       path: '/catalog',
       icon: icon('ic-analytics'),
     },
-    
-    {
-      title: 'Tour plan',
-      path: '/tour-plan',
-      icon: icon('ic-analytics'),
-    },     
+      
     ],
   }, 
 {
@@ -238,7 +239,31 @@ export const navData = [
     },
      
     ],
-  },   
+  },
+  
+  {
+    title: 'Country Hierarchy',
+    path: '/country-hierarchy',
+    icon: icon('ic-analytics'),
+
+    children: [        
+      {
+        title: 'Hierarchy Country Level',
+        path: '/hierarchy-country-level',
+        icon: icon('ic-analytics'),
+      },
+      {
+        title: 'Hierarchy Country Node',
+        path: '/hierarchy-country-node',
+        icon: icon('ic-analytics'),
+      },
+      {
+        title: 'Assign To Market Node',
+        path: '/assign-to-market-node',
+        icon: icon('ic-analytics'),
+      },        
+     ],
+  },
   // {
   //   title: 'Product',
   //   path: '/products',
