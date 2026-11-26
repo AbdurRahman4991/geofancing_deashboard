@@ -242,23 +242,23 @@ export const navData = [
   },
   
   {
-    title: 'Country Hierarchy',
-    path: '/country-hierarchy',
+    title: 'Geography',
+    path: '/geography -hierarchy',
     icon: icon('ic-analytics'),
 
     children: [        
       {
-        title: 'Hierarchy Country Level',
+        title: 'Geography Level',
         path: '/country-hiearchy-lavel',
         icon: icon('ic-analytics'),
       },
       {
-        title: 'Hierarchy Country Node',
+        title: 'Geography Node',
         path: '/country-hiearchy-node',
         icon: icon('ic-analytics'),
       },
       {
-        title: 'Assign To Market Node',
+        title: 'Assign To Geography Node',
         path: '/assign-to-market-node',
         icon: icon('ic-analytics'),
       },        
