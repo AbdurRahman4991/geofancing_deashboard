@@ -91,7 +91,41 @@ export const navData = [
       icon: icon('ic-analytics'),
     },
     ],
-  },  
+  }, 
+  
+  {
+    title: 'Approval',
+    path: '/approval',
+    icon: icon('ic-analytics'),
+
+  children: [
+    {
+      title: 'Roles',
+      path: '/roles',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Assign Roles',
+      path: '/roles/assign-role',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Assigned Roles List',
+      path: '/roles/assign-role-list',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Permissions',
+      path: '/permissions',
+      icon: icon('ic-analytics'),
+    },
+    {
+      title: 'Assign Permissions',
+      path: '/permissions/assign-permission',
+      icon: icon('ic-analytics'),
+    },
+    ],
+  }, 
  
 
   // ------------------------------------------------

@@ -229,16 +229,13 @@ export const routesSection: RouteObject[] = [
           { path: 'report/geofence-map', element: <GeofenceMapReport /> },
           { path: 'order', element: <Order /> },
           { path: 'create/order', element: <CreatOrder /> },
-          { path: 'edit/order/:id', element: <EdiOrder /> },
-          
+          { path: 'edit/order/:id', element: <EdiOrder /> },          
           { path: 'tour-plan', element: <TourPlan /> },
           { path: 'create/tour-plan', element: <CreatTourPlan /> },
-          { path: 'edit/tour-plan/:id', element: <EdiTourPlan /> },
-          
+          { path: 'edit/tour-plan/:id', element: <EdiTourPlan /> },          
           { path: 'country-hiearchy-lavel', element: <CountryLavel /> },
           { path: 'create/country-hiearchy-lavel', element: <CreatCountryLavel /> },
           { path: 'edit/country-hiearchy-lavel/:id', element: <EdiCountryLavel /> },  
-
           { path: 'country-hiearchy-node', element: <CountryNode /> },
           { path: 'create/country-hiearchy-node', element: <CreatCountryNode /> },
           { path: 'edit/country-hiearchy-node/:id', element: <EdiCountryNode /> },
